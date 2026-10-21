@@ -1,0 +1,217 @@
+; Copyright 2026 Paul Maddern (paul@arcadegeek.co.uk)
+
+[Fact:theory-of-operation:Theory Of Operation]
+The Currah μSpeech is a 2K ROM that occupies the same addresses
+as the Spectrum ROM. Any access to #R$0038 (including the opcode
+fetch that lands there) pages one or the other in. The Spectrum
+IM1 handler always jumps to #R$0038, so this ROM runs first on
+every interrupt; every exit jumps back to #R$0038 to page the
+Spectrum ROM in and let IM1 finish.
+
+The ROM is mirrored from #N$0800 to #N$0FFF. Speech itself is
+produced by the #FACT(sp0256,SP0256) chip, fed one allophone at
+a time from a short workspace just below
+*#SKOOLKID$5CB2(RAMTOP).
+
+#TABLE(default,centre)
+{ =h Range | =h Contents }
+{ #N$0000-#N$0037 | Banner bitmaps }
+{ #N$0038-#N$03AE | Interrupt and helpers }
+{ #N$03AF-#N$075A | Keys, suffixes and dictionary }
+{ #N$075B-#N$0792 | Banner address list }
+{ #N$0793-#N$0797 | "Anson" }
+{ #N$0798-#N$07FF | More banner bitmaps }
+{ #N$0800-#N$0FFF | Mirror of this ROM }
+{ #N$1000 | #FACT(sp0256,SP0256) allophone / status }
+{ #N$3000 / #N$3001 | Low / high intonation }
+TABLE#
+
+On the first few frames #R$0081 lowers *#SKOOLKID$5CB2(RAMTOP)
+by one page and plants the workspace (low byte #N$57). After
+that, each interrupt at #R$00B7:
+
+#LIST
+{ Ticks *#SKOOLKID$5C78(FRAMES), because this ROM owns IM1 }
+{ Ticks the two keyboard-state timer pairs }
+{ Expands the BASIC string #FACT(sstring,s$) if it exists }
+{ Speaks a new key from *#SKOOLKID$5C08(LAST_K) if keys is #N$01 }
+{ Sends the next queued allophone if the #FACT(sp0256,SP0256) is idle }
+LIST#
+
+Letters, tokens and symbols become allophone IDs through
+#R$0447. A parenthesised name such as "(SH)" picks an allophone
+directly (see #R$02EB). The queued IDs sit in the workspace
+buffer and grow downwards; when the #FACT(sp0256,SP0256) is
+ready, #R$0166 writes one ID and shuffles the rest down.
+
+[Fact:workspace:Speech Workspace]
+The workspace is a few bytes in the page of
+*#SKOOLKID$5CB4(P_RAMT). #R$0354 reads index #N$00 as the byte
+at low address #N$57, index #N$01 as #N$56, and so on. A 48K
+machine uses #N$FF57; a 16K machine uses #N$7F57.
+#R$0081 lowers *#SKOOLKID$5CB2(RAMTOP) by one page so BASIC
+stays out of this block.
+
+#TABLE(default,centre,centre)
+{ =h Index | =h Address | =h Purpose }
+{ #N$00 | #N$57 | Flags }
+{ #N$01 | #N$56 | Cleared on install }
+{ #N$03 | #N$54 | Live buffer pointer (low, then high) }
+{ #N$06 | #N$51 | Saved queue start / first allophone }
+TABLE#
+
+The live pointer is a word, so its high byte sits at #N$55
+(install first writes the workspace page there). The allophone
+buffer begins at the address of index #N$06 and grows down
+towards the new *#SKOOLKID$5CB2(RAMTOP). #R$0375 sets carry
+when the pointer has dropped into that reserved page.
+
+Flags at index #N$00:
+
+#TABLE(default,centre)
+{ =h Bit | =h Meaning }
+{ 1 | Key speech (set when keys is #N$01) }
+{ 2 | Workspace live (set while installing, reset when ready) }
+{ 4 | A key is already being spoken }
+{ 6 | High intonation (set for uppercase, reset for lowercase) }
+{ 7 | Banner not yet drawn }
+TABLE#
+
+[Fact:sp0256:SP0256 Speech Synthesiser]
+The μSpeech speaks through a General Instrument SP0256-AL2
+chip. #R$0166 feeds it one allophone at a time from the
+workspace queue.
+
+#N$1000 is the allophone port. Reading it returns status; bit 0
+set means the chip is still speaking. Writing an allophone ID
+starts that sound; writing #N$00 silences the chip.
+
+Intonation is selected first by writing the same ID to #N$3000
+(low) or #N$3001 (high). Bit 6 of the queued byte chooses the
+port; #R$017F then writes the ID to #N$1000.
+
+The IDs themselves are the AL2 allophone set stored in #R$0447.
+Hear every ID on the #LINK(Sound)(Allophones) page.
+
+[Fact:sstring:BASIC Speech String]
+Programs speak by assigning the BASIC string variable s$. On each
+interrupt #R$00DD looks that name up with #R$01CD (name code #N$53)
+and, if it exists, calls #R$021F.
+
+#R$021F ignores an empty string, and also ignores a string whose
+first character is "*" or "?". Those two markers mean the text has
+already been spoken, or could not be parsed.
+
+Anything else is expanded into the allophone buffer. A full stop
+queues a short pause. A "(" starts a parenthesised allophone name
+(see #R$02EB). Other characters are mapped through #R$03AF.
+
+After a successful pass the first character of s$ is overwritten
+with "*". If a character cannot be mapped, it is overwritten with
+"?" instead. Either way the next interrupt will skip the string
+until a program assigns s$ again.
+
+The separate numeric variable keys (#N$01) enables speaking each
+key press from *#SKOOLKID$5C08(LAST_K); that path does not use s$.
+
+The #LINK(TryIt)(Try s$) page runs this parser in the browser
+and plays the resulting #FACT(sp0256,SP0256) allophones.
+
+[Fact:punctuation:Key Speech Remap]
+When a new key arrives in *#SKOOLKID$5C08(LAST_K), #R$0100 turns it
+into a dictionary key and looks it up in #R$0447. Letters are
+uppercased, and codes #N$80-#N$A4 (block graphics) all use key
+#N$80. Everything else is offered to #R$042D first.
+
+#R$011D searches the #N$0D keys at #R$042D. A miss keeps the original
+code. A hit takes the byte the same distance into #R$043A and uses
+that as the dictionary key instead.
+
+The table covers symbols and tokens that either share a spoken word
+with another key, or have no entry of their own in #R$0447 (POINT,
+CLS, SGN and AND).
+
+#TABLE(default,centre,centre)
+{ =h LAST_K | =h Dictionary key }
+{ ")" | "(" }
+{ "[" | "(" }
+{ "]" | "(" }
+{ "{" | "(" }
+{ "}" | "(" }
+{ POINT | "." }
+{ CLS | CLEAR }
+{ "@" | AT }
+{ Cursor right | Cursor (#N$08) }
+{ Cursor down | Cursor (#N$08) }
+{ Cursor up | Cursor (#N$08) }
+{ SGN | SIN }
+{ AND | "&" }
+TABLE#
+
+All brackets therefore share the "(" entry (spoken as a bracket).
+The extra cursor keys share the spoken "cursor" for #N$08. POINT is
+spoken as a full stop, CLS as CLEAR, "@" as AT, SGN as SIN, and AND
+as "&".
+
+[Fact:dictionary:Allophone Dictionary]
+#R$0447 is the character-to-allophone table used by #R$012C. Each
+entry is a key byte followed by one or more #FACT(sp0256,SP0256-AL2)
+allophone IDs. Bit 6 of an ID selects high intonation; bit 7 marks
+the last ID of that entry.
+
+The table starts with a dummy terminator (#N$80) so the scanner's
+"end of the previous list" step lands on the first real key, and it
+ends on a key of #N$00.
+
+#LIST
+{ Control keys: EDIT, ENTER, cursor, DELETE }
+{ Colour tokens, graphics and symbols, plus LET and NEW }
+{ Digits #N$30-#N$39 }
+{ "#", "$" and "%" }
+{ Letters A-Z }
+{ BASIC tokens from RND through COPY }
+LIST#
+
+Each comment line on #R$0447 has an audio player for that
+spoken list.
+
+A key that is not in the table is skipped; the interrupt then
+continues to #R$0166. That is why POINT, CLS, SGN and AND are
+rewritten by #R$042D before the lookup.
+
+[Fact:suffixes:Allophone Name Suffixes]
+A parenthesised name in #FACT(sstring,s$) such as "(AA)" or "(SH)"
+is read by #R$02EB. Each letter is normalised by #R$035E (so "A"
+and "a" both become #N$21) and must appear in the first #N$18
+entries of #R$03AF.
+Those values are summed; the sum is the lookup key.
+
+Most sums are searched for in the #N$36 bytes from #R$03AF, and the
+matching allophone is #N$35 bytes later. Five sums are handled
+separately and go through the suffix tables instead:
+
+#TABLE(default,centre,centre)
+{ =h Sum | =h Letter used }
+{ #N$64 | Last letter (e.g. "(RR)") }
+{ #N$68 | Last letter (e.g. "(OY)") }
+{ #N$5C | Last letter (e.g. "(NN)") }
+{ #N$66 | Last letter (e.g. "(OW)") }
+{ #N$78 | Letter before last (e.g. "(EAR)") }
+TABLE#
+
+#R$0336 takes that letter, normalises it, and searches #R$041B. The
+parallel byte #N$08 later in #R$0424 is the allophone. A letter that
+is not in #R$041B makes the group invalid.
+
+#TABLE(default,centre,centre)
+{ =h Suffix letter | =h Allophone }
+{ "R" | #N$0E (RR1) }
+{ "U" | #N$16 (UW1) }
+{ "T" | #N$0D (TT2) }
+{ "Y" | #N$05 (OY) }
+{ "H" | #N$1D (TH) }
+{ "N" | #N$38 (NN2) }
+{ "A" | #N$3C (YR) }
+{ "E" | #N$2F (XR) }
+{ "W" | #N$20 (AW) }
+TABLE#

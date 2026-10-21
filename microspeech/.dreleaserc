@@ -1,0 +1,6 @@
+GAME=microspeech
+DECCONFIG="-Da"
+HEXCONFIG="-a"
+SRCFILES=$(echo microspeech.skool {microspeech,bugs,changelog}.ref {dark,green,plum}.css)
+SKOOL2BINOPTS="-E 16384"
+WAVCONVERT="rasp.wav"

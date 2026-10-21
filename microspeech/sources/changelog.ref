@@ -1,0 +1,14 @@
+; Copyright 2024 Paul Maddern (paul@arcadegeek.co.uk)
+
+[Page:Changelog]
+SectionType=BulletPoints
+
+[Changelog:20261021]
+-
+- Added a #LINK(TryIt)(Try s$) page that speaks a speech string.
+- Added audio players for the AL2 set and the dictionary.
+
+[Changelog:20240412]
+-
+
+- Added CHANGELOG!

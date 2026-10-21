@@ -1,0 +1,112 @@
+;
+; SkoolKit ref file for the Currah μSpeech
+;
+; To build the HTML disassembly, run these commands:
+;   sna2skool.py -H -o 0 -c sources/microspeech.ctl CURRAH.ROM > sources/microspeech.skool
+;   utils/mkhtml.py
+
+[Config]
+Expand=#INCLUDE(Expand)
+RefFiles=bases.ref;analytics.ref;changelog.ref;facts.ref;sound.ref
+GameDir=microspeech
+
+[Game]
+Game=Currah μSpeech
+Copyright=&copy; 1983 Currah &copy; 2024 ArcadeGeek LTD.
+Repository=https://github.com/pobtastic/currah/
+LinkInternalOperands=1
+AddressAnchor={address#IF({base}==16)(:04x)}
+
+[PageHeaders]
+GameIndex=The complete<>ROM disassembly (work in progress)
+TryIt=Try s$
+Sound=Allophones
+
+[Index:Reference:Reference]
+Facts
+TryIt
+Sound
+Credits
+Changelog
+
+[Paths]
+Changelog=reference/changelog.html
+Credits=reference/credits.html
+TryIt=reference/tryit.html
+Sound=sound/sounds.html
+
+[Titles+]
+TryIt=Try s$
+Sound=Allophones
+
+[Resources]
+uspeech.css=.
+audio/*.wav={AudioPath}
+
+[Page:TryIt]
+JavaScript=allophones.js;uspeech.js
+PageContent=#INCLUDE(TryIt)
+
+[TryIt]
+<link rel="stylesheet" type="text/css" href="../uspeech.css" />
+<div class="uspeech">
+  <p>Type a Currah speech string as you would assign to
+  #FACT(sstring,s$) and hear the #FACT(sp0256,SP0256-AL2)
+  allophones that #R$021F would queue. This is not English
+  text-to-speech: letters map one-for-one, and names in
+  parentheses pick a specific sound.</p>
+  <label for="uspeech-input">s$=</label>
+  <textarea id="uspeech-input" spellcheck="false"
+    aria-describedby="uspeech-status">he(ll)(oo)</textarea>
+  <div class="uspeech-row">
+    <button type="button" id="uspeech-speak">Speak</button>
+    <button type="button" id="uspeech-stop">Stop</button>
+    <span class="uspeech-note">Ctrl+Enter also speaks.</span>
+  </div>
+  <p>Examples from the 1983 manual:</p>
+  <div class="uspeech-row uspeech-examples">
+    <button type="button" data-uspeech="he(ll)(oo)">he(ll)(oo)</button>
+    <button type="button" data-uspeech="kw(ee)n">kw(ee)n</button>
+    <button type="button" data-uspeech="boks">boks</button>
+    <button type="button" data-uspeech="sp(EE)k n(oo) (EE)vil">sp(EE)k n(oo) (EE)vil</button>
+    <button type="button" data-uspeech="a(tt)">a(tt)</button>
+    <button type="button" data-uspeech="(dth)en">(dth)en</button>
+    <button type="button" data-uspeech="s(er)cul">s(er)cul</button>
+  </div>
+  <p id="uspeech-status" class="uspeech-status" role="status"></p>
+  <p id="uspeech-marked" class="uspeech-marked" hidden></p>
+  <p>Queued allophones (bit 6 set means high intonation). Click
+  one to hear it alone:</p>
+  <div id="uspeech-tokens" class="uspeech-tokens"></div>
+  <p>A full stop queues a sentence pause. A space is a word
+  pause, a comma is a phrase pause, and an apostrophe is a
+  short pause. Uppercase raises the pitch. Q and X are not
+  letters in this alphabet; write "kw" and "ks" instead.</p>
+  <p>The parser follows #R$021F and #R$02EB. Samples are
+  recordings of a real AL2 chip, concatenated in the browser;
+  they are close to the unit, not a cycle-accurate
+  #FACT(sp0256,SP0256) core.</p>
+</div>
+
+[Credits]
+<div>
+  <p>This work would not be possible without the efforts of;</p>
+  <dl>
+    <dt>CURRAH μSPEECH programming manual (1983)</dt>
+    <dd><a href="https://maziac.github.io/currah_uspeech_tests/data/currah_manual.pdf" rel="noopener noreferrer nofollow">https://maziac.github.io/currah_uspeech_tests/data/currah_manual.pdf</a></dd>
+    <dt>General Instrument SP0256-AL2 datasheet</dt>
+    <dd><a href="https://bitsavers.org/components/gi/speech/General_Instrument_-_SP0256A-AL2_datasheet_(Radio_Shack_276-1784)_-_Apr1984.pdf" rel="noopener noreferrer nofollow">https://bitsavers.org/components/gi/speech/General_Instrument_-_SP0256A-AL2_datasheet_(Radio_Shack_276-1784)_-_Apr1984.pdf</a></dd>
+    <dt>SkoolKit Spectrum ROM disassembly</dt>
+    <dd><a href="https://skoolkit.ca/disassemblies/rom/" rel="noopener noreferrer nofollow">https://skoolkit.ca/disassemblies/rom/</a></dd>
+    <dt>Gunther Strube — currah_uspeech_tests</dt>
+    <dd><a href="https://github.com/maziac/currah_uspeech_tests" rel="noopener noreferrer nofollow">https://github.com/maziac/currah_uspeech_tests</a></dd>
+    <dt>Spectrum Computing — Currah MicroSpeech</dt>
+    <dd><a href="https://spectrumcomputing.co.uk/entry/1000081/Hardware/Currah_MicroSpeech" rel="noopener noreferrer nofollow">https://spectrumcomputing.co.uk/entry/1000081/Hardware/Currah_MicroSpeech</a></dd>
+    <dt>CPCWiki — SP0256 allophone list and chip recordings</dt>
+    <dd><a href="https://www.cpcwiki.eu/index.php/SP0256_Allophones" rel="noopener noreferrer nofollow">https://www.cpcwiki.eu/index.php/SP0256_Allophones</a></dd>
+    <dt>ExtremeElectronics — packed AL2 PCM samples</dt>
+    <dd><a href="https://github.com/ExtremeElectronics/RC2040" rel="noopener noreferrer nofollow">https://github.com/ExtremeElectronics/RC2040</a></dd>
+  </dl>
+  <p>These pages were a great help when working out the paging, the
+  allophone set and the BASIC interface.</p>
+</div>

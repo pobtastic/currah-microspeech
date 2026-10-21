@@ -1,0 +1,1095 @@
+@start
+@rom
+@set-handle-unsupported-macros=1
+@org=$0000
+@expand=#DEF1(#SKOOLKID(addr)(name)#HTML(<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/#EVAL({addr},16,4).html">){name}#HTML(</a>))
+@expand=#DEF(#FACT()(anchor,text) #LINK(Facts#$anchor)($text))
+
+; Banner Characters
+;
+; Seven 8x8 bitmaps used by #R$01AB with #R$0798 to print
+; "speech system © CURRAH 1983" into the display file. The inverse
+; letters here are "RRAH"; "CU" live at #R$0798(#N$07F0).
+@label=BannerCharacters
+b$0000 DEFB $00,$3C,$42,$0C,$02,$42,$3C,$00 ; #UDGTABLE { #UDG(#PC) } TABLE#
+ $0008 DEFB $FF,$83,$BD,$BD,$83,$BB,$BD,$FF ; #UDGTABLE { #UDG(#PC) } TABLE#
+ $0010 DEFB $FF,$C3,$BD,$BD,$81,$BD,$BD,$FF ; #UDGTABLE { #UDG(#PC) } TABLE#
+ $0018 DEFB $FF,$BD,$BD,$81,$BD,$BD,$BD,$FF ; #UDGTABLE { #UDG(#PC) } TABLE#
+ $0020 DEFB $00,$30,$50,$10,$10,$10,$7C,$00 ; #UDGTABLE { #UDG(#PC) } TABLE#
+ $0028 DEFB $00,$3C,$42,$42,$3E,$02,$3C,$00 ; #UDGTABLE { #UDG(#PC) } TABLE#
+ $0030 DEFB $00,$3C,$42,$3C,$42,$42,$3C,$00 ; #UDGTABLE { #UDG(#PC) } TABLE#
+
+; Handle Interrupt
+;
+; Any access to #R$0038 (including this opcode fetch) pages
+; the μSpeech ROM in or out. The Spectrum IM1 handler lands here,
+; so this ROM runs first. Every exit jumps back to #R$0038, which
+; pages the Spectrum ROM in and lets IM1 finish.
+@label=HandleInterrupt
+c$0038 PUSH AF       ; {Keep #REGaf unchanged.
+ $0039 POP AF        ; }
+ $003A DI            ; Disable interrupts.
+ $003B PUSH HL       ; {Stash #REGhl, #REGaf, #REGbc and #REGde on the stack.
+ $003C PUSH AF       ;
+ $003D PUSH BC       ;
+ $003E PUSH DE       ; }
+; The speech workspace is a short block just below
+; *#SKOOLKID$5CB2(RAMTOP) (low byte #N$57). A 48K machine uses
+; #N$FF57; a 16K machine uses #N$7F57.
+ $003F LD HL,($5CB2) ; Fetch *#SKOOLKID$5CB2(RAMTOP).
+ $0042 LD A,L        ; {Jump to #R$0050 if the low byte is not #N$57.
+ $0043 CP $57        ;
+ $0045 JR NZ,$0050   ; }
+ $0047 LD A,H        ; {Jump to #R$0081 if this is a 48K machine.
+ $0048 CP $FF        ;
+ $004A JR Z,$0081    ; }
+ $004C CP $7F        ; {Jump to #R$0081 if this is a 16K machine.
+ $004E JR Z,$0081    ; }
+; *#SKOOLKID$5CB2(RAMTOP) is not the installed workspace yet.
+@label=ProbeWorkspace
+*$0050 LD A,$06      ; {Call #R$0354 for the saved buffer pointer.
+ $0052 CALL $0354    ; }
+ $0055 LD B,H        ; {Copy the workspace address to #REGbc.
+ $0056 LD C,L        ; }
+ $0057 CALL $0375    ; {Call #R$0375 and jump to #R$0081 if the reserved block
+ $005A JR C,$0081    ; is already below *#SKOOLKID$5CB2(RAMTOP).}
+ $005C CALL $037F    ; Call #R$037F.
+ $005F CALL $0375    ; Call #R$0375.
+ $0062 CALL C,$03A2  ; Call #R$03A2 if the pointer is out of range.
+ $0065 XOR A         ; {Call #R$0354 for the flags byte.
+ $0066 CALL $0354    ; }
+ $0069 BIT 2,A       ; {Jump to #R$00B7 if the workspace is already live.
+ $006B JR NZ,$00B7   ; }
+ $006D SET 2,(HL)    ; Mark the workspace as being installed.
+ $006F POP DE        ; {Restore #REGde, #REGbc, #REGaf and #REGhl from the
+ $0070 POP BC        ; stack.
+ $0071 POP AF        ;
+ $0072 POP HL        ; }
+; Page the Spectrum ROM back in so IM1 can run.
+@label=ReturnToSpectrum
+ $0073 PUSH HL       ; {No operation.
+ $0074 PUSH HL       ;
+ $0075 POP HL        ;
+ $0076 POP HL        ; }
+ $0077 LD HL,$0038   ; Set the return address to #R$0038.
+ $007A PUSH HL       ; Stash the return address on the stack.
+ $007B DEC SP        ; {Move #REGsp down two bytes.
+ $007C DEC SP        ; }
+ $007D POP HL        ; Restore #REGhl from the stack.
+ $007E JP $0038      ; Jump to #R$0038.
+; Wait a few frames, then reserve a page below
+; *#SKOOLKID$5CB2(RAMTOP) for the speech workspace.
+@label=InstallWorkspace
+*$0081 LD A,($5C78)  ; {Jump to #R$01A3 if *#SKOOLKID$5C78(FRAMES) is still
+ $0084 CP $05        ; less than #N$05.
+ $0086 JP C,$01A3    ; }
+ $0089 XOR A         ; {Call #R$0354 for the flags byte.
+ $008A CALL $0354    ; }
+ $008D DEC H         ; {Lower *#SKOOLKID$5CB2(RAMTOP) by one page.
+ $008E LD ($5CB2),HL ; }
+ $0091 INC H         ; {Write #N$82 to the flags byte.
+ $0092 LD (HL),$82   ; }
+ $0094 DEC HL        ; {Clear workspace index #N$01.
+ $0095 XOR A         ;
+ $0096 LD (HL),A     ; }
+ $0097 DEC HL        ; {Store the workspace page in index #N$02.
+ $0098 LD (HL),H     ; }
+ $0099 DEC HL        ; {Write #N$51 to the buffer pointer (index #N$03).
+ $009A LD (HL),$51   ; }
+ $009C DEC HL        ; {Clear workspace indexes #N$04 and #N$05.
+ $009D LD (HL),A     ;
+ $009E DEC HL        ;
+ $009F LD (HL),A     ; }
+ $00A0 LD HL,($5CB2) ; Fetch the new *#SKOOLKID$5CB2(RAMTOP).
+; Plant a sentinel and move the machine stack below the
+; new *#SKOOLKID$5CB2(RAMTOP).
+@label=InstallWorkspace_Stack
+ $00A3 LD (HL),$3E   ; {Write a #N$3E sentinel at the new
+ $00A5 DEC HL        ; *#SKOOLKID$5CB2(RAMTOP).}
+ $00A6 LD (HL),A     ; Write #N$00 beneath it.
+ $00A7 LD SP,HL      ; Point #REGsp at the new *#SKOOLKID$5CB2(RAMTOP).
+ $00A8 DEC HL        ; {Clear the two bytes below the new stack.
+ $00A9 LD (HL),A     ;
+ $00AA DEC HL        ;
+ $00AB LD (HL),A     ; }
+ $00AC LD ($5C3D),HL ; Write the error stack to *#SKOOLKID$5C3D(ERR_SP).
+ $00AF LD DE,$12A9   ; Set the return address to #SKOOLKID$12A9(MAIN-5).
+ $00B2 PUSH DE       ; Stash the return address on the stack.
+ $00B3 EI            ; Enable interrupts.
+ $00B4 JP $0038      ; Jump to #R$0038.
+; The workspace is live. Draw the banner once, then speak.
+@label=ServiceSpeech
+*$00B7 RES 2,(HL)    ; Clear the "installing" flag.
+ $00B9 BIT 7,(HL)    ; {Call #R$01AB if the banner has not been drawn yet.
+ $00BB CALL NZ,$01AB ; }
+; Keep *#SKOOLKID$5C78(FRAMES) moving while this ROM owns the
+; interrupt.
+ $00BE LD HL,($5C78) ; Fetch the *#SKOOLKID$5C78(FRAMES) word.
+ $00C1 LD A,H        ; {Jump to #R$00C9 if *#SKOOLKID$5C78(FRAMES) is non-zero.
+ $00C2 OR L          ;
+ $00C3 JR NZ,$00C9   ; }
+ $00C5 LD HL,$5C7A   ; {Decrease the third *#SKOOLKID$5C78(FRAMES) byte.
+ $00C8 DEC (HL)      ; }
+@label=ServiceSpeech_Tick
+*$00C9 LD HL,($5C78) ; {Decrease the *#SKOOLKID$5C78(FRAMES) word.
+ $00CC DEC HL        ;
+ $00CD LD ($5C78),HL ; }
+; Tick the two keyboard-state timer pairs.
+ $00D0 LD HL,$5C02   ; {Point at the keyboard-state timers (#N$04 bytes apart).
+ $00D3 LD DE,$0004   ; }
+ $00D6 CALL $034B    ; Call #R$034B.
+ $00D9 DEC HL        ; Move back one byte.
+ $00DA CALL $034B    ; Call #R$034B.
+; Programs speak by assigning the BASIC string #FACT(sstring,s$). Look
+; it up and expand it into allophones if it exists.
+ $00DD LD A,$53      ; {Call #R$01CD for "#FACT(sstring,s$)".
+ $00DF CALL $01CD    ; }
+ $00E2 CALL Z,$021F  ; Call #R$021F if #FACT(sstring,s$) exists.
+ $00E5 CALL $02AD    ; Call #R$02AD.
+ $00E8 JP Z,$0166    ; Jump to #R$0166 if key speech is enabled.
+ $00EB XOR A         ; {Call #R$0354 for the flags byte.
+ $00EC CALL $0354    ; }
+ $00EF LD A,($5C3B)  ; Fetch *#SKOOLKID$5C3B(FLAGS).
+ $00F2 BIT 5,A       ; {Jump to #R$00FC if no new key was pressed.
+ $00F4 JR Z,$00FC    ; }
+ $00F6 BIT 4,(HL)    ; {Jump to #R$0166 if this key is already being spoken.
+ $00F8 JR NZ,$0166   ; }
+ $00FA JR $0100      ; Jump to #R$0100.
+@label=ServiceSpeech_NoKey
+*$00FC RES 4,(HL)    ; {Clear the "key held" flag and jump to #R$0166.
+ $00FE JR $0166      ; }
+; A new key is in *#SKOOLKID$5C08(LAST_K); turn it into allophones.
+@label=ServiceSpeech_Key
+*$0100 SET 4,(HL)    ; Set the "key held" flag.
+ $0102 LD A,($5C08)  ; Fetch *#SKOOLKID$5C08(LAST_K).
+ $0105 CP $7B        ; {Jump to #R$0111 if the code is #N$7B or higher.
+ $0107 JR NC,$0111   ; }
+ $0109 CP $61        ; {Jump to #R$0111 if the code is below "a".
+ $010B JR C,$0111    ; }
+ $010D SUB $20       ; {Convert a lowercase letter to uppercase and jump to
+ $010F JR $012C      ; #R$012C.}
+; Not a letter. Block graphics share key #N$80; other
+; symbols go through #R$042D.
+@label=ServiceSpeech_NotLetter
+*$0111 CP $A5        ; {Jump to #R$011D if the code is #N$A5 or higher.
+ $0113 JR NC,$011D   ; }
+ $0115 CP $80        ; {Jump to #R$011D if the code is below #N$80.
+ $0117 JR C,$011D    ; }
+ $0119 LD A,$80      ; {Use dictionary key #N$80 and jump to #R$012C.
+ $011B JR $012C      ; }
+@label=ServiceSpeech_Punctuation
+*$011D LD HL,$042D   ; {Search #R$042D for this character.
+ $0120 LD BC,$000D   ; }
+ $0123 CPIR          ; {Jump to #R$012C if there is no mapping.
+ $0125 JR NZ,$012C   ; }
+ $0127 LD BC,$000C   ; {Fetch the replacement from #R$043A.
+ $012A ADD HL,BC     ;
+ $012B LD A,(HL)     ; }
+; Look the key up in #R$0447.
+@label=ServiceSpeech_Lookup
+*$012C LD HL,$0447   ; Point at #R$0447.
+ $012F LD B,A        ; Keep the key in #REGb.
+@label=ServiceSpeech_FindKey
+*$0130 BIT 7,(HL)    ; {Jump to #R$0137 if this byte ends an allophone list.
+ $0132 JR NZ,$0137   ; }
+ $0134 INC HL        ; Move to the next dictionary byte.
+ $0135 JR $0130      ; Jump to #R$0130.
+@label=ServiceSpeech_NextKey
+*$0137 INC HL        ; Move to the next dictionary key.
+ $0138 XOR A         ; {Jump to #R$0166 if the table has ended.
+ $0139 CP (HL)       ;
+ $013A JR Z,$0166    ; }
+ $013C LD A,B        ; {Jump to #R$0143 if this key matches.
+ $013D CP (HL)       ;
+ $013E JR Z,$0143    ; }
+ $0140 INC HL        ; Move to the next dictionary byte.
+ $0141 JR $0130      ; Jump to #R$0130.
+; Copy the matching allophones into the speech buffer.
+@label=ServiceSpeech_Copy
+*$0143 INC HL        ; Move to the first allophone of this entry.
+ $0144 CALL $0393    ; {Call #R$0393 and jump to #R$0151 if the buffer pointers
+ $0147 JR Z,$0151    ; already match.}
+ $0149 INC BC        ; Step the buffer pointer on one byte.
+ $014A LD A,(BC)     ; {Jump to #R$0166 if the previous allophone is not a
+ $014B RLA           ; terminator.
+ $014C JR NC,$0166   ; }
+ $014E CALL $03A2    ; Call #R$03A2.
+@label=ServiceSpeech_Store
+*$0151 LD A,(HL)     ; {Queue this allophone in the speech buffer.
+ $0152 LD (BC),A     ;
+ $0153 DEC BC        ; }
+ $0154 CALL $0375    ; {Call #R$0375 and jump to #R$0160 if the buffer has hit
+ $0157 JR C,$0160    ; *#SKOOLKID$5CB2(RAMTOP).}
+ $0159 BIT 7,(HL)    ; {Jump to #R$0163 if this was the last allophone of the
+ $015B JR NZ,$0163   ; word.}
+ $015D INC HL        ; Move to the next allophone.
+ $015E JR $0151      ; Jump to #R$0151.
+@label=ServiceSpeech_Flush
+*$0160 CALL $037F    ; Call #R$037F.
+@label=ServiceSpeech_Commit
+*$0163 CALL $038A    ; Call #R$038A.
+; The #FACT(sp0256,SP0256) is the speech-synthesiser chip. Read its
+; busy flag at #N$1000 and send the next queued allophone if
+; it is idle.
+@label=FeedAllophone
+*$0166 LD A,($1000)  ; Read the #FACT(sp0256,SP0256) status from #N$1000.
+ $0169 BIT 0,A       ; {Jump to #R$01A3 if the chip is still busy.
+ $016B JR NZ,$01A3   ; }
+ $016D LD A,($5C3A)  ; Fetch *#SKOOLKID$5C3A(ERR_NR).
+ $0170 RLA           ; {Call #R$03A2 if BASIC is not reporting an error.
+ $0171 CALL NC,$03A2 ; }
+ $0174 CALL $0393    ; {Call #R$0393 and jump to #R$017F if there is something
+ $0177 JR NZ,$017F   ; left to say.}
+ $0179 XOR A         ; {Silence the #FACT(sp0256,SP0256) and jump to #R$01A3.
+ $017A LD ($1000),A  ;
+ $017D JR $01A3      ; }
+; The #FACT(sp0256,SP0256) is idle; write the next queued allophone.
+@label=FeedAllophone_Write
+*$017F LD A,$06      ; {Call #R$0354 for the next allophone.
+ $0181 CALL $0354    ; }
+ $0184 LD DE,$3000   ; Use the low-intonation port (#N$3000).
+ $0187 BIT 6,A       ; {Jump to #R$018C if bit 6 is reset.
+ $0189 JR Z,$018C    ; }
+ $018B INC DE        ; Use the high-intonation port instead (#N$3001).
+@label=FeedAllophone_Port
+*$018C LD (DE),A     ; Select the intonation.
+ $018D LD ($1000),A  ; Write the allophone to the #FACT(sp0256,SP0256).
+ $0190 OR A          ; {Work out how many bytes remain in the queue.
+ $0191 SBC HL,BC     ; }
+ $0193 INC BC        ; Step the queue pointer on one byte.
+ $0194 PUSH HL       ; Stash the remaining length on the stack.
+ $0195 CALL $038A    ; Call #R$038A.
+ $0198 LD A,$06      ; {Call #R$0354 for the queue start.
+ $019A CALL $0354    ; }
+ $019D LD D,H        ; {Point the copy at the previous queue byte.
+ $019E LD E,L        ;
+ $019F DEC HL        ; }
+ $01A0 POP BC        ; Restore the remaining length from the stack.
+ $01A1 LDDR          ; Shuffle the queued allophones down.
+; Restore the Spectrum registers and page its ROM back in.
+@label=ExitInterrupt
+*$01A3 POP DE        ; {Restore #REGde, #REGbc, #REGaf and #REGhl from the
+ $01A4 POP BC        ; stack.
+ $01A5 POP AF        ;
+ $01A6 POP HL        ; }
+ $01A7 EI            ; Enable interrupts.
+ $01A8 JP $0038      ; Jump to #R$0038.
+
+; Print Banner
+;
+; Used by the routine at #R$0038.
+; .
+; Copy the "speech system © CURRAH 1983" bitmaps into
+; the display file, using #R$075B.
+;
+; HL Workspace flags pointer
+@label=PrintBanner
+c$01AB LD DE,$4000   ; Start at the top of the display file.
+ $01AE LD BC,$075B   ; Use the banner address list.
+ $01B1 RES 7,(HL)    ; Mark the banner as drawn.
+@label=PrintBanner_Loop
+*$01B3 LD A,(BC)     ; {Fetch the next bitmap address.
+ $01B4 LD L,A        ;
+ $01B5 INC BC        ; }
+ $01B6 LD A,(BC)     ; {Return if the list has ended.
+ $01B7 CP $FF        ;
+ $01B9 RET Z         ; }
+ $01BA LD H,A        ; Complete the bitmap pointer.
+ $01BB PUSH BC       ; Stash the list pointer on the stack.
+ $01BC LD B,$08      ; Set the row counter to #N$08.
+@label=PrintBanner_Column
+*$01BE LD A,(HL)     ; {Write one pixel row to the display file.
+ $01BF LD (DE),A     ; }
+ $01C0 INC HL        ; {Move to the next pixel row.
+ $01C1 INC D         ; }
+ $01C2 DJNZ $01BE    ; Decrease the row counter and loop back to #R$01BE
+                     ; until the character is done.
+ $01C4 LD A,D        ; {Return to the top of the character cell.
+ $01C5 SUB $08       ;
+ $01C7 LD D,A        ; }
+ $01C8 INC DE        ; Move to the next character column.
+ $01C9 POP BC        ; Restore the list pointer from the stack.
+ $01CA INC BC        ; Move to the next address.
+ $01CB JR $01B3      ; Jump to #R$01B3.
+
+; Find Variable
+;
+; Used by the routines at #R$0038, #R$021F and #R$02AD.
+; .
+; Walk the BASIC variable area looking for the name code in #REGa.
+;
+;   A Name code
+; O:HL Pointer to the variable
+; O:F Z flag set if the name was found
+@label=FindVariable
+c$01CD LD B,A        ; Keep the name code in #REGb.
+ $01CE LD A,($5C3B)  ; Fetch *#SKOOLKID$5C3B(FLAGS).
+ $01D1 RLA           ; {Jump to #R$0209 if bit 7 is not set.
+ $01D2 JR NC,$0209   ; }
+ $01D4 LD A,($5CB6)  ; Fetch *#SKOOLKID$5CB6(CHINFO).
+ $01D7 CP $F4        ; {Jump to #R$01DE if it is #N$F4.
+ $01D9 JR Z,$01DE    ; }
+ $01DB OR A          ; {Jump to #R$0209 if it is not #N$00.
+ $01DC JR NZ,$0209   ; }
+; Walk *#SKOOLKID$5C4B(VARS) for the requested name.
+@label=FindVariable_Start
+*$01DE LD HL,($5C4B) ; Start at *#SKOOLKID$5C4B(VARS).
+@label=FindVariable_Loop
+*$01E1 LD A,(HL)     ; {Return if this is the requested variable.
+ $01E2 CP B          ;
+ $01E3 RET Z         ; }
+ $01E4 CP $80        ; {Jump to #R$0209 if this is the end of
+ $01E6 JR Z,$0209    ; *#SKOOLKID$5C4B(VARS).}
+ $01E8 AND %11100000 ; Keep only bits 5-7 (the variable type).
+ $01EA CP $60        ; {Jump to #R$0211 if the type is #N$60.
+ $01EC JR Z,$0211    ; }
+ $01EE CP $A0        ; {Jump to #R$0217 if the type is #N$A0.
+ $01F0 JR Z,$0217    ; }
+ $01F2 CP $E0        ; {Jump to #R$020D if the type is #N$E0.
+ $01F4 JR Z,$020D    ; }
+ $01F6 CP $C0        ; {Jump to #R$0201 if the type is #N$C0.
+ $01F8 JR Z,$0201    ; }
+ $01FA CP $80        ; {Jump to #R$0201 if the type is #N$80.
+ $01FC JR Z,$0201    ; }
+ $01FE CP $40        ; {Return if the type is not a simple numeric.
+ $0200 RET NZ        ; }
+@label=FindVariable_SkipWord
+*$0201 INC HL        ; {Skip the following length word and jump to #R$01E1.
+ $0202 LD E,(HL)     ;
+ $0203 INC HL        ;
+ $0204 LD D,(HL)     ;
+ $0205 INC HL        ;
+ $0206 ADD HL,DE     ;
+ $0207 JR $01E1      ; }
+@label=FindVariable_Miss
+*$0209 LD A,$80      ; {Clear the Z flag.
+ $020B AND A         ; }
+ $020C RET           ; Return.
+@label=FindVariable_SkipArray
+*$020D LD DE,$000D   ; {Skip the array header.
+ $0210 ADD HL,DE     ; }
+@label=FindVariable_SkipNumeric
+*$0211 LD DE,$0006   ; {Skip the numeric value and jump to #R$01E1.
+ $0214 ADD HL,DE     ;
+ $0215 JR $01E1      ; }
+@label=FindVariable_SkipName
+*$0217 INC HL        ; Move to the next letter of the long name.
+ $0218 LD A,(HL)     ; {Jump to #R$0217 if the name has not ended.
+ $0219 SLA A         ;
+ $021B JR NC,$0217   ; }
+ $021D JR $0211      ; Jump to #R$0211.
+
+; Parse Speech String
+;
+; Used by the routine at #R$0038.
+; .
+; Expand the contents of #FACT(sstring,s$) into the allophone buffer.
+; A leading "*" or "?" means the string has already been spoken.
+;
+; HL Pointer to #FACT(sstring,s$)
+;
+; Read the length of #FACT(sstring,s$) and ignore an empty string.
+@label=ParseSpeechString
+c$021F INC HL        ; {Fetch the low length byte of #FACT(sstring,s$).
+ $0220 LD E,(HL)     ; }
+ $0221 XOR A         ; {Test whether the low length byte is zero.
+ $0222 CP (HL)       ; }
+ $0223 INC HL        ; {Fetch the high length byte of #FACT(sstring,s$).
+ $0224 LD D,(HL)     ; }
+ $0225 JR NZ,$0229   ; Jump to #R$0229 if the low length byte is non-zero.
+ $0227 CP (HL)       ; {Return if #FACT(sstring,s$) is empty.
+ $0228 RET Z         ; }
+; Leave strings that have already been spoken.
+@label=ParseSpeechString_Body
+*$0229 INC HL        ; Move to the first character.
+ $022A LD A,$2A      ; {Return if #FACT(sstring,s$) starts with "*".
+ $022C CP (HL)       ;
+ $022D RET Z         ; }
+ $022E LD A,$3F      ; {Return if #FACT(sstring,s$) starts with "?".
+ $0230 CP (HL)       ;
+ $0231 RET Z         ; }
+ $0232 DEC HL        ; Move back to the length.
+ $0233 PUSH HL       ; Stash the start of #FACT(sstring,s$) on the stack.
+ $0234 ADD HL,DE     ; {Point #REGde at the end of #FACT(sstring,s$).
+ $0235 EX DE,HL      ; }
+ $0236 POP HL        ; Restore the start of #FACT(sstring,s$) from the stack.
+ $0237 CALL $037F    ; Call #R$037F.
+; Convert the next character of #FACT(sstring,s$) into allophones.
+@label=ParseSpeechString_Next
+*$023A PUSH BC       ; Stash the buffer pointer on the stack.
+ $023B INC HL        ; {Fetch the next character from #FACT(sstring,s$).
+ $023C LD A,(HL)     ; }
+ $023D CALL $035E    ; Call #R$035E.
+ $0240 CP $0E        ; {Jump to #R$0250 if this is not a full stop.
+ $0242 JR NZ,$0250   ; }
+ $0244 LD A,$04      ; Queue a short pause.
+ $0246 POP BC        ; Restore the buffer pointer from the stack.
+ $0247 LD (BC),A     ; {Write the pause to the speech buffer.
+ $0248 DEC BC        ; }
+ $0249 CALL $0375    ; {Call #R$0375 and return if the buffer is full.
+ $024C RET C         ; }
+ $024D PUSH BC       ; Stash the buffer pointer on the stack.
+ $024E JR $0280      ; Jump to #R$0280.
+; A "(" starts a parenthesised allophone name.
+@label=ParseSpeechString_TestGroup
+*$0250 CP $08        ; {Jump to #R$025C if this is not "(".
+ $0252 JR NZ,$025C   ; }
+ $0254 CALL $02EB    ; {Call #R$02EB and jump to #R$0280 if the name was valid.
+ $0257 JR NC,$0280   ; }
+ $0259 POP BC        ; Restore the buffer pointer from the stack.
+ $025A JR $0269      ; Jump to #R$0269.
+; Map the character through #R$03AF.
+@label=ParseSpeechString_Map
+*$025C PUSH HL       ; Stash the string pointer on the stack.
+ $025D LD HL,$03AF   ; {Search #R$03AF and jump to #R$027A if this letter is
+ $0260 LD BC,$001B   ; known.
+ $0263 CPIR          ;
+ $0265 JR Z,$027A    ; }
+ $0267 POP HL        ; {Restore the string pointer and the buffer pointer from
+ $0268 POP BC        ; the stack.}
+; This character is not in the key tables; mark #FACT(sstring,s$)
+; with "?".
+@label=ParseSpeechString_Mark
+*$0269 INC DE        ; {Step past this character.
+ $026A INC HL        ; }
+@label=ParseSpeechString_Bound
+*$026B PUSH HL       ; {Test whether the string pointer has reached the end
+ $026C OR A          ; of #FACT(sstring,s$).
+ $026D SBC HL,DE     ;
+ $026F POP HL        ; }
+ $0270 JR C,$0275    ; Jump to #R$0275 if it has.
+ $0272 DEC HL        ; Move back one character.
+ $0273 JR $026B      ; Jump to #R$026B.
+@label=ParseSpeechString_Query
+*$0275 LD C,$3F      ; {Mark #FACT(sstring,s$) with "?" and jump to #R$02A3.
+ $0277 LD (HL),C     ;
+ $0278 JR $02A3      ; }
+@label=ParseSpeechString_Mapped
+*$027A LD BC,$0035   ; {Fetch the mapped allophone from #R$03CA.
+ $027D ADD HL,BC     ;
+ $027E LD A,(HL)     ; }
+ $027F POP HL        ; Restore the string pointer from the stack.
+; Apply intonation and queue the allophone.
+@label=ParseSpeechString_Store
+*$0280 LD B,A        ; Keep the allophone in #REGb.
+ $0281 XOR A         ; Set the flags-byte index.
+ $0282 PUSH HL       ; Stash the string pointer on the stack.
+ $0283 CALL $0354    ; Call #R$0354.
+ $0286 POP HL        ; Restore the string pointer from the stack.
+ $0287 AND %01000000 ; Keep only bit 6 (intonation).
+ $0289 ADD A,B       ; Apply the intonation bit to the allophone.
+ $028A POP BC        ; Restore the buffer pointer from the stack.
+ $028B LD (BC),A     ; {Queue the allophone in the speech buffer.
+ $028C DEC BC        ; }
+ $028D CALL $0375    ; {Call #R$0375 and return if the buffer is full.
+ $0290 RET C         ; }
+ $0291 PUSH HL       ; {Jump to #R$023A if there are still characters left
+ $0292 SBC HL,DE     ; in #FACT(sstring,s$).
+ $0294 POP HL        ;
+ $0295 JR C,$023A    ; }
+ $0297 XOR A         ; {Write a terminator to the speech buffer.
+ $0298 LD (BC),A     ;
+ $0299 DEC BC        ; }
+ $029A CALL $0375    ; {Call #R$0375 and return if the buffer is full.
+ $029D RET C         ; }
+ $029E CALL $038A    ; Call #R$038A.
+ $02A1 LD C,$2A      ; Use "*" as the "already spoken" marker.
+; Overwrite the first character of #FACT(sstring,s$) so it will not
+; be spoken again.
+@label=ParseSpeechString_Term
+*$02A3 LD A,$53      ; {Call #R$01CD for "#FACT(sstring,s$)".
+ $02A5 CALL $01CD    ; }
+ $02A8 INC HL        ; {Move to the first character of #FACT(sstring,s$).
+ $02A9 INC HL        ;
+ $02AA INC HL        ; }
+ $02AB LD (HL),C     ; Mark #FACT(sstring,s$) as already spoken.
+ $02AC RET           ; Return.
+
+; Test Keys Variable
+;
+; Used by the routine at #R$0038.
+; .
+; Look up the BASIC variable "keys".
+; A value of #N$01 enables speaking each key press.
+;
+; O:F Z flag set if key speech is enabled
+@label=TestKeysVariable
+c$02AD LD A,$AB      ; {Call #R$01CD for "keys".
+ $02AF CALL $01CD    ; }
+ $02B2 JR NZ,$02DD   ; Jump to #R$02DD if it was not found.
+ $02B4 INC HL        ; Move to the first letter of the name.
+ $02B5 LD A,$65      ; {Jump to #R$02DD if this is not "e".
+ $02B7 CPI           ;
+ $02B9 JR NZ,$02DD   ; }
+ $02BB LD A,$79      ; {Jump to #R$02DD if the next letter is not "y".
+ $02BD CPI           ;
+ $02BF JR NZ,$02DD   ; }
+ $02C1 LD A,$F3      ; {Jump to #R$02DD if the next letter is not "s".
+ $02C3 CPI           ;
+ $02C5 JR NZ,$02DD   ; }
+ $02C7 XOR A         ; {Jump to #R$02DD if the name has not ended.
+ $02C8 CPI           ;
+ $02CA JR NZ,$02DD   ; }
+ $02CC CPI           ; {Jump to #R$02DD if the value header is not empty.
+ $02CE JR NZ,$02DD   ; }
+ $02D0 CP (HL)       ; {Jump to #R$02E4 if keys is #N$00.
+ $02D1 JR Z,$02E4    ; }
+ $02D3 INC A         ; {Jump to #R$02DD if keys is not #N$01.
+ $02D4 CP (HL)       ;
+ $02D5 JR NZ,$02DD   ; }
+ $02D7 DEC A         ; {Call #R$0354 for the flags byte.
+ $02D8 CALL $0354    ; }
+ $02DB SET 1,(HL)    ; Enable key speech.
+@label=TestKeysVariable_State
+*$02DD XOR A         ; {Call #R$0354 for the flags byte.
+ $02DE CALL $0354    ; }
+ $02E1 BIT 1,(HL)    ; Set the Z flag from the key-speech flag.
+ $02E3 RET           ; Return.
+; keys is #N$00; turn key speech off.
+@label=TestKeysVariable_Off
+*$02E4 CALL $0354    ; Call #R$0354.
+ $02E7 RES 1,(HL)    ; {Disable key speech and jump to #R$02DD.
+ $02E9 JR $02DD      ; }
+
+; Parse Allophone Group
+;
+; Used by the routine at #R$021F.
+; .
+; Read a parenthesised allophone name from the speech string
+; (for example "(AA)" or "(SH)"). Letters are normalised, checked
+; against #R$03AF, and summed; the sum selects an allophone from
+; the parallel tables.
+;
+;   HL Current string pointer
+; O:A Mapped allophone
+; O:F Carry set if the group is invalid
+;
+; Clear the running total that will identify the name.
+@label=ParseAllophoneGroup
+c$02EB LD B,$00      ; Set the running total to #N$00.
+; Read letters until a closing parenthesis.
+@label=ParseAllophoneGroup_Loop
+*$02ED INC HL        ; {Fetch the next character from the speech string.
+ $02EE LD A,(HL)     ; }
+ $02EF CP $29        ; {Jump to #R$0309 if this is a closing parenthesis.
+ $02F1 JR Z,$0309    ; }
+ $02F3 PUSH BC       ; Stash the running total on the stack.
+ $02F4 CALL $035E    ; Call #R$035E.
+; The letter must appear in the first #N$18 character keys.
+ $02F7 PUSH HL       ; Stash the string pointer on the stack.
+ $02F8 LD HL,$03AF   ; {Search the first #N$18 entries of #R$03AF.
+ $02FB LD BC,$0018   ;
+ $02FE CPIR          ; }
+ $0300 POP HL        ; {Restore the string pointer and the running total from
+ $0301 POP BC        ; the stack.}
+ $0302 JR NZ,$0349   ; Jump to #R$0349 if this is not a valid allophone-name
+                     ; character.
+ $0304 ADD A,B       ; {Add the letter key to the running total and return
+ $0305 RET C         ; if the sum overflowed.}
+ $0306 LD B,A        ; {Keep the new total and jump to #R$02ED.
+ $0307 JR $02ED      ; }
+; The name has ended; the running total selects the allophone.
+@label=ParseAllophoneGroup_Close
+*$0309 LD A,B        ; Use the name sum as the lookup key.
+ $030A CP $64        ; {Jump to #R$0335 if the sum is #N$64.
+ $030C JR Z,$0335    ; }
+ $030E CP $68        ; {Jump to #R$0335 if the sum is #N$68.
+ $0310 JR Z,$0335    ; }
+ $0312 CP $5C        ; {Jump to #R$0335 if the sum is #N$5C.
+ $0314 JR Z,$0335    ; }
+ $0316 CP $66        ; {Jump to #R$0335 if the sum is #N$66.
+ $0318 JR Z,$0335    ; }
+ $031A CP $78        ; {Jump to #R$0331 if the sum is #N$78.
+ $031C JR Z,$0331    ; }
+; Look the sum up across both character-key tables.
+ $031E LD BC,$0036   ; Search #N$36 bytes of the character-key tables.
+ $0321 PUSH HL       ; Stash the string pointer on the stack.
+ $0322 LD HL,$03AF   ; {Search #R$03AF for the name sum.
+ $0325 CPIR          ; }
+ $0327 LD BC,$0035   ; Use the parallel mapped value (#N$35 bytes on).
+@label=ParseAllophoneGroup_Offset
+*$032A JR NZ,$0348   ; Jump to #R$0348 if no match was found.
+ $032C ADD HL,BC     ; {Fetch the mapped allophone from the parallel table.
+ $032D LD A,(HL)     ; }
+ $032E OR A          ; Set the flags from the mapped allophone.
+ $032F POP HL        ; Restore the string pointer from the stack.
+ $0330 RET           ; Return.
+; Sum #N$78 uses the character before the ")".
+@label=ParseAllophoneGroup_Prev
+*$0331 PUSH HL       ; Stash the string pointer on the stack.
+ $0332 DEC HL        ; Move back to the previous character.
+ $0333 JR $0336      ; Jump to #R$0336.
+@label=ParseAllophoneGroup_Look
+*$0335 PUSH HL       ; Stash the string pointer on the stack.
+; Map the previous character through the suffix tables.
+@label=ParseAllophoneGroup_Suffix
+*$0336 DEC HL        ; {Fetch the previous character.
+ $0337 LD A,(HL)     ; }
+ $0338 CALL $035E    ; Call #R$035E.
+ $033B LD BC,$0009   ; {Search #R$041B for the normalised character.
+ $033E LD HL,$041B   ;
+ $0341 CPIR          ; }
+ $0343 LD BC,$0008   ; {Use the parallel suffix value and jump to #R$032A.
+ $0346 JR $032A      ; }
+; The name sum is not in the key tables; restore the
+; string pointer and fail.
+@label=ParseAllophoneGroup_Fail
+*$0348 POP HL        ; Restore the string pointer from the stack.
+@label=ParseAllophoneGroup_Carry
+*$0349 SCF           ; Set the carry flag.
+ $034A RET           ; Return.
+
+; Increment Pair
+;
+; Used by the routine at #R$0038.
+; .
+; Add one to two addresses #REGde bytes apart. Used to tick
+; both keyboard-state timers.
+;
+; HL First address
+; DE Distance to the second address
+@label=IncrementPair
+c$034B PUSH HL       ; Stash the first address on the stack.
+ $034C LD B,$02      ; Set the update counter to #N$02.
+@label=IncrementPair_Loop
+*$034E INC (HL)      ; {Add one to this timer and move to the next.
+ $034F ADD HL,DE     ; }
+ $0350 DJNZ $034E    ; Decrease the counter and loop back to #R$034E
+                     ; until both timers are updated.
+ $0352 POP HL        ; Restore the first address from the stack.
+ $0353 RET           ; Return.
+
+; Read Workspace
+;
+; Used by the routines at #R$0038, #R$021F, #R$02AD, #R$035E, #R$037F, #R$038A,
+; #R$0393 and #R$03A2.
+; .
+; Fetch a byte from the speech workspace. The block lives
+; in the page of *#SKOOLKID$5CB4(P_RAMT), at low byte #N$57-index.
+;
+;   A Workspace index
+; O:A Byte at that index
+; O:HL Address of that index
+@label=ReadWorkspace
+c$0354 LD HL,($5CB4) ; Fetch *#SKOOLKID$5CB4(P_RAMT).
+; The slot is #N$57 minus the index, in the page of
+; *#SKOOLKID$5CB4(P_RAMT).
+ $0357 LD L,A        ; {Calculate the address of this workspace index.
+ $0358 LD A,$57      ;
+ $035A SUB L         ;
+ $035B LD L,A        ; }
+ $035C LD A,(HL)     ; Fetch the byte.
+ $035D RET           ; Return.
+
+; Normalise Character
+;
+; Used by the routines at #R$021F and #R$02EB.
+; .
+; Convert a character towards the dictionary alphabet,
+; and set workspace bit 6 for intonation (uppercase vs lowercase).
+;
+;   A Character
+; O:A Normalised character
+@label=NormaliseCharacter
+c$035E PUSH HL       ; Stash #REGhl on the stack.
+ $035F LD B,A        ; Keep the character in #REGb.
+ $0360 XOR A         ; {Call #R$0354 for the flags byte.
+ $0361 CALL $0354    ; }
+ $0364 LD A,B        ; Restore the character.
+; Fold the letter into the dictionary alphabet. "A" and
+; "a" both become #N$21.
+ $0365 CP $61        ; {Jump to #R$036F if this is not a lowercase letter.
+ $0367 JR C,$036F    ; }
+ $0369 SUB $40       ; Subtract #N$40 from a lowercase letter.
+ $036B RES 6,(HL)    ; {Use low intonation and jump to #R$0373.
+ $036D JR $0373      ; }
+@label=NormaliseCharacter_Upper
+*$036F SUB $20       ; Subtract #N$20 from an uppercase letter.
+ $0371 SET 6,(HL)    ; Use high intonation.
+@label=NormaliseCharacter_Done
+*$0373 POP HL        ; Restore #REGhl from the stack.
+ $0374 RET           ; Return.
+
+; Check Memory
+;
+; Used by the routines at #R$0038 and #R$021F.
+; .
+; Compare the speech-buffer pointer with
+; *#SKOOLKID$5CB2(RAMTOP). Carry is set when the pointer has
+; dropped into the reserved workspace.
+;
+;   BC Buffer pointer
+; O:F Carry set if #REGbc is below *#SKOOLKID$5CB2(RAMTOP)
+@label=CheckMemory
+c$0375 PUSH HL       ; Stash #REGhl on the stack.
+ $0376 LD HL,($5CB2) ; Fetch *#SKOOLKID$5CB2(RAMTOP).
+ $0379 OR A          ; {Compare *#SKOOLKID$5CB2(RAMTOP) with the buffer
+ $037A SBC HL,BC     ; pointer.
+ $037C CCF           ; }
+ $037D POP HL        ; Restore #REGhl from the stack.
+ $037E RET           ; Return.
+
+; Read Buffer Pointer
+;
+; Used by the routines at #R$0038, #R$021F and #R$0393.
+; .
+; Fetch the allophone buffer pointer from the workspace.
+;
+; O:BC Buffer pointer
+@label=ReadBufferPointer
+c$037F PUSH HL       ; Stash #REGhl on the stack.
+ $0380 LD A,$03      ; {Call #R$0354 for the buffer pointer.
+ $0382 CALL $0354    ; }
+ $0385 LD C,A        ; {Load the two-byte buffer pointer.
+ $0386 INC HL        ;
+ $0387 LD B,(HL)     ; }
+ $0388 POP HL        ; Restore #REGhl from the stack.
+ $0389 RET           ; Return.
+
+; Write Buffer Pointer
+;
+; Used by the routines at #R$0038, #R$021F and #R$03A2.
+; .
+; Store the allophone buffer pointer in the workspace.
+;
+; BC Buffer pointer
+@label=WriteBufferPointer
+c$038A LD A,$03      ; {Call #R$0354 for the buffer-pointer slot.
+ $038C CALL $0354    ; }
+ $038F LD (HL),C     ; {Write the two-byte buffer pointer.
+ $0390 INC HL        ;
+ $0391 LD (HL),B     ; }
+ $0392 RET           ; Return.
+
+; Compare Buffer
+;
+; Used by the routine at #R$0038.
+; .
+; Compare the live buffer pointer with the saved pointer
+; in the workspace.
+;
+; O:F Z flag set when the two pointers match
+@label=CompareBuffer
+c$0393 PUSH HL       ; Stash #REGhl on the stack.
+ $0394 LD A,$06      ; {Call #R$0354 for the saved pointer.
+ $0396 CALL $0354    ; }
+ $0399 CALL $037F    ; Call #R$037F.
+ $039C SBC HL,BC     ; Compare the two pointers.
+ $039E POP HL        ; Restore #REGhl from the stack.
+ $039F SCF           ; {Clear the carry flag.
+ $03A0 CCF           ; }
+ $03A1 RET           ; Return.
+
+; Reset Buffer Pointer
+;
+; Used by the routine at #R$0038.
+; .
+; Copy the saved queue pointer back over the live buffer pointer.
+;
+; O:BC Restored buffer pointer
+@label=ResetBufferPointer
+c$03A2 LD A,$06      ; Select workspace index #N$06.
+ $03A4 PUSH HL       ; Stash #REGhl on the stack.
+ $03A5 CALL $0354    ; Call #R$0354.
+ $03A8 LD B,H        ; {Copy the saved pointer to #REGbc.
+ $03A9 LD C,L        ; }
+ $03AA CALL $038A    ; Call #R$038A.
+ $03AD POP HL        ; Restore #REGhl from the stack.
+ $03AE RET           ; Return.
+
+; Character Keys
+;
+; Letters and symbols that can appear in an allophone name.
+; The matching allophone is #N$35 bytes later in #R$03CA.
+@label=CharacterKeys
+b$03AF DEFB $21,$22,$23,$24,$25,$26,$27,$28,$29,$2A,$2B,$2C,$2D,$2E,$2F,$30,$32,$33,$34,$35,$36,$37,$39,$3A,$0C,$07,$00
+
+; Mapped Characters
+;
+; Parallel table to #R$03AF.
+@label=MappedCharacters
+b$03CA DEFB $42,$5A,$44,$4E,$48,$4A,$4E,$50,$52,$58,$5E,$72,$61,$53,$55,$4D,$57,$5F,$4B,$5B,$5D,$62,$7B,$75,$89,$99,$80
+
+; Allophone Values
+;
+; Extra allophone bytes used when a parenthesised group
+; is closed. Hear the IDs on the #LINK(Sound)(Allophones) page.
+@label=AllophoneValues
+b$03E5 DEFB $18,$1C,$08,$15,$07,$28,$24,$1B,$0C,$0A,$2A,$2D,$10,$0B,$17,$09,$27,$37
+ $03F7 DEFB $11,$0F,$23,$2E,$31,$2B,$04,$01,$03,$14,$14,$3F,$29,$21,$13,$3D,$39,$06
+ $0409 DEFB $3E,$35,$19,$3A,$3B,$2C,$1A,$33,$30,$32,$25,$1E,$26,$35,$22,$34,$1F,$12
+
+; Suffix Keys
+;
+; Suffix letters used after certain allophone-name sums.
+; The matching value is #N$08 bytes later in #R$0424.
+@label=SuffixKeys
+b$041B DEFB $32,$35,$34,$39,$28,$2E,$21,$25,$37
+
+; Suffix Values
+;
+; Parallel table to #R$041B.
+@label=SuffixValues
+b$0424 DEFB $0E,$16,$0D,$05,$1D,$38,$3C,$2F,$20
+
+; Punctuation Keys
+;
+; Punctuation and token bytes spoken from *#SKOOLKID$5C08(LAST_K).
+; The replacement is #N$0C bytes later in #R$043A.
+@label=PunctuationKeys
+b$042D DEFB $29,$5B,$5D,$7B,$7D,$A9,$FB,$40,$09,$0A,$0B,$BC,$C6
+
+; Punctuation Values
+;
+; Parallel table to #R$042D.
+@label=PunctuationValues
+b$043A DEFB $28,$28,$28,$28,$28,$2E,$FD,$AC,$08,$08,$08,$B2,$26
+
+; Allophone Dictionary
+;
+; Character-to-allophone lists used from #R$012C. Each
+; entry is a key byte followed by one or more #FACT(sp0256,SP0256-AL2)
+; allophone IDs. Bit 6 selects high intonation; the last ID
+; has bit 7 set. The table starts with a dummy terminator
+; (#N$80) and ends on a key of #N$00. Each spoken list has an
+; audio player. The raw AL2 set is on the
+; #LINK(Sound)(Allophones) page.
+@label=AllophoneDictionary
+b$0447 DEFB $80                             ; Dummy list terminator.
+; Control keys.
+ $0448 DEFB $07,$47,$15,$0C,$8D             ; EDIT. #AUDIO0(key-edit.wav)
+ $044D DEFB $0D,$47,$07,$0B,$00,$0D,$9A     ; ENTER. #AUDIO0(key-enter.wav)
+ $0454 DEFB $08,$08,$00,$33,$00,$37,$37,$B3 ; Cursor. #AUDIO0(key-cursor.wav)
+ $045C DEFB $0C,$21,$4C,$2D,$13,$91         ; DELETE. #AUDIO0(key-delete.wav)
+; Colour tokens, graphics and symbols.
+ $0462 DEFB $D9,$0C,$2C,$AA                 ; INK. #AUDIO0(key-ink.wav)
+ $0466 DEFB $DA,$09,$00,$54,$09,$B3         ; PAPER. #AUDIO0(key-paper.wav)
+ $046C DEFB $80,$3D,$27,$58,$28,$0C,$A9     ; Block graphics.
+                                            ; #AUDIO0(key-graphics.wav)
+ $0473 DEFB $DB,$28,$2D,$58,$A5             ; FLASH. #AUDIO0(key-flash.wav)
+ $0478 DEFB $DC,$1C,$27,$00,$06,$8D         ; BRIGHT. #AUDIO0(key-bright.wav)
+ $047E DEFB $DD,$4C,$0C,$0B,$23,$34,$B7     ; INVERSE. #AUDIO0(key-inverse.wav)
+ $0485 DEFB $DE,$75,$23,$B3                 ; OVER. #AUDIO0(key-over.wav)
+ $0489 DEFB $AC,$18,$8D                     ; AT. #AUDIO0(key-at.wav)
+ $048C DEFB $AD,$0D,$18,$18,$9C             ; TAB. #AUDIO0(key-tab.wav)
+ $0491 DEFB $21,$47,$0A,$37,$08,$2D,$1A,$10 ; {"!". #AUDIO0(key-excl.wav)
+ $0499 DEFB $54,$25,$0F,$8B                 ; }
+ $049D DEFB $22,$2A,$2E,$35,$91             ; Quotation mark.
+                                            ; #AUDIO0(key-quot.wav)
+ $04A2 DEFB $26,$58,$2C,$95                 ; "&". #AUDIO0(key-amp.wav)
+ $04A6 DEFB $27,$18,$09,$57,$37,$11,$27,$0F ; {"'". #AUDIO0(key-apos.wav)
+ $04AE DEFB $28,$93                         ; }
+ $04B0 DEFB $28,$3F,$27,$58,$2A,$07,$8D     ; "(". #AUDIO0(key-lparen.wav)
+ $04B7 DEFB $3C,$2D,$47,$37,$37,$01,$1D,$1A ; {"<". #AUDIO0(key-lt.wav)
+ $04BF DEFB $8B                             ; }
+ $04C0 DEFB $3E,$3D,$27,$54,$0D,$B4         ; ">". #AUDIO0(key-gt.wav)
+ $04C6 DEFB $C8,$3D,$27,$54,$0D,$34,$01,$3A ; {>=. #AUDIO0(key-ge.wav)
+ $04CE DEFB $01,$53,$29,$2E,$0F,$AD         ; }
+ $04D4 DEFB $C7,$2D,$47,$37,$37,$01,$12,$18 ; {<=. #AUDIO0(key-le.wav)
+ $04DC DEFB $0B,$01,$3A,$01,$53,$29,$2E,$0F ;
+ $04E4 DEFB $AD                             ; }
+ $04E5 DEFB $C9,$0B,$57,$0D,$01,$53,$29,$2E ; {<>. #AUDIO0(key-ne.wav)
+ $04ED DEFB $0F,$AD                         ; }
+ $04EF DEFB $2F,$37,$37,$2D,$18,$A5         ; "/". #AUDIO0(key-slash.wav)
+ $04F5 DEFB $5C,$3F,$58,$29,$01,$37,$2D,$18 ; {"\". #AUDIO0(key-bslash.wav)
+ $04FD DEFB $A5                             ; }
+ $04FE DEFB $2E,$09,$05,$0B,$8D             ; ".". #AUDIO0(key-dot.wav)
+ $0503 DEFB $2C,$08,$17,$10,$98             ; ",". #AUDIO0(key-comma.wav)
+ $0508 DEFB $3B,$37,$47,$10,$13,$08,$35,$2D ; {";". #AUDIO0(key-semi.wav)
+ $0510 DEFB $17,$8B                         ; }
+ $0512 DEFB $5F,$4F,$0B,$15,$33,$2D,$06,$8B ; "_". #AUDIO0(key-und.wav)
+ $051A DEFB $2A,$37,$0D,$BB                 ; "*". #AUDIO0(key-star.wav)
+ $051E DEFB $60,$09,$20,$0B,$A1             ; "`". #AUDIO0(key-grave.wav)
+ $0523 DEFB $2B,$09,$2D,$0F,$37,$B7         ; "+". #AUDIO0(key-plus.wav)
+ $0529 DEFB $2D,$10,$46,$38,$0F,$37,$B7     ; "-". #AUDIO0(key-minus.wav)
+ $0530 DEFB $20,$37,$09,$14,$37,$B7         ; Space. #AUDIO0(key-space.wav)
+ $0536 DEFB $5E,$09,$60,$2E,$B3             ; "^". #AUDIO0(key-hat.wav)
+ $053B DEFB $3F,$2A,$2E,$13,$27,$93         ; "?". #AUDIO0(key-query.wav)
+ $0541 DEFB $7C,$1C,$BB                     ; "|". #AUDIO0(key-pipe.wav)
+ $0544 DEFB $7F,$08,$57,$09,$13,$27,$06,$8D ; Copyright.
+                                            ; #AUDIO0(key-copyright.wav)
+ $054C DEFB $F1,$2D,$07,$8D                 ; LET. #AUDIO0(key-let.wav)
+ $0550 DEFB $3A,$08,$75,$2D,$17,$8B         ; ":". #AUDIO0(key-colon.wav)
+ $0556 DEFB $3D,$53,$29,$2E,$0F,$2D,$AB     ; "=". #AUDIO0(key-eq.wav)
+ $055D DEFB $E6,$0B,$31,$9F                 ; NEW. #AUDIO0(key-new.wav)
+; Digits.
+ $0561 DEFB $30,$38,$3A,$8D                 ; "0". #AUDIO0(key-0.wav)
+ $0565 DEFB $31,$2E,$57,$8B                 ; "1". #AUDIO0(key-1.wav)
+ $0569 DEFB $32,$0D,$9F                     ; "2". #AUDIO0(key-2.wav)
+ $056C DEFB $33,$1D,$33,$93                 ; "3". #AUDIO0(key-3.wav)
+ $0570 DEFB $34,$28,$BA                     ; "4". #AUDIO0(key-4.wav)
+ $0573 DEFB $35,$28,$06,$A3                 ; "5". #AUDIO0(key-5.wav)
+ $0577 DEFB $36,$37,$4C,$2A,$B7             ; "6". #AUDIO0(key-6.wav)
+ $057C DEFB $37,$37,$37,$47,$23,$8B         ; "7". #AUDIO0(key-7.wav)
+ $0582 DEFB $38,$14,$8D                     ; "8". #AUDIO0(key-8.wav)
+ $0585 DEFB $39,$0B,$00,$06,$8B             ; "9". #AUDIO0(key-9.wav)
+; Number sign, dollar and percent.
+ $058A DEFB $23,$1B,$5A,$A5                 ; "#". #AUDIO0(key-hash.wav)
+ $058E DEFB $24,$21,$17,$2D,$B3             ; "$". #AUDIO0(key-dollar.wav)
+ $0593 DEFB $25,$09,$33,$37,$37,$47,$0B,$8D ; "%". #AUDIO0(key-pct.wav)
+; Letters.
+ $059B DEFB $41,$94                         ; "A". #AUDIO0(key-a.wav)
+ $059D DEFB $42,$3F,$93                     ; "B". #AUDIO0(key-b.wav)
+ $05A0 DEFB $43,$37,$37,$93                 ; "C". #AUDIO0(key-c.wav)
+ $05A4 DEFB $44,$21,$93                     ; "D". #AUDIO0(key-d.wav)
+ $05A7 DEFB $45,$93                         ; "E". #AUDIO0(key-e.wav)
+ $05A9 DEFB $46,$07,$28,$A8                 ; "F". #AUDIO0(key-f.wav)
+ $05AD DEFB $47,$0A,$93                     ; "G". #AUDIO0(key-g.wav)
+ $05B0 DEFB $48,$14,$B2                     ; "H". #AUDIO0(key-h.wav)
+ $05B3 DEFB $49,$86                         ; "I". #AUDIO0(key-i.wav)
+ $05B5 DEFB $4A,$0A,$94                     ; "J". #AUDIO0(key-j.wav)
+ $05B8 DEFB $4B,$2A,$94                     ; "K". #AUDIO0(key-k.wav)
+ $05BB DEFB $4C,$07,$BE                     ; "L". #AUDIO0(key-l.wav)
+ $05BE DEFB $4D,$07,$90                     ; "M". #AUDIO0(key-m.wav)
+ $05C1 DEFB $4E,$07,$AC                     ; "N". #AUDIO0(key-n.wav)
+ $05C4 DEFB $4F,$B5                         ; "O". #AUDIO0(key-o.wav)
+ $05C6 DEFB $50,$09,$93                     ; "P". #AUDIO0(key-p.wav)
+ $05C9 DEFB $51,$2A,$19,$9F                 ; "Q". #AUDIO0(key-q.wav)
+ $05CD DEFB $52,$BB                         ; "R". #AUDIO0(key-r.wav)
+ $05CF DEFB $53,$07,$37,$B7                 ; "S". #AUDIO0(key-s.wav)
+ $05D3 DEFB $54,$0D,$93                     ; "T". #AUDIO0(key-t.wav)
+ $05D6 DEFB $55,$31,$9F                     ; "U". #AUDIO0(key-u.wav)
+ $05D9 DEFB $56,$28,$93                     ; "V". #AUDIO0(key-v.wav)
+ $05DC DEFB $57,$21,$4F,$3F,$3E,$31,$9F     ; "W". #AUDIO0(key-w.wav)
+ $05E3 DEFB $58,$47,$2A,$B7                 ; "X". #AUDIO0(key-x.wav)
+ $05E7 DEFB $59,$2E,$86                     ; "Y". #AUDIO0(key-y.wav)
+ $05EA DEFB $5A,$2B,$07,$07,$95             ; "Z". #AUDIO0(key-z.wav)
+; BASIC tokens.
+ $05EF DEFB $A5,$27,$18,$0B,$95             ; RND. #AUDIO0(key-rnd.wav)
+ $05F4 DEFB $A6,$4C,$0B,$01,$2A,$93         ; INKEY$. #AUDIO0(key-inkey.wav)
+ $05FA DEFB $A7,$09,$86                     ; PI. #AUDIO0(key-pi.wav)
+ $05FD DEFB $A8,$28,$4F,$2C,$08,$25,$0F,$8B ; FN. #AUDIO0(key-fn.wav)
+ $0605 DEFB $AA,$37,$08,$27,$13,$8B         ; SCREEN$. #AUDIO0(key-screen.wav)
+ $060B DEFB $AB,$58,$0D,$A7                 ; ATTR. #AUDIO0(key-attr.wav)
+ $060F DEFB $AE,$23,$58,$2D,$B7             ; VAL$. #AUDIO0(key-valstr.wav)
+ $0614 DEFB $AF,$08,$35,$95                 ; CODE. #AUDIO0(key-code.wav)
+ $0618 DEFB $B0,$23,$58,$AD                 ; VAL. #AUDIO0(key-val.wav)
+ $061C DEFB $B1,$2D,$47,$8B                 ; LEN. #AUDIO0(key-len.wav)
+ $0620 DEFB $B2,$37,$06,$8B                 ; SIN. #AUDIO0(key-sin.wav)
+ $0624 DEFB $B3,$08,$17,$AB                 ; COS. #AUDIO0(key-cos.wav)
+ $0628 DEFB $B4,$0D,$18,$8B                 ; TAN. #AUDIO0(key-tan.wav)
+ $062C DEFB $B5,$3B,$08,$37,$06,$8B         ; ASN. #AUDIO0(key-asn.wav)
+ $0632 DEFB $B6,$3B,$08,$01,$08,$17,$AB     ; ACS. #AUDIO0(key-acs.wav)
+ $0639 DEFB $B7,$3B,$08,$0D,$18,$8B         ; ATN. #AUDIO0(key-atn.wav)
+ $063F DEFB $B8,$2D,$17,$17,$A2             ; LN. #AUDIO0(key-ln.wav)
+ $0644 DEFB $B9,$47,$2A,$37,$89             ; EXP. #AUDIO0(key-exp.wav)
+ $0649 DEFB $BA,$0C,$0B,$91                 ; INT. #AUDIO0(key-int.wav)
+ $064D DEFB $BB,$27,$1F,$8D                 ; SQR. #AUDIO0(key-sqr.wav)
+ $0651 DEFB $BD,$58,$1C,$B7                 ; ABS. #AUDIO0(key-abs.wav)
+ $0655 DEFB $BE,$09,$13,$A9                 ; PEEK. #AUDIO0(key-peek.wav)
+ $0659 DEFB $BF,$4C,$8B                     ; IN. #AUDIO0(key-in.wav)
+ $065C DEFB $C0,$31,$16,$2B,$B3             ; USR. #AUDIO0(key-usr.wav)
+ $0661 DEFB $C1,$37,$11,$27,$0C,$AC         ; STR$. #AUDIO0(key-str.wav)
+ $0667 DEFB $C2,$32,$7B,$AB                 ; CHR$. #AUDIO0(key-chr.wav)
+ $066B DEFB $C3,$0B,$17,$8D                 ; NOT. #AUDIO0(key-not.wav)
+ $066F DEFB $C4,$1C,$0C,$8B                 ; BIN. #AUDIO0(key-bin.wav)
+ $0673 DEFB $C5,$BA                         ; OR. #AUDIO0(key-or.wav)
+ $0675 DEFB $CA,$2D,$06,$8B                 ; LINE. #AUDIO0(key-line.wav)
+ $0679 DEFB $CB,$12,$47,$8B                 ; THEN. #AUDIO0(key-then.wav)
+ $067D DEFB $CC,$0D,$9F                     ; TO. #AUDIO0(key-to.wav)
+ $0680 DEFB $CD,$37,$11,$47,$89             ; STEP. #AUDIO0(key-step.wav)
+ $0685 DEFB $CE,$15,$47,$28,$06,$8B         ; DEF FN. #AUDIO0(key-deffn.wav)
+ $068B DEFB $CF,$08,$58,$91                 ; CAT. #AUDIO0(key-cat.wav)
+ $068F DEFB $D0,$28,$7A,$10,$18,$91         ; FORMAT. #AUDIO0(key-format.wav)
+ $0695 DEFB $D1,$10,$1F,$A3                 ; MOVE. #AUDIO0(key-move.wav)
+ $0699 DEFB $D2,$73,$14,$B7                 ; ERASE. #AUDIO0(key-erase.wav)
+ $069D DEFB $D3,$75,$09,$0F,$8B             ; OPEN #. #AUDIO0(key-open.wav)
+ $06A2 DEFB $D4,$08,$2D,$35,$B7             ; CLOSE #. #AUDIO0(key-close.wav)
+ $06A7 DEFB $D5,$10,$74,$15,$8A             ; MERGE. #AUDIO0(key-merge.wav)
+ $06AC DEFB $D6,$23,$47,$27,$0C,$28,$86     ; VERIFY. #AUDIO0(key-verify.wav)
+ $06B3 DEFB $D7,$3F,$13,$89                 ; BEEP. #AUDIO0(key-beep.wav)
+ $06B7 DEFB $D8,$37,$33,$08,$0F,$AD         ; CIRCLE. #AUDIO0(key-circle.wav)
+ $06BD DEFB $DF,$20,$91                     ; OUT. #AUDIO0(key-out.wav)
+ $06C0 DEFB $E0,$47,$3E,$01,$09,$27,$0C,$0B ; {LPRINT. #AUDIO0(key-lprint.wav)
+ $06C8 DEFB $91                             ; }
+ $06C9 DEFB $E1,$47,$3E,$01,$2D,$0C,$37,$91 ; LLIST. #AUDIO0(key-llist.wav)
+ $06D1 DEFB $E2,$37,$11,$17,$89             ; STOP. #AUDIO0(key-stop.wav)
+ $06D6 DEFB $E3,$27,$13,$95                 ; READ. #AUDIO0(key-read.wav)
+ $06DA DEFB $E4,$21,$54,$11,$8F             ; DATA. #AUDIO0(key-data.wav)
+ $06DF DEFB $E5,$27,$4C,$37,$11,$BA         ; RESTORE. #AUDIO0(key-restore.wav)
+ $06E5 DEFB $E7,$3F,$3A,$21,$B3             ; BORDER. #AUDIO0(key-border.wav)
+ $06EA DEFB $E8,$08,$17,$0B,$11,$4C,$0B,$31 ; {CONTINUE.
+ $06F2 DEFB $9F                             ; #AUDIO0(key-continue.wav)}
+ $06F3 DEFB $E9,$21,$4C,$90                 ; DIM. #AUDIO0(key-dim.wav)
+ $06F7 DEFB $EA,$27,$07,$90                 ; REM. #AUDIO0(key-rem.wav)
+ $06FB DEFB $EB,$28,$BA                     ; FOR. #AUDIO0(key-for.wav)
+ $06FE DEFB $EC,$3D,$75,$01,$0D,$96         ; GO TO. #AUDIO0(key-goto.wav)
+ $0704 DEFB $ED,$3D,$75,$01,$37,$0F,$9C     ; GO SUB. #AUDIO0(key-gosub.wav)
+ $070B DEFB $EE,$4C,$0B,$09,$1E,$91         ; INPUT. #AUDIO0(key-input.wav)
+ $0711 DEFB $EF,$2D,$35,$95                 ; LOAD. #AUDIO0(key-load.wav)
+ $0715 DEFB $F0,$2D,$4C,$37,$91             ; LIST. #AUDIO0(key-list.wav)
+ $071A DEFB $F2,$09,$3A,$AB                 ; PAUSE. #AUDIO0(key-pause.wav)
+ $071E DEFB $F3,$0B,$47,$2A,$37,$91         ; NEXT. #AUDIO0(key-next.wav)
+ $0724 DEFB $F4,$09,$35,$A9                 ; POKE. #AUDIO0(key-poke.wav)
+ $0728 DEFB $F5,$09,$27,$4C,$0B,$91         ; PRINT. #AUDIO0(key-print.wav)
+ $072E DEFB $F6,$09,$2D,$17,$91             ; PLOT. #AUDIO0(key-plot.wav)
+ $0733 DEFB $F7,$27,$0F,$8B                 ; RUN. #AUDIO0(key-run.wav)
+ $0737 DEFB $F8,$37,$14,$A3                 ; SAVE. #AUDIO0(key-save.wav)
+ $073B DEFB $F9,$27,$58,$0B,$15,$0F,$10,$06 ; {RANDOMIZE.
+ $0743 DEFB $AB                             ; #AUDIO0(key-randomize.wav)}
+ $0744 DEFB $FA,$4C,$A8                     ; IF. #AUDIO0(key-if.wav)
+ $0747 DEFB $FC,$15,$27,$BA                 ; DRAW. #AUDIO0(key-draw.wav)
+ $074B DEFB $FD,$08,$2D,$AF                 ; CLEAR. #AUDIO0(key-clear.wav)
+ $074F DEFB $FE,$27,$4C,$11,$34,$8B         ; RETURN. #AUDIO0(key-return.wav)
+ $0755 DEFB $FF,$08,$17,$09,$93             ; COPY. #AUDIO0(key-copy.wav)
+ $075A DEFB $00                             ; Table end.
+
+; Banner Addresses
+;
+; Pointers to the 8x8 bitmaps that spell
+; "speech system © CURRAH 1983". #N$FFFF ends the list.
+@label=BannerAddresses
+w$075B DEFW $07A0    ; #N$07A0 ("s").
+ $075D DEFW $07A8    ; #N$07A8 ("p").
+ $075F DEFW $07B0    ; #N$07B0 ("e").
+ $0761 DEFW $07B0    ; #N$07B0 ("e").
+ $0763 DEFW $07B8    ; #N$07B8 ("c").
+ $0765 DEFW $07C0    ; #N$07C0 ("h").
+ $0767 DEFW $0798    ; #N$0798 (space).
+ $0769 DEFW $07A0    ; #N$07A0 ("s").
+ $076B DEFW $07C8    ; #N$07C8 ("y").
+ $076D DEFW $07E0    ; #N$07E0 ("s").
+ $076F DEFW $07D8    ; #N$07D8 ("t").
+ $0771 DEFW $07B0    ; #N$07B0 ("e").
+ $0773 DEFW $07D0    ; #N$07D0 ("m").
+ $0775 DEFW $0798    ; #N$0798 (space).
+ $0777 DEFW $07E8    ; #N$07E8 (copyright).
+ $0779 DEFW $0798    ; #N$0798 (space).
+ $077B DEFW $07F0    ; #N$07F0 ("C").
+ $077D DEFW $07F8    ; #N$07F8 ("U").
+ $077F DEFW $0008    ; #N$0008 ("R").
+ $0781 DEFW $0008    ; #N$0008 ("R").
+ $0783 DEFW $0010    ; #N$0010 ("A").
+ $0785 DEFW $0018    ; #N$0018 ("H").
+ $0787 DEFW $0798    ; #N$0798 (space).
+ $0789 DEFW $0020    ; #N$0020 ("1").
+ $078B DEFW $0028    ; #N$0028 ("9").
+ $078D DEFW $0030    ; #N$0030 ("8").
+ $078F DEFW $0000    ; #N$0000 ("3").
+ $0791 DEFW $FFFF    ; Terminator.
+
+; Programmer Credit
+;
+; Name stored after the banner address table.
+@label=ProgrammerCredit
+t$0793 DEFM "Anson"  ; "Anson".
+
+; Banner Bitmaps
+;
+; Space, "speech system" letters, the copyright mark and
+; inverse "CU". Inverse "RRAH" and the "1983" digits live at #R$0000.
+@label=BannerBitmaps
+b$0798 DEFB $00,$00,$00,$00,$00,$00,$00,$00 ; #UDGTABLE { #UDG(#PC) } TABLE#
+ $07A0 DEFB $00,$3C,$40,$3C,$02,$42,$3C,$00 ; #UDGTABLE { #UDG(#PC) } TABLE#
+ $07A8 DEFB $00,$00,$78,$44,$44,$78,$40,$40 ; #UDGTABLE { #UDG(#PC) } TABLE#
+ $07B0 DEFB $00,$00,$38,$44,$78,$40,$3C,$00 ; #UDGTABLE { #UDG(#PC) } TABLE#
+ $07B8 DEFB $00,$00,$38,$40,$40,$40,$38,$00 ; #UDGTABLE { #UDG(#PC) } TABLE#
+ $07C0 DEFB $00,$40,$40,$78,$44,$44,$44,$00 ; #UDGTABLE { #UDG(#PC) } TABLE#
+ $07C8 DEFB $00,$00,$44,$44,$44,$3C,$04,$38 ; #UDGTABLE { #UDG(#PC) } TABLE#
+ $07D0 DEFB $00,$00,$68,$54,$54,$54,$54,$00 ; #UDGTABLE { #UDG(#PC) } TABLE#
+ $07D8 DEFB $00,$20,$70,$20,$20,$20,$18,$00 ; #UDGTABLE { #UDG(#PC) } TABLE#
+ $07E0 DEFB $00,$00,$38,$40,$38,$04,$78,$00 ; #UDGTABLE { #UDG(#PC) } TABLE#
+ $07E8 DEFB $3C,$42,$99,$A1,$A1,$99,$42,$3C ; #UDGTABLE { #UDG(#PC) } TABLE#
+ $07F0 DEFB $FF,$C3,$BD,$BF,$BF,$BD,$C3,$FF ; #UDGTABLE { #UDG(#PC) } TABLE#
+ $07F8 DEFB $FF,$BD,$BD,$BD,$BD,$BD,$C3,$FF ; #UDGTABLE { #UDG(#PC) } TABLE#
+

@@ -1,0 +1,78 @@
+; Copyright 2026 Paul Maddern (paul@arcadegeek.co.uk)
+
+[Page:Sound]
+SectionPrefix=Audio
+
+[Audio:allophones:AL2 Allophones]
+The #FACT(sp0256,SP0256-AL2) set, as written by #R$0166. These
+are recordings of a real chip, not a simulated core. Bit 6
+(high intonation) is not applied here; the
+#R$0447 entries play it where the ROM sets that bit.
+
+#TABLE(default,centre,centre,centre)
+{ =h ID | =h Name | =h Sample }
+{ #N$00 | PA1 | #AUDIO0(al2-pa1.wav) }
+{ #N$01 | PA2 | #AUDIO0(al2-pa2.wav) }
+{ #N$02 | PA3 | #AUDIO0(al2-pa3.wav) }
+{ #N$03 | PA4 | #AUDIO0(al2-pa4.wav) }
+{ #N$04 | PA5 | #AUDIO0(al2-pa5.wav) }
+{ #N$05 | OY | #AUDIO0(al2-oy.wav) }
+{ #N$06 | AY | #AUDIO0(al2-ay.wav) }
+{ #N$07 | EH | #AUDIO0(al2-eh.wav) }
+{ #N$08 | KK3 | #AUDIO0(al2-kk3.wav) }
+{ #N$09 | PP | #AUDIO0(al2-pp.wav) }
+{ #N$0A | JH | #AUDIO0(al2-jh.wav) }
+{ #N$0B | NN1 | #AUDIO0(al2-nn1.wav) }
+{ #N$0C | IH | #AUDIO0(al2-ih.wav) }
+{ #N$0D | TT2 | #AUDIO0(al2-tt2.wav) }
+{ #N$0E | RR1 | #AUDIO0(al2-rr1.wav) }
+{ #N$0F | AX | #AUDIO0(al2-ax.wav) }
+{ #N$10 | MM | #AUDIO0(al2-mm.wav) }
+{ #N$11 | TT1 | #AUDIO0(al2-tt1.wav) }
+{ #N$12 | DH1 | #AUDIO0(al2-dh1.wav) }
+{ #N$13 | IY | #AUDIO0(al2-iy.wav) }
+{ #N$14 | EY | #AUDIO0(al2-ey.wav) }
+{ #N$15 | DD1 | #AUDIO0(al2-dd1.wav) }
+{ #N$16 | UW1 | #AUDIO0(al2-uw1.wav) }
+{ #N$17 | AO | #AUDIO0(al2-ao.wav) }
+{ #N$18 | AA | #AUDIO0(al2-aa.wav) }
+{ #N$19 | YY2 | #AUDIO0(al2-yy2.wav) }
+{ #N$1A | AE | #AUDIO0(al2-ae.wav) }
+{ #N$1B | HH1 | #AUDIO0(al2-hh1.wav) }
+{ #N$1C | BB1 | #AUDIO0(al2-bb1.wav) }
+{ #N$1D | TH | #AUDIO0(al2-th.wav) }
+{ #N$1E | UH | #AUDIO0(al2-uh.wav) }
+{ #N$1F | UW2 | #AUDIO0(al2-uw2.wav) }
+{ #N$20 | AW | #AUDIO0(al2-aw.wav) }
+{ #N$21 | DD2 | #AUDIO0(al2-dd2.wav) }
+{ #N$22 | GG3 | #AUDIO0(al2-gg3.wav) }
+{ #N$23 | VV | #AUDIO0(al2-vv.wav) }
+{ #N$24 | GG1 | #AUDIO0(al2-gg1.wav) }
+{ #N$25 | SH | #AUDIO0(al2-sh.wav) }
+{ #N$26 | ZH | #AUDIO0(al2-zh.wav) }
+{ #N$27 | RR2 | #AUDIO0(al2-rr2.wav) }
+{ #N$28 | FF | #AUDIO0(al2-ff.wav) }
+{ #N$29 | KK2 | #AUDIO0(al2-kk2.wav) }
+{ #N$2A | KK1 | #AUDIO0(al2-kk1.wav) }
+{ #N$2B | ZZ | #AUDIO0(al2-zz.wav) }
+{ #N$2C | NG | #AUDIO0(al2-ng.wav) }
+{ #N$2D | LL | #AUDIO0(al2-ll.wav) }
+{ #N$2E | WW | #AUDIO0(al2-ww.wav) }
+{ #N$2F | XR | #AUDIO0(al2-xr.wav) }
+{ #N$30 | WH | #AUDIO0(al2-wh.wav) }
+{ #N$31 | YY1 | #AUDIO0(al2-yy1.wav) }
+{ #N$32 | CH | #AUDIO0(al2-ch.wav) }
+{ #N$33 | ER1 | #AUDIO0(al2-er1.wav) }
+{ #N$34 | ER2 | #AUDIO0(al2-er2.wav) }
+{ #N$35 | OW | #AUDIO0(al2-ow.wav) }
+{ #N$36 | DH2 | #AUDIO0(al2-dh2.wav) }
+{ #N$37 | SS | #AUDIO0(al2-ss.wav) }
+{ #N$38 | NN2 | #AUDIO0(al2-nn2.wav) }
+{ #N$39 | HH2 | #AUDIO0(al2-hh2.wav) }
+{ #N$3A | OR | #AUDIO0(al2-or.wav) }
+{ #N$3B | AR | #AUDIO0(al2-ar.wav) }
+{ #N$3C | YR | #AUDIO0(al2-yr.wav) }
+{ #N$3D | GG2 | #AUDIO0(al2-gg2.wav) }
+{ #N$3E | EL | #AUDIO0(al2-el.wav) }
+{ #N$3F | BB2 | #AUDIO0(al2-bb2.wav) }
+TABLE#
