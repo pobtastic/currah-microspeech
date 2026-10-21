@@ -1,0 +1,56 @@
+.uspeech {
+  max-width: 48rem;
+}
+.uspeech-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0.75rem 0;
+}
+.uspeech textarea {
+  display: block;
+  width: 100%;
+  min-height: 5.5rem;
+  box-sizing: border-box;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 1rem;
+  padding: 0.6rem 0.7rem;
+}
+.uspeech button {
+  font: inherit;
+  cursor: pointer;
+  padding: 0.35rem 0.75rem;
+}
+.uspeech-examples button,
+.uspeech-token {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+}
+.uspeech-tokens {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  min-height: 2rem;
+}
+.uspeech-token.high {
+  box-shadow: inset 0 2px 0 currentColor;
+}
+.uspeech-status {
+  margin: 0.5rem 0 0;
+}
+.uspeech-status.error,
+.uspeech-status.empty,
+.uspeech-status.skip {
+  font-weight: bold;
+}
+.uspeech-marked {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  margin: 0.25rem 0 0.75rem;
+}
+.uspeech table {
+  width: 100%;
+}
+.uspeech-note {
+  font-size: 0.9rem;
+}

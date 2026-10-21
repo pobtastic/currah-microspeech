@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Currah μSpeech: Routine at 035E</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Currah μSpeech</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="852.html">0354</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#862">Map</a></td>
+<td class="next">
+Next: <a href="885.html">0375</a>
+</td>
+</tr>
+</table>
+<div class="description">035E: Normalise Character</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="543.html">ParseSpeechString</a> and <a href="747.html">ParseAllophoneGroup</a>.
+</div>
+<div class="paragraph">
+Convert a character toward the dictionary alphabet and set workspace bit 6 for intonation (uppercase vs lowercase).
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">A</td>
+<td class="register-desc">Character</td>
+</tr>
+</table>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">A</td>
+<td class="register-desc">Normalised character</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">NormaliseCharacter</td>
+<td class="address-2"><span id="862"></span>035E</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="2">Stash <span class="register">HL</span> and keep the character in <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="863"></span>035F</td>
+<td class="instruction">LD B,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="864"></span>0360</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="2">Call <a href="852.html">ReadWorkspace</a> for the flags byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="865"></span>0361</td>
+<td class="instruction">CALL <a href="852.html">ReadWorkspace</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="868"></span>0364</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="1">Restore the character.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="869"></span>0365</td>
+<td class="instruction">CP $61</td>
+<td class="comment-1" rowspan="2">Jump to <a href="862.html#879">NormaliseCharacter_Upper</a> if this is not a lowercase letter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="871"></span>0367</td>
+<td class="instruction">JR C,<a href="862.html#879">NormaliseCharacter_Upper</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="873"></span>0369</td>
+<td class="instruction">SUB $40</td>
+<td class="comment-1" rowspan="1">Convert a lowercase letter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="875"></span>036B</td>
+<td class="instruction">RES 6,(HL)</td>
+<td class="comment-1" rowspan="2">Use low intonation and jump to <a href="862.html#883">NormaliseCharacter_Done</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="877"></span>036D</td>
+<td class="instruction">JR <a href="862.html#883">NormaliseCharacter_Done</a></td>
+</tr>
+<tr>
+<td class="asm-label">NormaliseCharacter_Upper</td>
+<td class="address-2"><span id="879"></span>036F</td>
+<td class="instruction">SUB $20</td>
+<td class="comment-1" rowspan="1">Convert an uppercase letter.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="881"></span>0371</td>
+<td class="instruction">SET 6,(HL)</td>
+<td class="comment-1" rowspan="1">Use high intonation.</td>
+</tr>
+<tr>
+<td class="asm-label">NormaliseCharacter_Done</td>
+<td class="address-2"><span id="883"></span>0373</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="2">Restore <span class="register">HL</span> and return.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="884"></span>0374</td>
+<td class="instruction">RET</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="852.html">0354</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#862">Map</a></td>
+<td class="next">
+Next: <a href="885.html">0375</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1983 Currah &copy; 2024 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/currah/">Source code</a>.</div>
+<div><a href="asm/862.html">Switch to hexadecimal</a>.</div>
+</footer>
+</body>
+</html>

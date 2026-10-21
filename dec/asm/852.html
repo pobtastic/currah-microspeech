@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Currah μSpeech: Routine at 00852</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Currah μSpeech</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="843.html">00843</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#852">Map</a></td>
+<td class="next">
+Next: <a href="862.html">00862</a>
+</td>
+</tr>
+</table>
+<div class="description">00852: Read Workspace</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="56.html">HandleInterrupt</a>, <a href="543.html">ParseSpeechString</a>, <a href="685.html">TestKeysVariable</a>, <a href="862.html">NormaliseCharacter</a>, <a href="895.html">ReadBufferPointer</a>, <a href="906.html">WriteBufferPointer</a>, <a href="915.html">CompareBuffer</a> and <a href="930.html">ResetBufferPointer</a>.
+</div>
+<div class="paragraph">
+Fetch a byte from the speech workspace. The block lives in the page of *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB4.html">P_RAMT</a>, at low byte 87-index.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">A</td>
+<td class="register-desc">Workspace index</td>
+</tr>
+</table>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">A</td>
+<td class="register-desc">Byte at that index</td>
+</tr>
+<tr>
+<td class="register">HL</td>
+<td class="register-desc">Address of that index</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ReadWorkspace</td>
+<td class="address-2"><span id="852"></span>00852</td>
+<td class="instruction">LD HL,(23732)</td>
+<td class="comment-1" rowspan="1">Fetch *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB4.html">P_RAMT</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="855"></span>
+<div class="comments">
+<div class="paragraph">
+The slot is 87 minus the index, in the page of *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB4.html">P_RAMT</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="855"></span>00855</td>
+<td class="instruction">LD L,A</td>
+<td class="comment-1" rowspan="4">Calculate the address of this workspace index.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="856"></span>00856</td>
+<td class="instruction">LD A,87</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="858"></span>00858</td>
+<td class="instruction">SUB L</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="859"></span>00859</td>
+<td class="instruction">LD L,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="860"></span>00860</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="1">Fetch the byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="861"></span>00861</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="843.html">00843</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#852">Map</a></td>
+<td class="next">
+Next: <a href="862.html">00862</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1983 Currah &copy; 2024 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah/">Source code</a>.</div>
+<div><a href="../../asm/0354.html">Switch to hexadecimal</a>.</div>
+</footer>
+</body>
+</html>

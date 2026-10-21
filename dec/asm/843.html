@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Currah μSpeech: Routine at 00843</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Currah μSpeech</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="747.html">00747</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#843">Map</a></td>
+<td class="next">
+Next: <a href="852.html">00852</a>
+</td>
+</tr>
+</table>
+<div class="description">00843: Increment Pair</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="56.html">HandleInterrupt</a>.
+</div>
+<div class="paragraph">
+Add one to two addresses <span class="register">DE</span> bytes apart. Used to tick both keyboard-state timers.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">HL</td>
+<td class="register-desc">First address</td>
+</tr>
+<tr>
+<td class="register">DE</td>
+<td class="register-desc">Distance to the second address</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">IncrementPair</td>
+<td class="address-2"><span id="843"></span>00843</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Stash the first address on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="844"></span>00844</td>
+<td class="instruction">LD B,2</td>
+<td class="comment-1" rowspan="1">Set the update counter to 2.</td>
+</tr>
+<tr>
+<td class="asm-label">IncrementPair_Loop</td>
+<td class="address-2"><span id="846"></span>00846</td>
+<td class="instruction">INC (HL)</td>
+<td class="comment-1" rowspan="2">Add one to this timer and move to the next.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="847"></span>00847</td>
+<td class="instruction">ADD HL,DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="848"></span>00848</td>
+<td class="instruction">DJNZ <a href="843.html#846">IncrementPair_Loop</a></td>
+<td class="comment-1" rowspan="1">Decrease the counter and loop back to <a href="843.html#846">IncrementPair_Loop</a> until both timers are updated.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="850"></span>00850</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the first address from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="851"></span>00851</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="747.html">00747</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#843">Map</a></td>
+<td class="next">
+Next: <a href="852.html">00852</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1983 Currah &copy; 2024 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah/">Source code</a>.</div>
+<div><a href="../../asm/034B.html">Switch to hexadecimal</a>.</div>
+</footer>
+</body>
+</html>

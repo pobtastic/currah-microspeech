@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Currah μSpeech: Routine at 02EB</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Currah μSpeech</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="685.html">02AD</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#747">Map</a></td>
+<td class="next">
+Next: <a href="843.html">034B</a>
+</td>
+</tr>
+</table>
+<div class="description">02EB: Parse Allophone Group</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="543.html">ParseSpeechString</a>.
+</div>
+<div class="paragraph">
+Read a parenthesised allophone name from the speech string (for example "(AA)" or "(SH)"). Letters are normalised, checked against <a href="943.html">CharacterKeys</a>, and summed; the sum selects an allophone from the parallel tables.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">HL</td>
+<td class="register-desc">Current string pointer</td>
+</tr>
+</table>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">A</td>
+<td class="register-desc">Mapped allophone</td>
+</tr>
+<tr>
+<td class="register">F</td>
+<td class="register-desc">Carry set if the group is invalid</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="747"></span>
+<div class="comments">
+<div class="paragraph">
+Clear the running total that will identify the name.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ParseAllophoneGroup</td>
+<td class="address-2"><span id="747"></span>02EB</td>
+<td class="instruction">LD B,$00</td>
+<td class="comment-1" rowspan="1">Set the running total to 0.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="749"></span>
+<div class="comments">
+<div class="paragraph">
+Read letters until a closing parenthesis.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ParseAllophoneGroup_Loop</td>
+<td class="address-2"><span id="749"></span>02ED</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="2">Fetch the next character from the speech string.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="750"></span>02EE</td>
+<td class="instruction">LD A,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="751"></span>02EF</td>
+<td class="instruction">CP $29</td>
+<td class="comment-1" rowspan="2">Jump to <a href="747.html#777">ParseAllophoneGroup_Close</a> if this is a closing parenthesis.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="753"></span>02F1</td>
+<td class="instruction">JR Z,<a href="747.html#777">ParseAllophoneGroup_Close</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="755"></span>02F3</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="1">Stash the running total on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="756"></span>02F4</td>
+<td class="instruction">CALL <a href="862.html">NormaliseCharacter</a></td>
+<td class="comment-1" rowspan="1">Call <a href="862.html">NormaliseCharacter</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="759"></span>
+<div class="comments">
+<div class="paragraph">
+The letter must appear in the first 24 character keys.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="759"></span>02F7</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Stash the string pointer on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="760"></span>02F8</td>
+<td class="instruction">LD HL,$03AF</td>
+<td class="comment-1" rowspan="3">Search the first 24 entries of <a href="943.html">CharacterKeys</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="763"></span>02FB</td>
+<td class="instruction">LD BC,$0018</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="766"></span>02FE</td>
+<td class="instruction">CPIR</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="768"></span>0300</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="2">Restore the string pointer and the running total from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="769"></span>0301</td>
+<td class="instruction">POP BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="770"></span>0302</td>
+<td class="instruction">JR NZ,<a href="747.html#841">ParseAllophoneGroup_Carry</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="747.html#841">ParseAllophoneGroup_Carry</a> if the letter is not a valid allophone-name character.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="772"></span>0304</td>
+<td class="instruction">ADD A,B</td>
+<td class="comment-1" rowspan="2">Add the letter key to the running total and return if the sum overflowed.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="773"></span>0305</td>
+<td class="instruction">RET C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="774"></span>0306</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="2">Keep the new total and jump to <a href="747.html#749">ParseAllophoneGroup_Loop</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="775"></span>0307</td>
+<td class="instruction">JR <a href="747.html#749">ParseAllophoneGroup_Loop</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="777"></span>
+<div class="comments">
+<div class="paragraph">
+The name has ended; the running total selects the allophone.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ParseAllophoneGroup_Close</td>
+<td class="address-2"><span id="777"></span>0309</td>
+<td class="instruction">LD A,B</td>
+<td class="comment-1" rowspan="1">Use the name sum as the lookup key.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="778"></span>030A</td>
+<td class="instruction">CP $64</td>
+<td class="comment-1" rowspan="2">Jump to <a href="747.html#821">ParseAllophoneGroup_Look</a> if the sum is 100.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="780"></span>030C</td>
+<td class="instruction">JR Z,<a href="747.html#821">ParseAllophoneGroup_Look</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="782"></span>030E</td>
+<td class="instruction">CP $68</td>
+<td class="comment-1" rowspan="2">Jump to <a href="747.html#821">ParseAllophoneGroup_Look</a> if the sum is 104.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="784"></span>0310</td>
+<td class="instruction">JR Z,<a href="747.html#821">ParseAllophoneGroup_Look</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="786"></span>0312</td>
+<td class="instruction">CP $5C</td>
+<td class="comment-1" rowspan="2">Jump to <a href="747.html#821">ParseAllophoneGroup_Look</a> if the sum is 92.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="788"></span>0314</td>
+<td class="instruction">JR Z,<a href="747.html#821">ParseAllophoneGroup_Look</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="790"></span>0316</td>
+<td class="instruction">CP $66</td>
+<td class="comment-1" rowspan="2">Jump to <a href="747.html#821">ParseAllophoneGroup_Look</a> if the sum is 102.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="792"></span>0318</td>
+<td class="instruction">JR Z,<a href="747.html#821">ParseAllophoneGroup_Look</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="794"></span>031A</td>
+<td class="instruction">CP $78</td>
+<td class="comment-1" rowspan="2">Jump to <a href="747.html#817">ParseAllophoneGroup_Prev</a> if the sum is 120.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="796"></span>031C</td>
+<td class="instruction">JR Z,<a href="747.html#817">ParseAllophoneGroup_Prev</a></td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="798"></span>
+<div class="comments">
+<div class="paragraph">
+Look the sum up across both character-key tables.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="798"></span>031E</td>
+<td class="instruction">LD BC,$0036</td>
+<td class="comment-1" rowspan="1">Search 54 bytes of the character-key tables.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="801"></span>0321</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Stash the string pointer on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="802"></span>0322</td>
+<td class="instruction">LD HL,$03AF</td>
+<td class="comment-1" rowspan="2">Search <a href="943.html">CharacterKeys</a> for the name sum.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="805"></span>0325</td>
+<td class="instruction">CPIR</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="807"></span>0327</td>
+<td class="instruction">LD BC,$0035</td>
+<td class="comment-1" rowspan="1">Use the parallel mapped value (53 bytes on).</td>
+</tr>
+<tr>
+<td class="asm-label">ParseAllophoneGroup_Offset</td>
+<td class="address-2"><span id="810"></span>032A</td>
+<td class="instruction">JR NZ,<a href="747.html#840">ParseAllophoneGroup_Fail</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="747.html#840">ParseAllophoneGroup_Fail</a> if no match was found.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="812"></span>032C</td>
+<td class="instruction">ADD HL,BC</td>
+<td class="comment-1" rowspan="2">Fetch the mapped allophone from the parallel table.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="813"></span>032D</td>
+<td class="instruction">LD A,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="814"></span>032E</td>
+<td class="instruction">OR A</td>
+<td class="comment-1" rowspan="1">Set the flags from the mapped allophone.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="815"></span>032F</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="2">Restore the string pointer and return.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="816"></span>0330</td>
+<td class="instruction">RET</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="817"></span>
+<div class="comments">
+<div class="paragraph">
+Sum 120 uses the character before the ")".
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ParseAllophoneGroup_Prev</td>
+<td class="address-2"><span id="817"></span>0331</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Stash the string pointer on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="818"></span>0332</td>
+<td class="instruction">DEC HL</td>
+<td class="comment-1" rowspan="2">Move back to the previous character and jump to <a href="747.html#822">ParseAllophoneGroup_Suffix</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="819"></span>0333</td>
+<td class="instruction">JR <a href="747.html#822">ParseAllophoneGroup_Suffix</a></td>
+</tr>
+<tr>
+<td class="asm-label">ParseAllophoneGroup_Look</td>
+<td class="address-2"><span id="821"></span>0335</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Stash the string pointer on the stack.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="822"></span>
+<div class="comments">
+<div class="paragraph">
+Map the previous character through the suffix tables.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ParseAllophoneGroup_Suffix</td>
+<td class="address-2"><span id="822"></span>0336</td>
+<td class="instruction">DEC HL</td>
+<td class="comment-1" rowspan="2">Fetch the previous character.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="823"></span>0337</td>
+<td class="instruction">LD A,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="824"></span>0338</td>
+<td class="instruction">CALL <a href="862.html">NormaliseCharacter</a></td>
+<td class="comment-1" rowspan="1">Call <a href="862.html">NormaliseCharacter</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="827"></span>033B</td>
+<td class="instruction">LD BC,$0009</td>
+<td class="comment-1" rowspan="3">Search <a href="1051.html">SuffixKeys</a> for the normalised character.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="830"></span>033E</td>
+<td class="instruction">LD HL,$041B</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="833"></span>0341</td>
+<td class="instruction">CPIR</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="835"></span>0343</td>
+<td class="instruction">LD BC,$0008</td>
+<td class="comment-1" rowspan="2">Use the parallel suffix value and jump to <a href="747.html#810">ParseAllophoneGroup_Offset</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="838"></span>0346</td>
+<td class="instruction">JR <a href="747.html#810">ParseAllophoneGroup_Offset</a></td>
+</tr>
+<tr>
+<td class="asm-label">ParseAllophoneGroup_Fail</td>
+<td class="address-2"><span id="840"></span>0348</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the string pointer from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label">ParseAllophoneGroup_Carry</td>
+<td class="address-2"><span id="841"></span>0349</td>
+<td class="instruction">SCF</td>
+<td class="comment-1" rowspan="2">Set the carry flag and return.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="842"></span>034A</td>
+<td class="instruction">RET</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="685.html">02AD</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#747">Map</a></td>
+<td class="next">
+Next: <a href="843.html">034B</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1983 Currah &copy; 2024 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/currah/">Source code</a>.</div>
+<div><a href="asm/747.html">Switch to hexadecimal</a>.</div>
+</footer>
+</body>
+</html>

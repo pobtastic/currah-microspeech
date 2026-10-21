@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Currah μSpeech: Routine at 01AB</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Currah μSpeech</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="56.html">0038</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#427">Map</a></td>
+<td class="next">
+Next: <a href="461.html">01CD</a>
+</td>
+</tr>
+</table>
+<div class="description">01AB: Print Banner</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="56.html">HandleInterrupt</a>.
+</div>
+<div class="paragraph">
+Copy the "speech system © CURRAH 1983" bitmaps into the display file, using <a href="1883.html">BannerAddresses</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">PrintBanner</td>
+<td class="address-2"><span id="427"></span>01AB</td>
+<td class="instruction">LD DE,$4000</td>
+<td class="comment-1" rowspan="1">Start at the top of the display file.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="430"></span>01AE</td>
+<td class="instruction">LD BC,$075B</td>
+<td class="comment-1" rowspan="1">Use the banner address list.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="433"></span>01B1</td>
+<td class="instruction">RES 7,(HL)</td>
+<td class="comment-1" rowspan="1">Mark the banner as drawn.</td>
+</tr>
+<tr>
+<td class="asm-label">PrintBanner_Loop</td>
+<td class="address-2"><span id="435"></span>01B3</td>
+<td class="instruction">LD A,(BC)</td>
+<td class="comment-1" rowspan="3">Fetch the next bitmap address.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="436"></span>01B4</td>
+<td class="instruction">LD L,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="437"></span>01B5</td>
+<td class="instruction">INC BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="438"></span>01B6</td>
+<td class="instruction">LD A,(BC)</td>
+<td class="comment-1" rowspan="3">Return if the list has ended.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="439"></span>01B7</td>
+<td class="instruction">CP $FF</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="441"></span>01B9</td>
+<td class="instruction">RET Z</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="442"></span>01BA</td>
+<td class="instruction">LD H,A</td>
+<td class="comment-1" rowspan="1">Complete the bitmap pointer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="443"></span>01BB</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="2">Stash the list pointer and copy 8 rows.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="444"></span>01BC</td>
+<td class="instruction">LD B,$08</td>
+</tr>
+<tr>
+<td class="asm-label">PrintBanner_Column</td>
+<td class="address-2"><span id="446"></span>01BE</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="2">Write one pixel row to the display file.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="447"></span>01BF</td>
+<td class="instruction">LD (DE),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="448"></span>01C0</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="2">Move to the next pixel row.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="449"></span>01C1</td>
+<td class="instruction">INC D</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="450"></span>01C2</td>
+<td class="instruction">DJNZ <a href="427.html#446">PrintBanner_Column</a></td>
+<td class="comment-1" rowspan="1">Decrease the row counter and loop back to <a href="427.html#446">PrintBanner_Column</a> until the character is done.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="452"></span>01C4</td>
+<td class="instruction">LD A,D</td>
+<td class="comment-1" rowspan="3">Return to the top of the character cell.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="453"></span>01C5</td>
+<td class="instruction">SUB $08</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="455"></span>01C7</td>
+<td class="instruction">LD D,A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="456"></span>01C8</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="1">Move to the next character column.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="457"></span>01C9</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1">Restore the list pointer from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="458"></span>01CA</td>
+<td class="instruction">INC BC</td>
+<td class="comment-1" rowspan="2">Move to the next address and jump to <a href="427.html#435">PrintBanner_Loop</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="459"></span>01CB</td>
+<td class="instruction">JR <a href="427.html#435">PrintBanner_Loop</a></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="56.html">0038</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#427">Map</a></td>
+<td class="next">
+Next: <a href="461.html">01CD</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1983 Currah &copy; 2024 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/currah/">Source code</a>.</div>
+<div><a href="asm/427.html">Switch to hexadecimal</a>.</div>
+</footer>
+</body>
+</html>

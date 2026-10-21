@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Currah μSpeech: Routine at 02AD</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Currah μSpeech</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="543.html">021F</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#685">Map</a></td>
+<td class="next">
+Next: <a href="747.html">02EB</a>
+</td>
+</tr>
+</table>
+<div class="description">02AD: Test Keys Variable</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="56.html">HandleInterrupt</a>.
+</div>
+<div class="paragraph">
+Look up the BASIC variable "keys". A value of 1 enables speaking each key press.
+</div>
+</div>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">F</td>
+<td class="register-desc">Z flag set if key speech is enabled</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">TestKeysVariable</td>
+<td class="address-2"><span id="685"></span>02AD</td>
+<td class="instruction">LD A,$AB</td>
+<td class="comment-1" rowspan="2">Call <a href="461.html">FindVariable</a> for "keys".</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="687"></span>02AF</td>
+<td class="instruction">CALL <a href="461.html">FindVariable</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="690"></span>02B2</td>
+<td class="instruction">JR NZ,<a href="685.html#733">TestKeysVariable_State</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="685.html#733">TestKeysVariable_State</a> if it was not found.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="692"></span>02B4</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move to the first letter of the name.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="693"></span>02B5</td>
+<td class="instruction">LD A,$65</td>
+<td class="comment-1" rowspan="3">Jump to <a href="685.html#733">TestKeysVariable_State</a> if this is not "e".</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="695"></span>02B7</td>
+<td class="instruction">CPI</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="697"></span>02B9</td>
+<td class="instruction">JR NZ,<a href="685.html#733">TestKeysVariable_State</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="699"></span>02BB</td>
+<td class="instruction">LD A,$79</td>
+<td class="comment-1" rowspan="3">Jump to <a href="685.html#733">TestKeysVariable_State</a> if the next letter is not "y".</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="701"></span>02BD</td>
+<td class="instruction">CPI</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="703"></span>02BF</td>
+<td class="instruction">JR NZ,<a href="685.html#733">TestKeysVariable_State</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="705"></span>02C1</td>
+<td class="instruction">LD A,$F3</td>
+<td class="comment-1" rowspan="3">Jump to <a href="685.html#733">TestKeysVariable_State</a> if the next letter is not "s".</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="707"></span>02C3</td>
+<td class="instruction">CPI</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="709"></span>02C5</td>
+<td class="instruction">JR NZ,<a href="685.html#733">TestKeysVariable_State</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="711"></span>02C7</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="3">Jump to <a href="685.html#733">TestKeysVariable_State</a> if the name has not ended.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="712"></span>02C8</td>
+<td class="instruction">CPI</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="714"></span>02CA</td>
+<td class="instruction">JR NZ,<a href="685.html#733">TestKeysVariable_State</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="716"></span>02CC</td>
+<td class="instruction">CPI</td>
+<td class="comment-1" rowspan="2">Jump to <a href="685.html#733">TestKeysVariable_State</a> if the value header is not empty.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="718"></span>02CE</td>
+<td class="instruction">JR NZ,<a href="685.html#733">TestKeysVariable_State</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="720"></span>02D0</td>
+<td class="instruction">CP (HL)</td>
+<td class="comment-1" rowspan="2">Jump to <a href="685.html#740">TestKeysVariable_Off</a> if keys is 0.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="721"></span>02D1</td>
+<td class="instruction">JR Z,<a href="685.html#740">TestKeysVariable_Off</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="723"></span>02D3</td>
+<td class="instruction">INC A</td>
+<td class="comment-1" rowspan="3">Jump to <a href="685.html#733">TestKeysVariable_State</a> if keys is not 1.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="724"></span>02D4</td>
+<td class="instruction">CP (HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="725"></span>02D5</td>
+<td class="instruction">JR NZ,<a href="685.html#733">TestKeysVariable_State</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="727"></span>02D7</td>
+<td class="instruction">DEC A</td>
+<td class="comment-1" rowspan="2">Call <a href="852.html">ReadWorkspace</a> for the flags byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="728"></span>02D8</td>
+<td class="instruction">CALL <a href="852.html">ReadWorkspace</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="731"></span>02DB</td>
+<td class="instruction">SET 1,(HL)</td>
+<td class="comment-1" rowspan="1">Enable key speech.</td>
+</tr>
+<tr>
+<td class="asm-label">TestKeysVariable_State</td>
+<td class="address-2"><span id="733"></span>02DD</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="2">Call <a href="852.html">ReadWorkspace</a> for the flags byte.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="734"></span>02DE</td>
+<td class="instruction">CALL <a href="852.html">ReadWorkspace</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="737"></span>02E1</td>
+<td class="instruction">BIT 1,(HL)</td>
+<td class="comment-1" rowspan="2">Return with the key-speech flag in the Z flag.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="739"></span>02E3</td>
+<td class="instruction">RET</td>
+</tr>
+<tr>
+<td class="asm-label">TestKeysVariable_Off</td>
+<td class="address-2"><span id="740"></span>02E4</td>
+<td class="instruction">CALL <a href="852.html">ReadWorkspace</a></td>
+<td class="comment-1" rowspan="1">Call <a href="852.html">ReadWorkspace</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="743"></span>02E7</td>
+<td class="instruction">RES 1,(HL)</td>
+<td class="comment-1" rowspan="2">Disable key speech and jump to <a href="685.html#733">TestKeysVariable_State</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="745"></span>02E9</td>
+<td class="instruction">JR <a href="685.html#733">TestKeysVariable_State</a></td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="543.html">021F</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#685">Map</a></td>
+<td class="next">
+Next: <a href="747.html">02EB</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1983 Currah &copy; 2024 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/currah/">Source code</a>.</div>
+<div><a href="asm/685.html">Switch to hexadecimal</a>.</div>
+</footer>
+</body>
+</html>

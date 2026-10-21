@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Currah μSpeech: Routine at 01CD</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Currah μSpeech</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="427.html">01AB</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#461">Map</a></td>
+<td class="next">
+Next: <a href="543.html">021F</a>
+</td>
+</tr>
+</table>
+<div class="description">01CD: Find Variable</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routines at <a href="56.html">HandleInterrupt</a>, <a href="543.html">ParseSpeechString</a> and <a href="685.html">TestKeysVariable</a>.
+</div>
+<div class="paragraph">
+Walk the BASIC variable area looking for the name code in <span class="register">A</span>.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">A</td>
+<td class="register-desc">Name code</td>
+</tr>
+</table>
+<table class="output">
+<tr class="asm-output-header">
+<th colspan="2">Output</th>
+</tr>
+<tr>
+<td class="register">HL</td>
+<td class="register-desc">Pointer to the variable</td>
+</tr>
+<tr>
+<td class="register">F</td>
+<td class="register-desc">Z flag set if the name was found</td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="asm-label">FindVariable</td>
+<td class="address-2"><span id="461"></span>01CD</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Keep the name code in <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="462"></span>01CE</td>
+<td class="instruction">LD A,($5C3B)</td>
+<td class="comment-1" rowspan="1">Fetch *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C3B.html">FLAGS</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="465"></span>01D1</td>
+<td class="instruction">RLA</td>
+<td class="comment-1" rowspan="2">Jump to <a href="461.html#521">FindVariable_Miss</a> if bit 7 is not set.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="466"></span>01D2</td>
+<td class="instruction">JR NC,<a href="461.html#521">FindVariable_Miss</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="468"></span>01D4</td>
+<td class="instruction">LD A,($5CB6)</td>
+<td class="comment-1" rowspan="1">Fetch the byte at 23734.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="471"></span>01D7</td>
+<td class="instruction">CP $F4</td>
+<td class="comment-1" rowspan="2">Jump to <a href="461.html#478">FindVariable_Start</a> if it is 244.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="473"></span>01D9</td>
+<td class="instruction">JR Z,<a href="461.html#478">FindVariable_Start</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="475"></span>01DB</td>
+<td class="instruction">OR A</td>
+<td class="comment-1" rowspan="2">Jump to <a href="461.html#521">FindVariable_Miss</a> if it is not 0.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="476"></span>01DC</td>
+<td class="instruction">JR NZ,<a href="461.html#521">FindVariable_Miss</a></td>
+</tr>
+<tr>
+<td class="asm-label">FindVariable_Start</td>
+<td class="address-2"><span id="478"></span>01DE</td>
+<td class="instruction">LD HL,($5C4B)</td>
+<td class="comment-1" rowspan="1">Start at *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C4B.html">VARS</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">FindVariable_Loop</td>
+<td class="address-2"><span id="481"></span>01E1</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="3">Return if this is the requested variable.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="482"></span>01E2</td>
+<td class="instruction">CP B</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="483"></span>01E3</td>
+<td class="instruction">RET Z</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="484"></span>01E4</td>
+<td class="instruction">CP $80</td>
+<td class="comment-1" rowspan="2">Jump to <a href="461.html#521">FindVariable_Miss</a> if this is the end of VARS.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="486"></span>01E6</td>
+<td class="instruction">JR Z,<a href="461.html#521">FindVariable_Miss</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="488"></span>01E8</td>
+<td class="instruction">AND %11100000</td>
+<td class="comment-1" rowspan="1">Keep only bits 5-7 (the variable type).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="490"></span>01EA</td>
+<td class="instruction">CP $60</td>
+<td class="comment-1" rowspan="2">Jump to <a href="461.html#529">FindVariable_SkipNumeric</a> if the type is 96.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="492"></span>01EC</td>
+<td class="instruction">JR Z,<a href="461.html#529">FindVariable_SkipNumeric</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="494"></span>01EE</td>
+<td class="instruction">CP $A0</td>
+<td class="comment-1" rowspan="2">Jump to <a href="461.html#535">FindVariable_SkipName</a> if the type is 160.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="496"></span>01F0</td>
+<td class="instruction">JR Z,<a href="461.html#535">FindVariable_SkipName</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="498"></span>01F2</td>
+<td class="instruction">CP $E0</td>
+<td class="comment-1" rowspan="2">Jump to <a href="461.html#525">FindVariable_SkipArray</a> if the type is 224.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="500"></span>01F4</td>
+<td class="instruction">JR Z,<a href="461.html#525">FindVariable_SkipArray</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="502"></span>01F6</td>
+<td class="instruction">CP $C0</td>
+<td class="comment-1" rowspan="2">Jump to <a href="461.html#513">FindVariable_SkipWord</a> if the type is 192.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="504"></span>01F8</td>
+<td class="instruction">JR Z,<a href="461.html#513">FindVariable_SkipWord</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="506"></span>01FA</td>
+<td class="instruction">CP $80</td>
+<td class="comment-1" rowspan="2">Jump to <a href="461.html#513">FindVariable_SkipWord</a> if the type is 128.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="508"></span>01FC</td>
+<td class="instruction">JR Z,<a href="461.html#513">FindVariable_SkipWord</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="510"></span>01FE</td>
+<td class="instruction">CP $40</td>
+<td class="comment-1" rowspan="2">Return if the type is not a simple numeric.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="512"></span>0200</td>
+<td class="instruction">RET NZ</td>
+</tr>
+<tr>
+<td class="asm-label">FindVariable_SkipWord</td>
+<td class="address-2"><span id="513"></span>0201</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="7">Skip the following length word and jump to <a href="461.html#481">FindVariable_Loop</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="514"></span>0202</td>
+<td class="instruction">LD E,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="515"></span>0203</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="516"></span>0204</td>
+<td class="instruction">LD D,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="517"></span>0205</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="518"></span>0206</td>
+<td class="instruction">ADD HL,DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="519"></span>0207</td>
+<td class="instruction">JR <a href="461.html#481">FindVariable_Loop</a></td>
+</tr>
+<tr>
+<td class="asm-label">FindVariable_Miss</td>
+<td class="address-2"><span id="521"></span>0209</td>
+<td class="instruction">LD A,$80</td>
+<td class="comment-1" rowspan="3">Return with the Z flag clear.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="523"></span>020B</td>
+<td class="instruction">AND A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="524"></span>020C</td>
+<td class="instruction">RET</td>
+</tr>
+<tr>
+<td class="asm-label">FindVariable_SkipArray</td>
+<td class="address-2"><span id="525"></span>020D</td>
+<td class="instruction">LD DE,$000D</td>
+<td class="comment-1" rowspan="2">Skip the array header.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="528"></span>0210</td>
+<td class="instruction">ADD HL,DE</td>
+</tr>
+<tr>
+<td class="asm-label">FindVariable_SkipNumeric</td>
+<td class="address-2"><span id="529"></span>0211</td>
+<td class="instruction">LD DE,$0006</td>
+<td class="comment-1" rowspan="3">Skip the numeric value and jump to <a href="461.html#481">FindVariable_Loop</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="532"></span>0214</td>
+<td class="instruction">ADD HL,DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="533"></span>0215</td>
+<td class="instruction">JR <a href="461.html#481">FindVariable_Loop</a></td>
+</tr>
+<tr>
+<td class="asm-label">FindVariable_SkipName</td>
+<td class="address-2"><span id="535"></span>0217</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move to the next letter of the long name.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="536"></span>0218</td>
+<td class="instruction">LD A,(HL)</td>
+<td class="comment-1" rowspan="3">Jump to <a href="461.html#535">FindVariable_SkipName</a> if the name has not ended.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="537"></span>0219</td>
+<td class="instruction">SLA A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="539"></span>021B</td>
+<td class="instruction">JR NC,<a href="461.html#535">FindVariable_SkipName</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="541"></span>021D</td>
+<td class="instruction">JR <a href="461.html#529">FindVariable_SkipNumeric</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="461.html#529">FindVariable_SkipNumeric</a>.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="427.html">01AB</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#461">Map</a></td>
+<td class="next">
+Next: <a href="543.html">021F</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1983 Currah &copy; 2024 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a href="https://github.com/pobtastic/currah/">Source code</a>.</div>
+<div><a href="asm/461.html">Switch to hexadecimal</a>.</div>
+</footer>
+</body>
+</html>

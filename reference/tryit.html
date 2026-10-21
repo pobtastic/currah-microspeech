@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Currah μSpeech: Try s$</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+<script type="text/javascript" src="../allophones.js"></script>
+<script type="text/javascript" src="../uspeech.js"></script>
+</head>
+<body class="TryIt">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Currah μSpeech</a></td>
+<td class="page-header">Try s$</td>
+</tr>
+</table>
+<link rel="stylesheet" type="text/css" href="../uspeech.css" />
+<div class="uspeech">
+<p>Type a Currah speech string as you would assign to
+<a href="facts.html#sstring">s$</a> and hear the <a href="facts.html#sp0256">SP0256-AL2</a>
+allophones that <a href="../asm/021F.html">ParseSpeechString</a> would queue. This is not English
+text-to-speech: letters map one-for-one, and names in
+parentheses pick a specific sound.</p>
+<label for="uspeech-input">s$=</label>
+<textarea id="uspeech-input" spellcheck="false"
+aria-describedby="uspeech-status">he(ll)(oo)</textarea>
+<div class="uspeech-row">
+<button type="button" id="uspeech-speak">Speak</button>
+<button type="button" id="uspeech-stop">Stop</button>
+<span class="uspeech-note">Ctrl+Enter also speaks.</span>
+</div>
+<p>Examples from the 1983 manual:</p>
+<div class="uspeech-row uspeech-examples">
+<button type="button" data-uspeech="he(ll)(oo)">he(ll)(oo)</button>
+<button type="button" data-uspeech="kw(ee)n">kw(ee)n</button>
+<button type="button" data-uspeech="boks">boks</button>
+<button type="button" data-uspeech="sp(EE)k n(oo) (EE)vil">sp(EE)k n(oo) (EE)vil</button>
+<button type="button" data-uspeech="a(tt)">a(tt)</button>
+<button type="button" data-uspeech="(dth)en">(dth)en</button>
+<button type="button" data-uspeech="s(er)cul">s(er)cul</button>
+</div>
+<p id="uspeech-status" class="uspeech-status" role="status"></p>
+<p id="uspeech-marked" class="uspeech-marked" hidden></p>
+<p>Queued allophones (bit 6 set means high intonation). Click
+one to hear it alone:</p>
+<div id="uspeech-tokens" class="uspeech-tokens"></div>
+<p>A full stop queues a sentence pause. A space is a word
+pause, a comma is a phrase pause, and an apostrophe is a
+short pause. Uppercase raises the pitch. Q and X are not
+letters in this alphabet; write "kw" and "ks" instead.</p>
+<p>The parser follows <a href="../asm/021F.html">ParseSpeechString</a> and <a href="../asm/02EB.html">ParseAllophoneGroup</a>. Samples are
+recordings of a real AL2 chip, concatenated in the browser;
+they are close to the unit, not a cycle-accurate
+<a href="facts.html#sp0256">SP0256</a> core.</p>
+</div>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1983 Currah &copy; 2024 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah/">Source code</a>.</div>
+<div><a href="../dec/reference/tryit.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>

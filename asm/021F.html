@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Currah μSpeech: Routine at 021F</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="../skoolkit.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
+<link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-75RERFCHBG"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-75RERFCHBG');
+</script>
+</head>
+<body class="Asm-c">
+<table class="header">
+<tr>
+<td class="logo"><a href="../index.html">Currah μSpeech</a></td>
+<td class="page-header">Routines</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="01CD.html">01CD</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#021f">Map</a></td>
+<td class="next">
+Next: <a href="02AD.html">02AD</a>
+</td>
+</tr>
+</table>
+<div class="description">021F: Parse Speech String</div>
+<table class="disassembly">
+<tr>
+<td class="routine-comment" colspan="5">
+<div class="details">
+<div class="paragraph">
+Used by the routine at <a href="0038.html">HandleInterrupt</a>.
+</div>
+<div class="paragraph">
+Expand the contents of <a href="../reference/facts.html#sstring">s$</a> into the allophone buffer. A leading "*" or "?" means the string has already been spoken.
+</div>
+</div>
+<table class="input">
+<tr class="asm-input-header">
+<th colspan="2">Input</th>
+</tr>
+<tr>
+<td class="register">HL</td>
+<td class="register-desc">Pointer to <a href="../reference/facts.html#sstring">s$</a></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="021f"></span>
+<div class="comments">
+<div class="paragraph">
+Read the length of <a href="../reference/facts.html#sstring">s$</a> and ignore an empty string.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ParseSpeechString</td>
+<td class="address-2"><span id="021f"></span>021F</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="2">Fetch the low length byte of <a href="../reference/facts.html#sstring">s$</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0220"></span>0220</td>
+<td class="instruction">LD E,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0221"></span>0221</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="2">Test whether the low length byte is zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0222"></span>0222</td>
+<td class="instruction">CP (HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0223"></span>0223</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="2">Fetch the high length byte of <a href="../reference/facts.html#sstring">s$</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0224"></span>0224</td>
+<td class="instruction">LD D,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0225"></span>0225</td>
+<td class="instruction">JR NZ,<a href="021F.html#0229">ParseSpeechString_Body</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="021F.html#0229">ParseSpeechString_Body</a> if the low length byte is non-zero.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0227"></span>0227</td>
+<td class="instruction">CP (HL)</td>
+<td class="comment-1" rowspan="2">Return if <a href="../reference/facts.html#sstring">s$</a> is empty.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0228"></span>0228</td>
+<td class="instruction">RET Z</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="0229"></span>
+<div class="comments">
+<div class="paragraph">
+Leave strings that have already been spoken.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ParseSpeechString_Body</td>
+<td class="address-2"><span id="0229"></span>0229</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="1">Move to the first character.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="022a"></span>022A</td>
+<td class="instruction">LD A,$2A</td>
+<td class="comment-1" rowspan="3">Return if <a href="../reference/facts.html#sstring">s$</a> starts with "*".</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="022c"></span>022C</td>
+<td class="instruction">CP (HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="022d"></span>022D</td>
+<td class="instruction">RET Z</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="022e"></span>022E</td>
+<td class="instruction">LD A,$3F</td>
+<td class="comment-1" rowspan="3">Return if <a href="../reference/facts.html#sstring">s$</a> starts with "?".</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0230"></span>0230</td>
+<td class="instruction">CP (HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0231"></span>0231</td>
+<td class="instruction">RET Z</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0232"></span>0232</td>
+<td class="instruction">DEC HL</td>
+<td class="comment-1" rowspan="1">Move back to the length.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0233"></span>0233</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Stash the start of <a href="../reference/facts.html#sstring">s$</a> on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0234"></span>0234</td>
+<td class="instruction">ADD HL,DE</td>
+<td class="comment-1" rowspan="2">Point <span class="register">DE</span> at the end of <a href="../reference/facts.html#sstring">s$</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0235"></span>0235</td>
+<td class="instruction">EX DE,HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0236"></span>0236</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the start of <a href="../reference/facts.html#sstring">s$</a> from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0237"></span>0237</td>
+<td class="instruction">CALL <a href="037F.html">ReadBufferPointer</a></td>
+<td class="comment-1" rowspan="1">Call <a href="037F.html">ReadBufferPointer</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="023a"></span>
+<div class="comments">
+<div class="paragraph">
+Convert the next character of <a href="../reference/facts.html#sstring">s$</a> into allophones.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ParseSpeechString_Next</td>
+<td class="address-2"><span id="023a"></span>023A</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="1">Stash the buffer pointer on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="023b"></span>023B</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="2">Fetch the next character from <a href="../reference/facts.html#sstring">s$</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="023c"></span>023C</td>
+<td class="instruction">LD A,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="023d"></span>023D</td>
+<td class="instruction">CALL <a href="035E.html">NormaliseCharacter</a></td>
+<td class="comment-1" rowspan="1">Call <a href="035E.html">NormaliseCharacter</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0240"></span>0240</td>
+<td class="instruction">CP $0E</td>
+<td class="comment-1" rowspan="2">Jump to <a href="021F.html#0250">ParseSpeechString_TestGroup</a> if this is not a full stop.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0242"></span>0242</td>
+<td class="instruction">JR NZ,<a href="021F.html#0250">ParseSpeechString_TestGroup</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0244"></span>0244</td>
+<td class="instruction">LD A,$04</td>
+<td class="comment-1" rowspan="1">Queue a short pause.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0246"></span>0246</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1">Restore the buffer pointer from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0247"></span>0247</td>
+<td class="instruction">LD (BC),A</td>
+<td class="comment-1" rowspan="2">Write the pause to the speech buffer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0248"></span>0248</td>
+<td class="instruction">DEC BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0249"></span>0249</td>
+<td class="instruction">CALL <a href="0375.html">CheckMemory</a></td>
+<td class="comment-1" rowspan="2">Call <a href="0375.html">CheckMemory</a> and return if the buffer is full.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="024c"></span>024C</td>
+<td class="instruction">RET C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="024d"></span>024D</td>
+<td class="instruction">PUSH BC</td>
+<td class="comment-1" rowspan="1">Stash the buffer pointer on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="024e"></span>024E</td>
+<td class="instruction">JR <a href="021F.html#0280">ParseSpeechString_Store</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="021F.html#0280">ParseSpeechString_Store</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="0250"></span>
+<div class="comments">
+<div class="paragraph">
+A "(" starts a parenthesised allophone name.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ParseSpeechString_TestGroup</td>
+<td class="address-2"><span id="0250"></span>0250</td>
+<td class="instruction">CP $08</td>
+<td class="comment-1" rowspan="2">Jump to <a href="021F.html#025c">ParseSpeechString_Map</a> if this is not "(".</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0252"></span>0252</td>
+<td class="instruction">JR NZ,<a href="021F.html#025c">ParseSpeechString_Map</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0254"></span>0254</td>
+<td class="instruction">CALL <a href="02EB.html">ParseAllophoneGroup</a></td>
+<td class="comment-1" rowspan="2">Call <a href="02EB.html">ParseAllophoneGroup</a> and jump to <a href="021F.html#0280">ParseSpeechString_Store</a> if the name was valid.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0257"></span>0257</td>
+<td class="instruction">JR NC,<a href="021F.html#0280">ParseSpeechString_Store</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0259"></span>0259</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1">Restore the buffer pointer from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="025a"></span>025A</td>
+<td class="instruction">JR <a href="021F.html#0269">ParseSpeechString_Mark</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="021F.html#0269">ParseSpeechString_Mark</a>.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="025c"></span>
+<div class="comments">
+<div class="paragraph">
+Map the character through <a href="03AF.html">CharacterKeys</a>.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ParseSpeechString_Map</td>
+<td class="address-2"><span id="025c"></span>025C</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Stash the string pointer on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="025d"></span>025D</td>
+<td class="instruction">LD HL,$03AF</td>
+<td class="comment-1" rowspan="4">Search <a href="03AF.html">CharacterKeys</a> and jump to <a href="021F.html#027a">ParseSpeechString_Mapped</a> if this letter is known.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0260"></span>0260</td>
+<td class="instruction">LD BC,$001B</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0263"></span>0263</td>
+<td class="instruction">CPIR</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0265"></span>0265</td>
+<td class="instruction">JR Z,<a href="021F.html#027a">ParseSpeechString_Mapped</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0267"></span>0267</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="2">Restore the string pointer and the buffer pointer from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0268"></span>0268</td>
+<td class="instruction">POP BC</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="0269"></span>
+<div class="comments">
+<div class="paragraph">
+This character is not in the key tables; mark <a href="../reference/facts.html#sstring">s$</a> with "?".
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ParseSpeechString_Mark</td>
+<td class="address-2"><span id="0269"></span>0269</td>
+<td class="instruction">INC DE</td>
+<td class="comment-1" rowspan="2">Step past this character.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="026a"></span>026A</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label">ParseSpeechString_Bound</td>
+<td class="address-2"><span id="026b"></span>026B</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="4">Test whether the string pointer has reached the end of <a href="../reference/facts.html#sstring">s$</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="026c"></span>026C</td>
+<td class="instruction">OR A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="026d"></span>026D</td>
+<td class="instruction">SBC HL,DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="026f"></span>026F</td>
+<td class="instruction">POP HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0270"></span>0270</td>
+<td class="instruction">JR C,<a href="021F.html#0275">ParseSpeechString_Query</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="021F.html#0275">ParseSpeechString_Query</a> if it has.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0272"></span>0272</td>
+<td class="instruction">DEC HL</td>
+<td class="comment-1" rowspan="1">Move back one character.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0273"></span>0273</td>
+<td class="instruction">JR <a href="021F.html#026b">ParseSpeechString_Bound</a></td>
+<td class="comment-1" rowspan="1">Jump to <a href="021F.html#026b">ParseSpeechString_Bound</a>.</td>
+</tr>
+<tr>
+<td class="asm-label">ParseSpeechString_Query</td>
+<td class="address-2"><span id="0275"></span>0275</td>
+<td class="instruction">LD C,$3F</td>
+<td class="comment-1" rowspan="3">Mark <a href="../reference/facts.html#sstring">s$</a> with "?" and jump to <a href="021F.html#02a3">ParseSpeechString_Term</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0277"></span>0277</td>
+<td class="instruction">LD (HL),C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0278"></span>0278</td>
+<td class="instruction">JR <a href="021F.html#02a3">ParseSpeechString_Term</a></td>
+</tr>
+<tr>
+<td class="asm-label">ParseSpeechString_Mapped</td>
+<td class="address-2"><span id="027a"></span>027A</td>
+<td class="instruction">LD BC,$0035</td>
+<td class="comment-1" rowspan="3">Fetch the mapped allophone from <a href="03CA.html">MappedCharacters</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="027d"></span>027D</td>
+<td class="instruction">ADD HL,BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="027e"></span>027E</td>
+<td class="instruction">LD A,(HL)</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="027f"></span>027F</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the string pointer from the stack.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="0280"></span>
+<div class="comments">
+<div class="paragraph">
+Apply intonation and queue the allophone.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ParseSpeechString_Store</td>
+<td class="address-2"><span id="0280"></span>0280</td>
+<td class="instruction">LD B,A</td>
+<td class="comment-1" rowspan="1">Keep the allophone in <span class="register">B</span>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0281"></span>0281</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="1">Set the flags-byte index.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0282"></span>0282</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="1">Stash the string pointer on the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0283"></span>0283</td>
+<td class="instruction">CALL <a href="0354.html">ReadWorkspace</a></td>
+<td class="comment-1" rowspan="1">Call <a href="0354.html">ReadWorkspace</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0286"></span>0286</td>
+<td class="instruction">POP HL</td>
+<td class="comment-1" rowspan="1">Restore the string pointer from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0287"></span>0287</td>
+<td class="instruction">AND %01000000</td>
+<td class="comment-1" rowspan="1">Keep only bit 6 (intonation).</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0289"></span>0289</td>
+<td class="instruction">ADD A,B</td>
+<td class="comment-1" rowspan="1">Apply the intonation bit to the allophone.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="028a"></span>028A</td>
+<td class="instruction">POP BC</td>
+<td class="comment-1" rowspan="1">Restore the buffer pointer from the stack.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="028b"></span>028B</td>
+<td class="instruction">LD (BC),A</td>
+<td class="comment-1" rowspan="2">Queue the allophone in the speech buffer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="028c"></span>028C</td>
+<td class="instruction">DEC BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="028d"></span>028D</td>
+<td class="instruction">CALL <a href="0375.html">CheckMemory</a></td>
+<td class="comment-1" rowspan="2">Call <a href="0375.html">CheckMemory</a> and return if the buffer is full.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0290"></span>0290</td>
+<td class="instruction">RET C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0291"></span>0291</td>
+<td class="instruction">PUSH HL</td>
+<td class="comment-1" rowspan="4">Jump to <a href="021F.html#023a">ParseSpeechString_Next</a> if there are still characters left in <a href="../reference/facts.html#sstring">s$</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0292"></span>0292</td>
+<td class="instruction">SBC HL,DE</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0294"></span>0294</td>
+<td class="instruction">POP HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0295"></span>0295</td>
+<td class="instruction">JR C,<a href="021F.html#023a">ParseSpeechString_Next</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0297"></span>0297</td>
+<td class="instruction">XOR A</td>
+<td class="comment-1" rowspan="3">Write a terminator to the speech buffer.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0298"></span>0298</td>
+<td class="instruction">LD (BC),A</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0299"></span>0299</td>
+<td class="instruction">DEC BC</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="029a"></span>029A</td>
+<td class="instruction">CALL <a href="0375.html">CheckMemory</a></td>
+<td class="comment-1" rowspan="2">Call <a href="0375.html">CheckMemory</a> and return if the buffer is full.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="029d"></span>029D</td>
+<td class="instruction">RET C</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="029e"></span>029E</td>
+<td class="instruction">CALL <a href="038A.html">WriteBufferPointer</a></td>
+<td class="comment-1" rowspan="1">Call <a href="038A.html">WriteBufferPointer</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="02a1"></span>02A1</td>
+<td class="instruction">LD C,$2A</td>
+<td class="comment-1" rowspan="1">Use "*" as the "already spoken" marker.</td>
+</tr>
+<tr>
+<td class="routine-comment" colspan="5">
+<span id="02a3"></span>
+<div class="comments">
+<div class="paragraph">
+Overwrite the first character of <a href="../reference/facts.html#sstring">s$</a> so it will not be spoken again.
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="asm-label">ParseSpeechString_Term</td>
+<td class="address-2"><span id="02a3"></span>02A3</td>
+<td class="instruction">LD A,$53</td>
+<td class="comment-1" rowspan="2">Call <a href="01CD.html">FindVariable</a> for "<a href="../reference/facts.html#sstring">s$</a>".</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="02a5"></span>02A5</td>
+<td class="instruction">CALL <a href="01CD.html">FindVariable</a></td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="02a8"></span>02A8</td>
+<td class="instruction">INC HL</td>
+<td class="comment-1" rowspan="3">Move to the first character of <a href="../reference/facts.html#sstring">s$</a>.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="02a9"></span>02A9</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="02aa"></span>02AA</td>
+<td class="instruction">INC HL</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="02ab"></span>02AB</td>
+<td class="instruction">LD (HL),C</td>
+<td class="comment-1" rowspan="1">Mark <a href="../reference/facts.html#sstring">s$</a> as already spoken.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="02ac"></span>02AC</td>
+<td class="instruction">RET</td>
+<td class="comment-1" rowspan="1">Return.</td>
+</tr>
+</table>
+<table class="asm-navigation">
+<tr>
+<td class="prev">
+Prev: <a href="01CD.html">01CD</a>
+</td>
+<td class="up">Up: <a href="../maps/all.html#021f">Map</a></td>
+<td class="next">
+Next: <a href="02AD.html">02AD</a>
+</td>
+</tr>
+</table>
+<footer>
+<div class="release"></div>
+<div class="copyright">&copy; 1983 Currah &copy; 2024 ArcadeGeek LTD.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah/">Source code</a>.</div>
+<div><a href="../dec/asm/543.html">Switch to decimal</a>.</div>
+</footer>
+</body>
+</html>
