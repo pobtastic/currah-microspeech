@@ -277,6 +277,15 @@ def patch_ctl(slugs: dict[int, str]):
             in_dict = True
         elif raw.startswith("w $075B "):
             in_dict = False
+        audio_n = (
+            re.match(r"N (\$[0-9A-Fa-f]{4}) #AUDIO0\([^)]+\)\s*$", raw)
+            if in_dict
+            else None
+        )
+        if audio_n:
+            addr = int(audio_n.group(1)[1:], 16)
+            if addr in slugs:
+                continue
         match = (
             re.match(r"(  \$[0-9A-Fa-f]{4},\$[0-9A-Fa-f]+ )(.+)$", raw)
             if in_dict
@@ -285,12 +294,13 @@ def patch_ctl(slugs: dict[int, str]):
         if match:
             prefix, comment = match.group(1), match.group(2)
             addr = int(prefix[3:7], 16)
+            comment = re.sub(r" #AUDIO0?\([^)]+\)", "", comment)
+            raw = prefix + comment
             if addr in slugs:
-                comment = re.sub(r" #AUDIO0?\([^)]+\)", "", comment)
-                audio = f" #AUDIO0(key-{slugs[addr]}.wav)"
-                raw = prefix + comment + audio
-                if len(raw) > 80:
-                    raise SystemExit(f"line exceeds 80 characters: {raw}")
+                nline = f"N ${addr:04X} #AUDIO0(key-{slugs[addr]}.wav)"
+                if len(nline) > 80 or len(raw) > 80:
+                    raise SystemExit(f"line exceeds 80 characters: {nline}")
+                out.append(nline + "\n")
         out.append(raw + ("\n" if line.endswith("\n") else ""))
     CTL.write_text("".join(out))
 

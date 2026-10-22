@@ -595,166 +595,321 @@ D $0447 Character-to-allophone lists used from #R$012C. Each
 . #LINK(Sound)(Allophones) page.
   $0447,$01 Dummy list terminator.
 N $0448 Control keys.
-  $0448,$05 EDIT. #AUDIO0(key-edit.wav)
-  $044D,$07 ENTER. #AUDIO0(key-enter.wav)
-  $0454,$08 Cursor. #AUDIO0(key-cursor.wav)
-  $045C,$06 DELETE. #AUDIO0(key-delete.wav)
+N $0448 #AUDIO0(key-edit.wav)
+  $0448,$05 EDIT.
+N $044D #AUDIO0(key-enter.wav)
+  $044D,$07 ENTER.
+N $0454 #AUDIO0(key-cursor.wav)
+  $0454,$08 Cursor.
+N $045C #AUDIO0(key-delete.wav)
+  $045C,$06 DELETE.
 N $0462 Colour tokens, graphics and symbols.
-  $0462,$04 INK. #AUDIO0(key-ink.wav)
-  $0466,$06 PAPER. #AUDIO0(key-paper.wav)
-  $046C,$07 Block graphics. #AUDIO0(key-graphics.wav)
-  $0473,$05 FLASH. #AUDIO0(key-flash.wav)
-  $0478,$06 BRIGHT. #AUDIO0(key-bright.wav)
-  $047E,$07 INVERSE. #AUDIO0(key-inverse.wav)
-  $0485,$04 OVER. #AUDIO0(key-over.wav)
-  $0489,$03 AT. #AUDIO0(key-at.wav)
-  $048C,$05 TAB. #AUDIO0(key-tab.wav)
-  $0491,$0C "!". #AUDIO0(key-excl.wav)
-  $049D,$05 Quotation mark. #AUDIO0(key-quot.wav)
-  $04A2,$04 "&". #AUDIO0(key-amp.wav)
-  $04A6,$0A "'". #AUDIO0(key-apos.wav)
-  $04B0,$07 "(". #AUDIO0(key-lparen.wav)
-  $04B7,$09 "<". #AUDIO0(key-lt.wav)
-  $04C0,$06 ">". #AUDIO0(key-gt.wav)
-  $04C6,$0E >=. #AUDIO0(key-ge.wav)
-  $04D4,$11 <=. #AUDIO0(key-le.wav)
-  $04E5,$0A <>. #AUDIO0(key-ne.wav)
-  $04EF,$06 "/". #AUDIO0(key-slash.wav)
-  $04F5,$09 "\". #AUDIO0(key-bslash.wav)
-  $04FE,$05 ".". #AUDIO0(key-dot.wav)
-  $0503,$05 ",". #AUDIO0(key-comma.wav)
-  $0508,$0A ";". #AUDIO0(key-semi.wav)
-  $0512,$08 "_". #AUDIO0(key-und.wav)
-  $051A,$04 "*". #AUDIO0(key-star.wav)
-  $051E,$05 "`". #AUDIO0(key-grave.wav)
-  $0523,$06 "+". #AUDIO0(key-plus.wav)
-  $0529,$07 "-". #AUDIO0(key-minus.wav)
-  $0530,$06 Space. #AUDIO0(key-space.wav)
-  $0536,$05 "^". #AUDIO0(key-hat.wav)
-  $053B,$06 "?". #AUDIO0(key-query.wav)
-  $0541,$03 "|". #AUDIO0(key-pipe.wav)
-  $0544,$08 Copyright. #AUDIO0(key-copyright.wav)
-  $054C,$04 LET. #AUDIO0(key-let.wav)
-  $0550,$06 ":". #AUDIO0(key-colon.wav)
-  $0556,$07 "=". #AUDIO0(key-eq.wav)
-  $055D,$04 NEW. #AUDIO0(key-new.wav)
+N $0462 #AUDIO0(key-ink.wav)
+  $0462,$04 INK.
+N $0466 #AUDIO0(key-paper.wav)
+  $0466,$06 PAPER.
+N $046C #AUDIO0(key-graphics.wav)
+  $046C,$07 Block graphics.
+N $0473 #AUDIO0(key-flash.wav)
+  $0473,$05 FLASH.
+N $0478 #AUDIO0(key-bright.wav)
+  $0478,$06 BRIGHT.
+N $047E #AUDIO0(key-inverse.wav)
+  $047E,$07 INVERSE.
+N $0485 #AUDIO0(key-over.wav)
+  $0485,$04 OVER.
+N $0489 #AUDIO0(key-at.wav)
+  $0489,$03 AT.
+N $048C #AUDIO0(key-tab.wav)
+  $048C,$05 TAB.
+N $0491 #AUDIO0(key-excl.wav)
+  $0491,$0C "!".
+N $049D #AUDIO0(key-quot.wav)
+  $049D,$05 Quotation mark.
+N $04A2 #AUDIO0(key-amp.wav)
+  $04A2,$04 "&".
+N $04A6 #AUDIO0(key-apos.wav)
+  $04A6,$0A "'".
+N $04B0 #AUDIO0(key-lparen.wav)
+  $04B0,$07 "(".
+N $04B7 #AUDIO0(key-lt.wav)
+  $04B7,$09 "<".
+N $04C0 #AUDIO0(key-gt.wav)
+  $04C0,$06 ">".
+N $04C6 #AUDIO0(key-ge.wav)
+  $04C6,$0E >=.
+N $04D4 #AUDIO0(key-le.wav)
+  $04D4,$11 <=.
+N $04E5 #AUDIO0(key-ne.wav)
+  $04E5,$0A <>.
+N $04EF #AUDIO0(key-slash.wav)
+  $04EF,$06 "/".
+N $04F5 #AUDIO0(key-bslash.wav)
+  $04F5,$09 "\".
+N $04FE #AUDIO0(key-dot.wav)
+  $04FE,$05 ".".
+N $0503 #AUDIO0(key-comma.wav)
+  $0503,$05 ",".
+N $0508 #AUDIO0(key-semi.wav)
+  $0508,$0A ";".
+N $0512 #AUDIO0(key-und.wav)
+  $0512,$08 "_".
+N $051A #AUDIO0(key-star.wav)
+  $051A,$04 "*".
+N $051E #AUDIO0(key-grave.wav)
+  $051E,$05 "`".
+N $0523 #AUDIO0(key-plus.wav)
+  $0523,$06 "+".
+N $0529 #AUDIO0(key-minus.wav)
+  $0529,$07 "-".
+N $0530 #AUDIO0(key-space.wav)
+  $0530,$06 Space.
+N $0536 #AUDIO0(key-hat.wav)
+  $0536,$05 "^".
+N $053B #AUDIO0(key-query.wav)
+  $053B,$06 "?".
+N $0541 #AUDIO0(key-pipe.wav)
+  $0541,$03 "|".
+N $0544 #AUDIO0(key-copyright.wav)
+  $0544,$08 Copyright.
+N $054C #AUDIO0(key-let.wav)
+  $054C,$04 LET.
+N $0550 #AUDIO0(key-colon.wav)
+  $0550,$06 ":".
+N $0556 #AUDIO0(key-eq.wav)
+  $0556,$07 "=".
+N $055D #AUDIO0(key-new.wav)
+  $055D,$04 NEW.
 N $0561 Digits.
-  $0561,$04 "0". #AUDIO0(key-0.wav)
-  $0565,$04 "1". #AUDIO0(key-1.wav)
-  $0569,$03 "2". #AUDIO0(key-2.wav)
-  $056C,$04 "3". #AUDIO0(key-3.wav)
-  $0570,$03 "4". #AUDIO0(key-4.wav)
-  $0573,$04 "5". #AUDIO0(key-5.wav)
-  $0577,$05 "6". #AUDIO0(key-6.wav)
-  $057C,$06 "7". #AUDIO0(key-7.wav)
-  $0582,$03 "8". #AUDIO0(key-8.wav)
-  $0585,$05 "9". #AUDIO0(key-9.wav)
+N $0561 #AUDIO0(key-0.wav)
+  $0561,$04 "0".
+N $0565 #AUDIO0(key-1.wav)
+  $0565,$04 "1".
+N $0569 #AUDIO0(key-2.wav)
+  $0569,$03 "2".
+N $056C #AUDIO0(key-3.wav)
+  $056C,$04 "3".
+N $0570 #AUDIO0(key-4.wav)
+  $0570,$03 "4".
+N $0573 #AUDIO0(key-5.wav)
+  $0573,$04 "5".
+N $0577 #AUDIO0(key-6.wav)
+  $0577,$05 "6".
+N $057C #AUDIO0(key-7.wav)
+  $057C,$06 "7".
+N $0582 #AUDIO0(key-8.wav)
+  $0582,$03 "8".
+N $0585 #AUDIO0(key-9.wav)
+  $0585,$05 "9".
 N $058A Number sign, dollar and percent.
-  $058A,$04 "#". #AUDIO0(key-hash.wav)
-  $058E,$05 "$". #AUDIO0(key-dollar.wav)
-  $0593,$08 "%". #AUDIO0(key-pct.wav)
+N $058A #AUDIO0(key-hash.wav)
+  $058A,$04 "#".
+N $058E #AUDIO0(key-dollar.wav)
+  $058E,$05 "$".
+N $0593 #AUDIO0(key-pct.wav)
+  $0593,$08 "%".
 N $059B Letters.
-  $059B,$02 "A". #AUDIO0(key-a.wav)
-  $059D,$03 "B". #AUDIO0(key-b.wav)
-  $05A0,$04 "C". #AUDIO0(key-c.wav)
-  $05A4,$03 "D". #AUDIO0(key-d.wav)
-  $05A7,$02 "E". #AUDIO0(key-e.wav)
-  $05A9,$04 "F". #AUDIO0(key-f.wav)
-  $05AD,$03 "G". #AUDIO0(key-g.wav)
-  $05B0,$03 "H". #AUDIO0(key-h.wav)
-  $05B3,$02 "I". #AUDIO0(key-i.wav)
-  $05B5,$03 "J". #AUDIO0(key-j.wav)
-  $05B8,$03 "K". #AUDIO0(key-k.wav)
-  $05BB,$03 "L". #AUDIO0(key-l.wav)
-  $05BE,$03 "M". #AUDIO0(key-m.wav)
-  $05C1,$03 "N". #AUDIO0(key-n.wav)
-  $05C4,$02 "O". #AUDIO0(key-o.wav)
-  $05C6,$03 "P". #AUDIO0(key-p.wav)
-  $05C9,$04 "Q". #AUDIO0(key-q.wav)
-  $05CD,$02 "R". #AUDIO0(key-r.wav)
-  $05CF,$04 "S". #AUDIO0(key-s.wav)
-  $05D3,$03 "T". #AUDIO0(key-t.wav)
-  $05D6,$03 "U". #AUDIO0(key-u.wav)
-  $05D9,$03 "V". #AUDIO0(key-v.wav)
-  $05DC,$07 "W". #AUDIO0(key-w.wav)
-  $05E3,$04 "X". #AUDIO0(key-x.wav)
-  $05E7,$03 "Y". #AUDIO0(key-y.wav)
-  $05EA,$05 "Z". #AUDIO0(key-z.wav)
+N $059B #AUDIO0(key-a.wav)
+  $059B,$02 "A".
+N $059D #AUDIO0(key-b.wav)
+  $059D,$03 "B".
+N $05A0 #AUDIO0(key-c.wav)
+  $05A0,$04 "C".
+N $05A4 #AUDIO0(key-d.wav)
+  $05A4,$03 "D".
+N $05A7 #AUDIO0(key-e.wav)
+  $05A7,$02 "E".
+N $05A9 #AUDIO0(key-f.wav)
+  $05A9,$04 "F".
+N $05AD #AUDIO0(key-g.wav)
+  $05AD,$03 "G".
+N $05B0 #AUDIO0(key-h.wav)
+  $05B0,$03 "H".
+N $05B3 #AUDIO0(key-i.wav)
+  $05B3,$02 "I".
+N $05B5 #AUDIO0(key-j.wav)
+  $05B5,$03 "J".
+N $05B8 #AUDIO0(key-k.wav)
+  $05B8,$03 "K".
+N $05BB #AUDIO0(key-l.wav)
+  $05BB,$03 "L".
+N $05BE #AUDIO0(key-m.wav)
+  $05BE,$03 "M".
+N $05C1 #AUDIO0(key-n.wav)
+  $05C1,$03 "N".
+N $05C4 #AUDIO0(key-o.wav)
+  $05C4,$02 "O".
+N $05C6 #AUDIO0(key-p.wav)
+  $05C6,$03 "P".
+N $05C9 #AUDIO0(key-q.wav)
+  $05C9,$04 "Q".
+N $05CD #AUDIO0(key-r.wav)
+  $05CD,$02 "R".
+N $05CF #AUDIO0(key-s.wav)
+  $05CF,$04 "S".
+N $05D3 #AUDIO0(key-t.wav)
+  $05D3,$03 "T".
+N $05D6 #AUDIO0(key-u.wav)
+  $05D6,$03 "U".
+N $05D9 #AUDIO0(key-v.wav)
+  $05D9,$03 "V".
+N $05DC #AUDIO0(key-w.wav)
+  $05DC,$07 "W".
+N $05E3 #AUDIO0(key-x.wav)
+  $05E3,$04 "X".
+N $05E7 #AUDIO0(key-y.wav)
+  $05E7,$03 "Y".
+N $05EA #AUDIO0(key-z.wav)
+  $05EA,$05 "Z".
 N $05EF BASIC tokens.
-  $05EF,$05 RND. #AUDIO0(key-rnd.wav)
-  $05F4,$06 INKEY$. #AUDIO0(key-inkey.wav)
-  $05FA,$03 PI. #AUDIO0(key-pi.wav)
-  $05FD,$08 FN. #AUDIO0(key-fn.wav)
-  $0605,$06 SCREEN$. #AUDIO0(key-screen.wav)
-  $060B,$04 ATTR. #AUDIO0(key-attr.wav)
-  $060F,$05 VAL$. #AUDIO0(key-valstr.wav)
-  $0614,$04 CODE. #AUDIO0(key-code.wav)
-  $0618,$04 VAL. #AUDIO0(key-val.wav)
-  $061C,$04 LEN. #AUDIO0(key-len.wav)
-  $0620,$04 SIN. #AUDIO0(key-sin.wav)
-  $0624,$04 COS. #AUDIO0(key-cos.wav)
-  $0628,$04 TAN. #AUDIO0(key-tan.wav)
-  $062C,$06 ASN. #AUDIO0(key-asn.wav)
-  $0632,$07 ACS. #AUDIO0(key-acs.wav)
-  $0639,$06 ATN. #AUDIO0(key-atn.wav)
-  $063F,$05 LN. #AUDIO0(key-ln.wav)
-  $0644,$05 EXP. #AUDIO0(key-exp.wav)
-  $0649,$04 INT. #AUDIO0(key-int.wav)
-  $064D,$04 SQR. #AUDIO0(key-sqr.wav)
-  $0651,$04 ABS. #AUDIO0(key-abs.wav)
-  $0655,$04 PEEK. #AUDIO0(key-peek.wav)
-  $0659,$03 IN. #AUDIO0(key-in.wav)
-  $065C,$05 USR. #AUDIO0(key-usr.wav)
-  $0661,$06 STR$. #AUDIO0(key-str.wav)
-  $0667,$04 CHR$. #AUDIO0(key-chr.wav)
-  $066B,$04 NOT. #AUDIO0(key-not.wav)
-  $066F,$04 BIN. #AUDIO0(key-bin.wav)
-  $0673,$02 OR. #AUDIO0(key-or.wav)
-  $0675,$04 LINE. #AUDIO0(key-line.wav)
-  $0679,$04 THEN. #AUDIO0(key-then.wav)
-  $067D,$03 TO. #AUDIO0(key-to.wav)
-  $0680,$05 STEP. #AUDIO0(key-step.wav)
-  $0685,$06 DEF FN. #AUDIO0(key-deffn.wav)
-  $068B,$04 CAT. #AUDIO0(key-cat.wav)
-  $068F,$06 FORMAT. #AUDIO0(key-format.wav)
-  $0695,$04 MOVE. #AUDIO0(key-move.wav)
-  $0699,$04 ERASE. #AUDIO0(key-erase.wav)
-  $069D,$05 OPEN #. #AUDIO0(key-open.wav)
-  $06A2,$05 CLOSE #. #AUDIO0(key-close.wav)
-  $06A7,$05 MERGE. #AUDIO0(key-merge.wav)
-  $06AC,$07 VERIFY. #AUDIO0(key-verify.wav)
-  $06B3,$04 BEEP. #AUDIO0(key-beep.wav)
-  $06B7,$06 CIRCLE. #AUDIO0(key-circle.wav)
-  $06BD,$03 OUT. #AUDIO0(key-out.wav)
-  $06C0,$09 LPRINT. #AUDIO0(key-lprint.wav)
-  $06C9,$08 LLIST. #AUDIO0(key-llist.wav)
-  $06D1,$05 STOP. #AUDIO0(key-stop.wav)
-  $06D6,$04 READ. #AUDIO0(key-read.wav)
-  $06DA,$05 DATA. #AUDIO0(key-data.wav)
-  $06DF,$06 RESTORE. #AUDIO0(key-restore.wav)
-  $06E5,$05 BORDER. #AUDIO0(key-border.wav)
-  $06EA,$09 CONTINUE. #AUDIO0(key-continue.wav)
-  $06F3,$04 DIM. #AUDIO0(key-dim.wav)
-  $06F7,$04 REM. #AUDIO0(key-rem.wav)
-  $06FB,$03 FOR. #AUDIO0(key-for.wav)
-  $06FE,$06 GO TO. #AUDIO0(key-goto.wav)
-  $0704,$07 GO SUB. #AUDIO0(key-gosub.wav)
-  $070B,$06 INPUT. #AUDIO0(key-input.wav)
-  $0711,$04 LOAD. #AUDIO0(key-load.wav)
-  $0715,$05 LIST. #AUDIO0(key-list.wav)
-  $071A,$04 PAUSE. #AUDIO0(key-pause.wav)
-  $071E,$06 NEXT. #AUDIO0(key-next.wav)
-  $0724,$04 POKE. #AUDIO0(key-poke.wav)
-  $0728,$06 PRINT. #AUDIO0(key-print.wav)
-  $072E,$05 PLOT. #AUDIO0(key-plot.wav)
-  $0733,$04 RUN. #AUDIO0(key-run.wav)
-  $0737,$04 SAVE. #AUDIO0(key-save.wav)
-  $073B,$09 RANDOMIZE. #AUDIO0(key-randomize.wav)
-  $0744,$03 IF. #AUDIO0(key-if.wav)
-  $0747,$04 DRAW. #AUDIO0(key-draw.wav)
-  $074B,$04 CLEAR. #AUDIO0(key-clear.wav)
-  $074F,$06 RETURN. #AUDIO0(key-return.wav)
-  $0755,$05 COPY. #AUDIO0(key-copy.wav)
+N $05EF #AUDIO0(key-rnd.wav)
+  $05EF,$05 RND.
+N $05F4 #AUDIO0(key-inkey.wav)
+  $05F4,$06 INKEY$.
+N $05FA #AUDIO0(key-pi.wav)
+  $05FA,$03 PI.
+N $05FD #AUDIO0(key-fn.wav)
+  $05FD,$08 FN.
+N $0605 #AUDIO0(key-screen.wav)
+  $0605,$06 SCREEN$.
+N $060B #AUDIO0(key-attr.wav)
+  $060B,$04 ATTR.
+N $060F #AUDIO0(key-valstr.wav)
+  $060F,$05 VAL$.
+N $0614 #AUDIO0(key-code.wav)
+  $0614,$04 CODE.
+N $0618 #AUDIO0(key-val.wav)
+  $0618,$04 VAL.
+N $061C #AUDIO0(key-len.wav)
+  $061C,$04 LEN.
+N $0620 #AUDIO0(key-sin.wav)
+  $0620,$04 SIN.
+N $0624 #AUDIO0(key-cos.wav)
+  $0624,$04 COS.
+N $0628 #AUDIO0(key-tan.wav)
+  $0628,$04 TAN.
+N $062C #AUDIO0(key-asn.wav)
+  $062C,$06 ASN.
+N $0632 #AUDIO0(key-acs.wav)
+  $0632,$07 ACS.
+N $0639 #AUDIO0(key-atn.wav)
+  $0639,$06 ATN.
+N $063F #AUDIO0(key-ln.wav)
+  $063F,$05 LN.
+N $0644 #AUDIO0(key-exp.wav)
+  $0644,$05 EXP.
+N $0649 #AUDIO0(key-int.wav)
+  $0649,$04 INT.
+N $064D #AUDIO0(key-sqr.wav)
+  $064D,$04 SQR.
+N $0651 #AUDIO0(key-abs.wav)
+  $0651,$04 ABS.
+N $0655 #AUDIO0(key-peek.wav)
+  $0655,$04 PEEK.
+N $0659 #AUDIO0(key-in.wav)
+  $0659,$03 IN.
+N $065C #AUDIO0(key-usr.wav)
+  $065C,$05 USR.
+N $0661 #AUDIO0(key-str.wav)
+  $0661,$06 STR$.
+N $0667 #AUDIO0(key-chr.wav)
+  $0667,$04 CHR$.
+N $066B #AUDIO0(key-not.wav)
+  $066B,$04 NOT.
+N $066F #AUDIO0(key-bin.wav)
+  $066F,$04 BIN.
+N $0673 #AUDIO0(key-or.wav)
+  $0673,$02 OR.
+N $0675 #AUDIO0(key-line.wav)
+  $0675,$04 LINE.
+N $0679 #AUDIO0(key-then.wav)
+  $0679,$04 THEN.
+N $067D #AUDIO0(key-to.wav)
+  $067D,$03 TO.
+N $0680 #AUDIO0(key-step.wav)
+  $0680,$05 STEP.
+N $0685 #AUDIO0(key-deffn.wav)
+  $0685,$06 DEF FN.
+N $068B #AUDIO0(key-cat.wav)
+  $068B,$04 CAT.
+N $068F #AUDIO0(key-format.wav)
+  $068F,$06 FORMAT.
+N $0695 #AUDIO0(key-move.wav)
+  $0695,$04 MOVE.
+N $0699 #AUDIO0(key-erase.wav)
+  $0699,$04 ERASE.
+N $069D #AUDIO0(key-open.wav)
+  $069D,$05 OPEN #.
+N $06A2 #AUDIO0(key-close.wav)
+  $06A2,$05 CLOSE #.
+N $06A7 #AUDIO0(key-merge.wav)
+  $06A7,$05 MERGE.
+N $06AC #AUDIO0(key-verify.wav)
+  $06AC,$07 VERIFY.
+N $06B3 #AUDIO0(key-beep.wav)
+  $06B3,$04 BEEP.
+N $06B7 #AUDIO0(key-circle.wav)
+  $06B7,$06 CIRCLE.
+N $06BD #AUDIO0(key-out.wav)
+  $06BD,$03 OUT.
+N $06C0 #AUDIO0(key-lprint.wav)
+  $06C0,$09 LPRINT.
+N $06C9 #AUDIO0(key-llist.wav)
+  $06C9,$08 LLIST.
+N $06D1 #AUDIO0(key-stop.wav)
+  $06D1,$05 STOP.
+N $06D6 #AUDIO0(key-read.wav)
+  $06D6,$04 READ.
+N $06DA #AUDIO0(key-data.wav)
+  $06DA,$05 DATA.
+N $06DF #AUDIO0(key-restore.wav)
+  $06DF,$06 RESTORE.
+N $06E5 #AUDIO0(key-border.wav)
+  $06E5,$05 BORDER.
+N $06EA #AUDIO0(key-continue.wav)
+  $06EA,$09 CONTINUE.
+N $06F3 #AUDIO0(key-dim.wav)
+  $06F3,$04 DIM.
+N $06F7 #AUDIO0(key-rem.wav)
+  $06F7,$04 REM.
+N $06FB #AUDIO0(key-for.wav)
+  $06FB,$03 FOR.
+N $06FE #AUDIO0(key-goto.wav)
+  $06FE,$06 GO TO.
+N $0704 #AUDIO0(key-gosub.wav)
+  $0704,$07 GO SUB.
+N $070B #AUDIO0(key-input.wav)
+  $070B,$06 INPUT.
+N $0711 #AUDIO0(key-load.wav)
+  $0711,$04 LOAD.
+N $0715 #AUDIO0(key-list.wav)
+  $0715,$05 LIST.
+N $071A #AUDIO0(key-pause.wav)
+  $071A,$04 PAUSE.
+N $071E #AUDIO0(key-next.wav)
+  $071E,$06 NEXT.
+N $0724 #AUDIO0(key-poke.wav)
+  $0724,$04 POKE.
+N $0728 #AUDIO0(key-print.wav)
+  $0728,$06 PRINT.
+N $072E #AUDIO0(key-plot.wav)
+  $072E,$05 PLOT.
+N $0733 #AUDIO0(key-run.wav)
+  $0733,$04 RUN.
+N $0737 #AUDIO0(key-save.wav)
+  $0737,$04 SAVE.
+N $073B #AUDIO0(key-randomize.wav)
+  $073B,$09 RANDOMIZE.
+N $0744 #AUDIO0(key-if.wav)
+  $0744,$03 IF.
+N $0747 #AUDIO0(key-draw.wav)
+  $0747,$04 DRAW.
+N $074B #AUDIO0(key-clear.wav)
+  $074B,$04 CLEAR.
+N $074F #AUDIO0(key-return.wav)
+  $074F,$06 RETURN.
+N $0755 #AUDIO0(key-copy.wav)
+  $0755,$05 COPY.
   $075A,$01 Table end.
 
 w $075B Banner Addresses

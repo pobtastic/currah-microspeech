@@ -857,181 +857,339 @@ b$043A DEFB $28,$28,$28,$28,$28,$2E,$FD,$AC,$08,$08,$08,$B2,$26
 @label=AllophoneDictionary
 b$0447 DEFB $80                             ; Dummy list terminator.
 ; Control keys.
- $0448 DEFB $07,$47,$15,$0C,$8D             ; EDIT. #AUDIO0(key-edit.wav)
- $044D DEFB $0D,$47,$07,$0B,$00,$0D,$9A     ; ENTER. #AUDIO0(key-enter.wav)
- $0454 DEFB $08,$08,$00,$33,$00,$37,$37,$B3 ; Cursor. #AUDIO0(key-cursor.wav)
- $045C DEFB $0C,$21,$4C,$2D,$13,$91         ; DELETE. #AUDIO0(key-delete.wav)
+; .
+; #AUDIO0(key-edit.wav)
+ $0448 DEFB $07,$47,$15,$0C,$8D             ; EDIT.
+; #AUDIO0(key-enter.wav)
+ $044D DEFB $0D,$47,$07,$0B,$00,$0D,$9A     ; ENTER.
+; #AUDIO0(key-cursor.wav)
+ $0454 DEFB $08,$08,$00,$33,$00,$37,$37,$B3 ; Cursor.
+; #AUDIO0(key-delete.wav)
+ $045C DEFB $0C,$21,$4C,$2D,$13,$91         ; DELETE.
 ; Colour tokens, graphics and symbols.
- $0462 DEFB $D9,$0C,$2C,$AA                 ; INK. #AUDIO0(key-ink.wav)
- $0466 DEFB $DA,$09,$00,$54,$09,$B3         ; PAPER. #AUDIO0(key-paper.wav)
+; .
+; #AUDIO0(key-ink.wav)
+ $0462 DEFB $D9,$0C,$2C,$AA                 ; INK.
+; #AUDIO0(key-paper.wav)
+ $0466 DEFB $DA,$09,$00,$54,$09,$B3         ; PAPER.
+; #AUDIO0(key-graphics.wav)
  $046C DEFB $80,$3D,$27,$58,$28,$0C,$A9     ; Block graphics.
-                                            ; #AUDIO0(key-graphics.wav)
- $0473 DEFB $DB,$28,$2D,$58,$A5             ; FLASH. #AUDIO0(key-flash.wav)
- $0478 DEFB $DC,$1C,$27,$00,$06,$8D         ; BRIGHT. #AUDIO0(key-bright.wav)
- $047E DEFB $DD,$4C,$0C,$0B,$23,$34,$B7     ; INVERSE. #AUDIO0(key-inverse.wav)
- $0485 DEFB $DE,$75,$23,$B3                 ; OVER. #AUDIO0(key-over.wav)
- $0489 DEFB $AC,$18,$8D                     ; AT. #AUDIO0(key-at.wav)
- $048C DEFB $AD,$0D,$18,$18,$9C             ; TAB. #AUDIO0(key-tab.wav)
- $0491 DEFB $21,$47,$0A,$37,$08,$2D,$1A,$10 ; {"!". #AUDIO0(key-excl.wav)
+; #AUDIO0(key-flash.wav)
+ $0473 DEFB $DB,$28,$2D,$58,$A5             ; FLASH.
+; #AUDIO0(key-bright.wav)
+ $0478 DEFB $DC,$1C,$27,$00,$06,$8D         ; BRIGHT.
+; #AUDIO0(key-inverse.wav)
+ $047E DEFB $DD,$4C,$0C,$0B,$23,$34,$B7     ; INVERSE.
+; #AUDIO0(key-over.wav)
+ $0485 DEFB $DE,$75,$23,$B3                 ; OVER.
+; #AUDIO0(key-at.wav)
+ $0489 DEFB $AC,$18,$8D                     ; AT.
+; #AUDIO0(key-tab.wav)
+ $048C DEFB $AD,$0D,$18,$18,$9C             ; TAB.
+; #AUDIO0(key-excl.wav)
+ $0491 DEFB $21,$47,$0A,$37,$08,$2D,$1A,$10 ; {"!".
  $0499 DEFB $54,$25,$0F,$8B                 ; }
+; #AUDIO0(key-quot.wav)
  $049D DEFB $22,$2A,$2E,$35,$91             ; Quotation mark.
-                                            ; #AUDIO0(key-quot.wav)
- $04A2 DEFB $26,$58,$2C,$95                 ; "&". #AUDIO0(key-amp.wav)
- $04A6 DEFB $27,$18,$09,$57,$37,$11,$27,$0F ; {"'". #AUDIO0(key-apos.wav)
+; #AUDIO0(key-amp.wav)
+ $04A2 DEFB $26,$58,$2C,$95                 ; "&".
+; #AUDIO0(key-apos.wav)
+ $04A6 DEFB $27,$18,$09,$57,$37,$11,$27,$0F ; {"'".
  $04AE DEFB $28,$93                         ; }
- $04B0 DEFB $28,$3F,$27,$58,$2A,$07,$8D     ; "(". #AUDIO0(key-lparen.wav)
- $04B7 DEFB $3C,$2D,$47,$37,$37,$01,$1D,$1A ; {"<". #AUDIO0(key-lt.wav)
+; #AUDIO0(key-lparen.wav)
+ $04B0 DEFB $28,$3F,$27,$58,$2A,$07,$8D     ; "(".
+; #AUDIO0(key-lt.wav)
+ $04B7 DEFB $3C,$2D,$47,$37,$37,$01,$1D,$1A ; {"<".
  $04BF DEFB $8B                             ; }
- $04C0 DEFB $3E,$3D,$27,$54,$0D,$B4         ; ">". #AUDIO0(key-gt.wav)
- $04C6 DEFB $C8,$3D,$27,$54,$0D,$34,$01,$3A ; {>=. #AUDIO0(key-ge.wav)
+; #AUDIO0(key-gt.wav)
+ $04C0 DEFB $3E,$3D,$27,$54,$0D,$B4         ; ">".
+; #AUDIO0(key-ge.wav)
+ $04C6 DEFB $C8,$3D,$27,$54,$0D,$34,$01,$3A ; {>=.
  $04CE DEFB $01,$53,$29,$2E,$0F,$AD         ; }
- $04D4 DEFB $C7,$2D,$47,$37,$37,$01,$12,$18 ; {<=. #AUDIO0(key-le.wav)
+; #AUDIO0(key-le.wav)
+ $04D4 DEFB $C7,$2D,$47,$37,$37,$01,$12,$18 ; {<=.
  $04DC DEFB $0B,$01,$3A,$01,$53,$29,$2E,$0F ;
  $04E4 DEFB $AD                             ; }
- $04E5 DEFB $C9,$0B,$57,$0D,$01,$53,$29,$2E ; {<>. #AUDIO0(key-ne.wav)
+; #AUDIO0(key-ne.wav)
+ $04E5 DEFB $C9,$0B,$57,$0D,$01,$53,$29,$2E ; {<>.
  $04ED DEFB $0F,$AD                         ; }
- $04EF DEFB $2F,$37,$37,$2D,$18,$A5         ; "/". #AUDIO0(key-slash.wav)
- $04F5 DEFB $5C,$3F,$58,$29,$01,$37,$2D,$18 ; {"\". #AUDIO0(key-bslash.wav)
+; #AUDIO0(key-slash.wav)
+ $04EF DEFB $2F,$37,$37,$2D,$18,$A5         ; "/".
+; #AUDIO0(key-bslash.wav)
+ $04F5 DEFB $5C,$3F,$58,$29,$01,$37,$2D,$18 ; {"\".
  $04FD DEFB $A5                             ; }
- $04FE DEFB $2E,$09,$05,$0B,$8D             ; ".". #AUDIO0(key-dot.wav)
- $0503 DEFB $2C,$08,$17,$10,$98             ; ",". #AUDIO0(key-comma.wav)
- $0508 DEFB $3B,$37,$47,$10,$13,$08,$35,$2D ; {";". #AUDIO0(key-semi.wav)
+; #AUDIO0(key-dot.wav)
+ $04FE DEFB $2E,$09,$05,$0B,$8D             ; ".".
+; #AUDIO0(key-comma.wav)
+ $0503 DEFB $2C,$08,$17,$10,$98             ; ",".
+; #AUDIO0(key-semi.wav)
+ $0508 DEFB $3B,$37,$47,$10,$13,$08,$35,$2D ; {";".
  $0510 DEFB $17,$8B                         ; }
- $0512 DEFB $5F,$4F,$0B,$15,$33,$2D,$06,$8B ; "_". #AUDIO0(key-und.wav)
- $051A DEFB $2A,$37,$0D,$BB                 ; "*". #AUDIO0(key-star.wav)
- $051E DEFB $60,$09,$20,$0B,$A1             ; "`". #AUDIO0(key-grave.wav)
- $0523 DEFB $2B,$09,$2D,$0F,$37,$B7         ; "+". #AUDIO0(key-plus.wav)
- $0529 DEFB $2D,$10,$46,$38,$0F,$37,$B7     ; "-". #AUDIO0(key-minus.wav)
- $0530 DEFB $20,$37,$09,$14,$37,$B7         ; Space. #AUDIO0(key-space.wav)
- $0536 DEFB $5E,$09,$60,$2E,$B3             ; "^". #AUDIO0(key-hat.wav)
- $053B DEFB $3F,$2A,$2E,$13,$27,$93         ; "?". #AUDIO0(key-query.wav)
- $0541 DEFB $7C,$1C,$BB                     ; "|". #AUDIO0(key-pipe.wav)
+; #AUDIO0(key-und.wav)
+ $0512 DEFB $5F,$4F,$0B,$15,$33,$2D,$06,$8B ; "_".
+; #AUDIO0(key-star.wav)
+ $051A DEFB $2A,$37,$0D,$BB                 ; "*".
+; #AUDIO0(key-grave.wav)
+ $051E DEFB $60,$09,$20,$0B,$A1             ; "`".
+; #AUDIO0(key-plus.wav)
+ $0523 DEFB $2B,$09,$2D,$0F,$37,$B7         ; "+".
+; #AUDIO0(key-minus.wav)
+ $0529 DEFB $2D,$10,$46,$38,$0F,$37,$B7     ; "-".
+; #AUDIO0(key-space.wav)
+ $0530 DEFB $20,$37,$09,$14,$37,$B7         ; Space.
+; #AUDIO0(key-hat.wav)
+ $0536 DEFB $5E,$09,$60,$2E,$B3             ; "^".
+; #AUDIO0(key-query.wav)
+ $053B DEFB $3F,$2A,$2E,$13,$27,$93         ; "?".
+; #AUDIO0(key-pipe.wav)
+ $0541 DEFB $7C,$1C,$BB                     ; "|".
+; #AUDIO0(key-copyright.wav)
  $0544 DEFB $7F,$08,$57,$09,$13,$27,$06,$8D ; Copyright.
-                                            ; #AUDIO0(key-copyright.wav)
- $054C DEFB $F1,$2D,$07,$8D                 ; LET. #AUDIO0(key-let.wav)
- $0550 DEFB $3A,$08,$75,$2D,$17,$8B         ; ":". #AUDIO0(key-colon.wav)
- $0556 DEFB $3D,$53,$29,$2E,$0F,$2D,$AB     ; "=". #AUDIO0(key-eq.wav)
- $055D DEFB $E6,$0B,$31,$9F                 ; NEW. #AUDIO0(key-new.wav)
+; #AUDIO0(key-let.wav)
+ $054C DEFB $F1,$2D,$07,$8D                 ; LET.
+; #AUDIO0(key-colon.wav)
+ $0550 DEFB $3A,$08,$75,$2D,$17,$8B         ; ":".
+; #AUDIO0(key-eq.wav)
+ $0556 DEFB $3D,$53,$29,$2E,$0F,$2D,$AB     ; "=".
+; #AUDIO0(key-new.wav)
+ $055D DEFB $E6,$0B,$31,$9F                 ; NEW.
 ; Digits.
- $0561 DEFB $30,$38,$3A,$8D                 ; "0". #AUDIO0(key-0.wav)
- $0565 DEFB $31,$2E,$57,$8B                 ; "1". #AUDIO0(key-1.wav)
- $0569 DEFB $32,$0D,$9F                     ; "2". #AUDIO0(key-2.wav)
- $056C DEFB $33,$1D,$33,$93                 ; "3". #AUDIO0(key-3.wav)
- $0570 DEFB $34,$28,$BA                     ; "4". #AUDIO0(key-4.wav)
- $0573 DEFB $35,$28,$06,$A3                 ; "5". #AUDIO0(key-5.wav)
- $0577 DEFB $36,$37,$4C,$2A,$B7             ; "6". #AUDIO0(key-6.wav)
- $057C DEFB $37,$37,$37,$47,$23,$8B         ; "7". #AUDIO0(key-7.wav)
- $0582 DEFB $38,$14,$8D                     ; "8". #AUDIO0(key-8.wav)
- $0585 DEFB $39,$0B,$00,$06,$8B             ; "9". #AUDIO0(key-9.wav)
+; .
+; #AUDIO0(key-0.wav)
+ $0561 DEFB $30,$38,$3A,$8D                 ; "0".
+; #AUDIO0(key-1.wav)
+ $0565 DEFB $31,$2E,$57,$8B                 ; "1".
+; #AUDIO0(key-2.wav)
+ $0569 DEFB $32,$0D,$9F                     ; "2".
+; #AUDIO0(key-3.wav)
+ $056C DEFB $33,$1D,$33,$93                 ; "3".
+; #AUDIO0(key-4.wav)
+ $0570 DEFB $34,$28,$BA                     ; "4".
+; #AUDIO0(key-5.wav)
+ $0573 DEFB $35,$28,$06,$A3                 ; "5".
+; #AUDIO0(key-6.wav)
+ $0577 DEFB $36,$37,$4C,$2A,$B7             ; "6".
+; #AUDIO0(key-7.wav)
+ $057C DEFB $37,$37,$37,$47,$23,$8B         ; "7".
+; #AUDIO0(key-8.wav)
+ $0582 DEFB $38,$14,$8D                     ; "8".
+; #AUDIO0(key-9.wav)
+ $0585 DEFB $39,$0B,$00,$06,$8B             ; "9".
 ; Number sign, dollar and percent.
- $058A DEFB $23,$1B,$5A,$A5                 ; "#". #AUDIO0(key-hash.wav)
- $058E DEFB $24,$21,$17,$2D,$B3             ; "$". #AUDIO0(key-dollar.wav)
- $0593 DEFB $25,$09,$33,$37,$37,$47,$0B,$8D ; "%". #AUDIO0(key-pct.wav)
+; .
+; #AUDIO0(key-hash.wav)
+ $058A DEFB $23,$1B,$5A,$A5                 ; "#".
+; #AUDIO0(key-dollar.wav)
+ $058E DEFB $24,$21,$17,$2D,$B3             ; "$".
+; #AUDIO0(key-pct.wav)
+ $0593 DEFB $25,$09,$33,$37,$37,$47,$0B,$8D ; "%".
 ; Letters.
- $059B DEFB $41,$94                         ; "A". #AUDIO0(key-a.wav)
- $059D DEFB $42,$3F,$93                     ; "B". #AUDIO0(key-b.wav)
- $05A0 DEFB $43,$37,$37,$93                 ; "C". #AUDIO0(key-c.wav)
- $05A4 DEFB $44,$21,$93                     ; "D". #AUDIO0(key-d.wav)
- $05A7 DEFB $45,$93                         ; "E". #AUDIO0(key-e.wav)
- $05A9 DEFB $46,$07,$28,$A8                 ; "F". #AUDIO0(key-f.wav)
- $05AD DEFB $47,$0A,$93                     ; "G". #AUDIO0(key-g.wav)
- $05B0 DEFB $48,$14,$B2                     ; "H". #AUDIO0(key-h.wav)
- $05B3 DEFB $49,$86                         ; "I". #AUDIO0(key-i.wav)
- $05B5 DEFB $4A,$0A,$94                     ; "J". #AUDIO0(key-j.wav)
- $05B8 DEFB $4B,$2A,$94                     ; "K". #AUDIO0(key-k.wav)
- $05BB DEFB $4C,$07,$BE                     ; "L". #AUDIO0(key-l.wav)
- $05BE DEFB $4D,$07,$90                     ; "M". #AUDIO0(key-m.wav)
- $05C1 DEFB $4E,$07,$AC                     ; "N". #AUDIO0(key-n.wav)
- $05C4 DEFB $4F,$B5                         ; "O". #AUDIO0(key-o.wav)
- $05C6 DEFB $50,$09,$93                     ; "P". #AUDIO0(key-p.wav)
- $05C9 DEFB $51,$2A,$19,$9F                 ; "Q". #AUDIO0(key-q.wav)
- $05CD DEFB $52,$BB                         ; "R". #AUDIO0(key-r.wav)
- $05CF DEFB $53,$07,$37,$B7                 ; "S". #AUDIO0(key-s.wav)
- $05D3 DEFB $54,$0D,$93                     ; "T". #AUDIO0(key-t.wav)
- $05D6 DEFB $55,$31,$9F                     ; "U". #AUDIO0(key-u.wav)
- $05D9 DEFB $56,$28,$93                     ; "V". #AUDIO0(key-v.wav)
- $05DC DEFB $57,$21,$4F,$3F,$3E,$31,$9F     ; "W". #AUDIO0(key-w.wav)
- $05E3 DEFB $58,$47,$2A,$B7                 ; "X". #AUDIO0(key-x.wav)
- $05E7 DEFB $59,$2E,$86                     ; "Y". #AUDIO0(key-y.wav)
- $05EA DEFB $5A,$2B,$07,$07,$95             ; "Z". #AUDIO0(key-z.wav)
+; .
+; #AUDIO0(key-a.wav)
+ $059B DEFB $41,$94                         ; "A".
+; #AUDIO0(key-b.wav)
+ $059D DEFB $42,$3F,$93                     ; "B".
+; #AUDIO0(key-c.wav)
+ $05A0 DEFB $43,$37,$37,$93                 ; "C".
+; #AUDIO0(key-d.wav)
+ $05A4 DEFB $44,$21,$93                     ; "D".
+; #AUDIO0(key-e.wav)
+ $05A7 DEFB $45,$93                         ; "E".
+; #AUDIO0(key-f.wav)
+ $05A9 DEFB $46,$07,$28,$A8                 ; "F".
+; #AUDIO0(key-g.wav)
+ $05AD DEFB $47,$0A,$93                     ; "G".
+; #AUDIO0(key-h.wav)
+ $05B0 DEFB $48,$14,$B2                     ; "H".
+; #AUDIO0(key-i.wav)
+ $05B3 DEFB $49,$86                         ; "I".
+; #AUDIO0(key-j.wav)
+ $05B5 DEFB $4A,$0A,$94                     ; "J".
+; #AUDIO0(key-k.wav)
+ $05B8 DEFB $4B,$2A,$94                     ; "K".
+; #AUDIO0(key-l.wav)
+ $05BB DEFB $4C,$07,$BE                     ; "L".
+; #AUDIO0(key-m.wav)
+ $05BE DEFB $4D,$07,$90                     ; "M".
+; #AUDIO0(key-n.wav)
+ $05C1 DEFB $4E,$07,$AC                     ; "N".
+; #AUDIO0(key-o.wav)
+ $05C4 DEFB $4F,$B5                         ; "O".
+; #AUDIO0(key-p.wav)
+ $05C6 DEFB $50,$09,$93                     ; "P".
+; #AUDIO0(key-q.wav)
+ $05C9 DEFB $51,$2A,$19,$9F                 ; "Q".
+; #AUDIO0(key-r.wav)
+ $05CD DEFB $52,$BB                         ; "R".
+; #AUDIO0(key-s.wav)
+ $05CF DEFB $53,$07,$37,$B7                 ; "S".
+; #AUDIO0(key-t.wav)
+ $05D3 DEFB $54,$0D,$93                     ; "T".
+; #AUDIO0(key-u.wav)
+ $05D6 DEFB $55,$31,$9F                     ; "U".
+; #AUDIO0(key-v.wav)
+ $05D9 DEFB $56,$28,$93                     ; "V".
+; #AUDIO0(key-w.wav)
+ $05DC DEFB $57,$21,$4F,$3F,$3E,$31,$9F     ; "W".
+; #AUDIO0(key-x.wav)
+ $05E3 DEFB $58,$47,$2A,$B7                 ; "X".
+; #AUDIO0(key-y.wav)
+ $05E7 DEFB $59,$2E,$86                     ; "Y".
+; #AUDIO0(key-z.wav)
+ $05EA DEFB $5A,$2B,$07,$07,$95             ; "Z".
 ; BASIC tokens.
- $05EF DEFB $A5,$27,$18,$0B,$95             ; RND. #AUDIO0(key-rnd.wav)
- $05F4 DEFB $A6,$4C,$0B,$01,$2A,$93         ; INKEY$. #AUDIO0(key-inkey.wav)
- $05FA DEFB $A7,$09,$86                     ; PI. #AUDIO0(key-pi.wav)
- $05FD DEFB $A8,$28,$4F,$2C,$08,$25,$0F,$8B ; FN. #AUDIO0(key-fn.wav)
- $0605 DEFB $AA,$37,$08,$27,$13,$8B         ; SCREEN$. #AUDIO0(key-screen.wav)
- $060B DEFB $AB,$58,$0D,$A7                 ; ATTR. #AUDIO0(key-attr.wav)
- $060F DEFB $AE,$23,$58,$2D,$B7             ; VAL$. #AUDIO0(key-valstr.wav)
- $0614 DEFB $AF,$08,$35,$95                 ; CODE. #AUDIO0(key-code.wav)
- $0618 DEFB $B0,$23,$58,$AD                 ; VAL. #AUDIO0(key-val.wav)
- $061C DEFB $B1,$2D,$47,$8B                 ; LEN. #AUDIO0(key-len.wav)
- $0620 DEFB $B2,$37,$06,$8B                 ; SIN. #AUDIO0(key-sin.wav)
- $0624 DEFB $B3,$08,$17,$AB                 ; COS. #AUDIO0(key-cos.wav)
- $0628 DEFB $B4,$0D,$18,$8B                 ; TAN. #AUDIO0(key-tan.wav)
- $062C DEFB $B5,$3B,$08,$37,$06,$8B         ; ASN. #AUDIO0(key-asn.wav)
- $0632 DEFB $B6,$3B,$08,$01,$08,$17,$AB     ; ACS. #AUDIO0(key-acs.wav)
- $0639 DEFB $B7,$3B,$08,$0D,$18,$8B         ; ATN. #AUDIO0(key-atn.wav)
- $063F DEFB $B8,$2D,$17,$17,$A2             ; LN. #AUDIO0(key-ln.wav)
- $0644 DEFB $B9,$47,$2A,$37,$89             ; EXP. #AUDIO0(key-exp.wav)
- $0649 DEFB $BA,$0C,$0B,$91                 ; INT. #AUDIO0(key-int.wav)
- $064D DEFB $BB,$27,$1F,$8D                 ; SQR. #AUDIO0(key-sqr.wav)
- $0651 DEFB $BD,$58,$1C,$B7                 ; ABS. #AUDIO0(key-abs.wav)
- $0655 DEFB $BE,$09,$13,$A9                 ; PEEK. #AUDIO0(key-peek.wav)
- $0659 DEFB $BF,$4C,$8B                     ; IN. #AUDIO0(key-in.wav)
- $065C DEFB $C0,$31,$16,$2B,$B3             ; USR. #AUDIO0(key-usr.wav)
- $0661 DEFB $C1,$37,$11,$27,$0C,$AC         ; STR$. #AUDIO0(key-str.wav)
- $0667 DEFB $C2,$32,$7B,$AB                 ; CHR$. #AUDIO0(key-chr.wav)
- $066B DEFB $C3,$0B,$17,$8D                 ; NOT. #AUDIO0(key-not.wav)
- $066F DEFB $C4,$1C,$0C,$8B                 ; BIN. #AUDIO0(key-bin.wav)
- $0673 DEFB $C5,$BA                         ; OR. #AUDIO0(key-or.wav)
- $0675 DEFB $CA,$2D,$06,$8B                 ; LINE. #AUDIO0(key-line.wav)
- $0679 DEFB $CB,$12,$47,$8B                 ; THEN. #AUDIO0(key-then.wav)
- $067D DEFB $CC,$0D,$9F                     ; TO. #AUDIO0(key-to.wav)
- $0680 DEFB $CD,$37,$11,$47,$89             ; STEP. #AUDIO0(key-step.wav)
- $0685 DEFB $CE,$15,$47,$28,$06,$8B         ; DEF FN. #AUDIO0(key-deffn.wav)
- $068B DEFB $CF,$08,$58,$91                 ; CAT. #AUDIO0(key-cat.wav)
- $068F DEFB $D0,$28,$7A,$10,$18,$91         ; FORMAT. #AUDIO0(key-format.wav)
- $0695 DEFB $D1,$10,$1F,$A3                 ; MOVE. #AUDIO0(key-move.wav)
- $0699 DEFB $D2,$73,$14,$B7                 ; ERASE. #AUDIO0(key-erase.wav)
- $069D DEFB $D3,$75,$09,$0F,$8B             ; OPEN #. #AUDIO0(key-open.wav)
- $06A2 DEFB $D4,$08,$2D,$35,$B7             ; CLOSE #. #AUDIO0(key-close.wav)
- $06A7 DEFB $D5,$10,$74,$15,$8A             ; MERGE. #AUDIO0(key-merge.wav)
- $06AC DEFB $D6,$23,$47,$27,$0C,$28,$86     ; VERIFY. #AUDIO0(key-verify.wav)
- $06B3 DEFB $D7,$3F,$13,$89                 ; BEEP. #AUDIO0(key-beep.wav)
- $06B7 DEFB $D8,$37,$33,$08,$0F,$AD         ; CIRCLE. #AUDIO0(key-circle.wav)
- $06BD DEFB $DF,$20,$91                     ; OUT. #AUDIO0(key-out.wav)
- $06C0 DEFB $E0,$47,$3E,$01,$09,$27,$0C,$0B ; {LPRINT. #AUDIO0(key-lprint.wav)
+; .
+; #AUDIO0(key-rnd.wav)
+ $05EF DEFB $A5,$27,$18,$0B,$95             ; RND.
+; #AUDIO0(key-inkey.wav)
+ $05F4 DEFB $A6,$4C,$0B,$01,$2A,$93         ; INKEY$.
+; #AUDIO0(key-pi.wav)
+ $05FA DEFB $A7,$09,$86                     ; PI.
+; #AUDIO0(key-fn.wav)
+ $05FD DEFB $A8,$28,$4F,$2C,$08,$25,$0F,$8B ; FN.
+; #AUDIO0(key-screen.wav)
+ $0605 DEFB $AA,$37,$08,$27,$13,$8B         ; SCREEN$.
+; #AUDIO0(key-attr.wav)
+ $060B DEFB $AB,$58,$0D,$A7                 ; ATTR.
+; #AUDIO0(key-valstr.wav)
+ $060F DEFB $AE,$23,$58,$2D,$B7             ; VAL$.
+; #AUDIO0(key-code.wav)
+ $0614 DEFB $AF,$08,$35,$95                 ; CODE.
+; #AUDIO0(key-val.wav)
+ $0618 DEFB $B0,$23,$58,$AD                 ; VAL.
+; #AUDIO0(key-len.wav)
+ $061C DEFB $B1,$2D,$47,$8B                 ; LEN.
+; #AUDIO0(key-sin.wav)
+ $0620 DEFB $B2,$37,$06,$8B                 ; SIN.
+; #AUDIO0(key-cos.wav)
+ $0624 DEFB $B3,$08,$17,$AB                 ; COS.
+; #AUDIO0(key-tan.wav)
+ $0628 DEFB $B4,$0D,$18,$8B                 ; TAN.
+; #AUDIO0(key-asn.wav)
+ $062C DEFB $B5,$3B,$08,$37,$06,$8B         ; ASN.
+; #AUDIO0(key-acs.wav)
+ $0632 DEFB $B6,$3B,$08,$01,$08,$17,$AB     ; ACS.
+; #AUDIO0(key-atn.wav)
+ $0639 DEFB $B7,$3B,$08,$0D,$18,$8B         ; ATN.
+; #AUDIO0(key-ln.wav)
+ $063F DEFB $B8,$2D,$17,$17,$A2             ; LN.
+; #AUDIO0(key-exp.wav)
+ $0644 DEFB $B9,$47,$2A,$37,$89             ; EXP.
+; #AUDIO0(key-int.wav)
+ $0649 DEFB $BA,$0C,$0B,$91                 ; INT.
+; #AUDIO0(key-sqr.wav)
+ $064D DEFB $BB,$27,$1F,$8D                 ; SQR.
+; #AUDIO0(key-abs.wav)
+ $0651 DEFB $BD,$58,$1C,$B7                 ; ABS.
+; #AUDIO0(key-peek.wav)
+ $0655 DEFB $BE,$09,$13,$A9                 ; PEEK.
+; #AUDIO0(key-in.wav)
+ $0659 DEFB $BF,$4C,$8B                     ; IN.
+; #AUDIO0(key-usr.wav)
+ $065C DEFB $C0,$31,$16,$2B,$B3             ; USR.
+; #AUDIO0(key-str.wav)
+ $0661 DEFB $C1,$37,$11,$27,$0C,$AC         ; STR$.
+; #AUDIO0(key-chr.wav)
+ $0667 DEFB $C2,$32,$7B,$AB                 ; CHR$.
+; #AUDIO0(key-not.wav)
+ $066B DEFB $C3,$0B,$17,$8D                 ; NOT.
+; #AUDIO0(key-bin.wav)
+ $066F DEFB $C4,$1C,$0C,$8B                 ; BIN.
+; #AUDIO0(key-or.wav)
+ $0673 DEFB $C5,$BA                         ; OR.
+; #AUDIO0(key-line.wav)
+ $0675 DEFB $CA,$2D,$06,$8B                 ; LINE.
+; #AUDIO0(key-then.wav)
+ $0679 DEFB $CB,$12,$47,$8B                 ; THEN.
+; #AUDIO0(key-to.wav)
+ $067D DEFB $CC,$0D,$9F                     ; TO.
+; #AUDIO0(key-step.wav)
+ $0680 DEFB $CD,$37,$11,$47,$89             ; STEP.
+; #AUDIO0(key-deffn.wav)
+ $0685 DEFB $CE,$15,$47,$28,$06,$8B         ; DEF FN.
+; #AUDIO0(key-cat.wav)
+ $068B DEFB $CF,$08,$58,$91                 ; CAT.
+; #AUDIO0(key-format.wav)
+ $068F DEFB $D0,$28,$7A,$10,$18,$91         ; FORMAT.
+; #AUDIO0(key-move.wav)
+ $0695 DEFB $D1,$10,$1F,$A3                 ; MOVE.
+; #AUDIO0(key-erase.wav)
+ $0699 DEFB $D2,$73,$14,$B7                 ; ERASE.
+; #AUDIO0(key-open.wav)
+ $069D DEFB $D3,$75,$09,$0F,$8B             ; OPEN #.
+; #AUDIO0(key-close.wav)
+ $06A2 DEFB $D4,$08,$2D,$35,$B7             ; CLOSE #.
+; #AUDIO0(key-merge.wav)
+ $06A7 DEFB $D5,$10,$74,$15,$8A             ; MERGE.
+; #AUDIO0(key-verify.wav)
+ $06AC DEFB $D6,$23,$47,$27,$0C,$28,$86     ; VERIFY.
+; #AUDIO0(key-beep.wav)
+ $06B3 DEFB $D7,$3F,$13,$89                 ; BEEP.
+; #AUDIO0(key-circle.wav)
+ $06B7 DEFB $D8,$37,$33,$08,$0F,$AD         ; CIRCLE.
+; #AUDIO0(key-out.wav)
+ $06BD DEFB $DF,$20,$91                     ; OUT.
+; #AUDIO0(key-lprint.wav)
+ $06C0 DEFB $E0,$47,$3E,$01,$09,$27,$0C,$0B ; {LPRINT.
  $06C8 DEFB $91                             ; }
- $06C9 DEFB $E1,$47,$3E,$01,$2D,$0C,$37,$91 ; LLIST. #AUDIO0(key-llist.wav)
- $06D1 DEFB $E2,$37,$11,$17,$89             ; STOP. #AUDIO0(key-stop.wav)
- $06D6 DEFB $E3,$27,$13,$95                 ; READ. #AUDIO0(key-read.wav)
- $06DA DEFB $E4,$21,$54,$11,$8F             ; DATA. #AUDIO0(key-data.wav)
- $06DF DEFB $E5,$27,$4C,$37,$11,$BA         ; RESTORE. #AUDIO0(key-restore.wav)
- $06E5 DEFB $E7,$3F,$3A,$21,$B3             ; BORDER. #AUDIO0(key-border.wav)
+; #AUDIO0(key-llist.wav)
+ $06C9 DEFB $E1,$47,$3E,$01,$2D,$0C,$37,$91 ; LLIST.
+; #AUDIO0(key-stop.wav)
+ $06D1 DEFB $E2,$37,$11,$17,$89             ; STOP.
+; #AUDIO0(key-read.wav)
+ $06D6 DEFB $E3,$27,$13,$95                 ; READ.
+; #AUDIO0(key-data.wav)
+ $06DA DEFB $E4,$21,$54,$11,$8F             ; DATA.
+; #AUDIO0(key-restore.wav)
+ $06DF DEFB $E5,$27,$4C,$37,$11,$BA         ; RESTORE.
+; #AUDIO0(key-border.wav)
+ $06E5 DEFB $E7,$3F,$3A,$21,$B3             ; BORDER.
+; #AUDIO0(key-continue.wav)
  $06EA DEFB $E8,$08,$17,$0B,$11,$4C,$0B,$31 ; {CONTINUE.
- $06F2 DEFB $9F                             ; #AUDIO0(key-continue.wav)}
- $06F3 DEFB $E9,$21,$4C,$90                 ; DIM. #AUDIO0(key-dim.wav)
- $06F7 DEFB $EA,$27,$07,$90                 ; REM. #AUDIO0(key-rem.wav)
- $06FB DEFB $EB,$28,$BA                     ; FOR. #AUDIO0(key-for.wav)
- $06FE DEFB $EC,$3D,$75,$01,$0D,$96         ; GO TO. #AUDIO0(key-goto.wav)
- $0704 DEFB $ED,$3D,$75,$01,$37,$0F,$9C     ; GO SUB. #AUDIO0(key-gosub.wav)
- $070B DEFB $EE,$4C,$0B,$09,$1E,$91         ; INPUT. #AUDIO0(key-input.wav)
- $0711 DEFB $EF,$2D,$35,$95                 ; LOAD. #AUDIO0(key-load.wav)
- $0715 DEFB $F0,$2D,$4C,$37,$91             ; LIST. #AUDIO0(key-list.wav)
- $071A DEFB $F2,$09,$3A,$AB                 ; PAUSE. #AUDIO0(key-pause.wav)
- $071E DEFB $F3,$0B,$47,$2A,$37,$91         ; NEXT. #AUDIO0(key-next.wav)
- $0724 DEFB $F4,$09,$35,$A9                 ; POKE. #AUDIO0(key-poke.wav)
- $0728 DEFB $F5,$09,$27,$4C,$0B,$91         ; PRINT. #AUDIO0(key-print.wav)
- $072E DEFB $F6,$09,$2D,$17,$91             ; PLOT. #AUDIO0(key-plot.wav)
- $0733 DEFB $F7,$27,$0F,$8B                 ; RUN. #AUDIO0(key-run.wav)
- $0737 DEFB $F8,$37,$14,$A3                 ; SAVE. #AUDIO0(key-save.wav)
+ $06F2 DEFB $9F                             ; }
+; #AUDIO0(key-dim.wav)
+ $06F3 DEFB $E9,$21,$4C,$90                 ; DIM.
+; #AUDIO0(key-rem.wav)
+ $06F7 DEFB $EA,$27,$07,$90                 ; REM.
+; #AUDIO0(key-for.wav)
+ $06FB DEFB $EB,$28,$BA                     ; FOR.
+; #AUDIO0(key-goto.wav)
+ $06FE DEFB $EC,$3D,$75,$01,$0D,$96         ; GO TO.
+; #AUDIO0(key-gosub.wav)
+ $0704 DEFB $ED,$3D,$75,$01,$37,$0F,$9C     ; GO SUB.
+; #AUDIO0(key-input.wav)
+ $070B DEFB $EE,$4C,$0B,$09,$1E,$91         ; INPUT.
+; #AUDIO0(key-load.wav)
+ $0711 DEFB $EF,$2D,$35,$95                 ; LOAD.
+; #AUDIO0(key-list.wav)
+ $0715 DEFB $F0,$2D,$4C,$37,$91             ; LIST.
+; #AUDIO0(key-pause.wav)
+ $071A DEFB $F2,$09,$3A,$AB                 ; PAUSE.
+; #AUDIO0(key-next.wav)
+ $071E DEFB $F3,$0B,$47,$2A,$37,$91         ; NEXT.
+; #AUDIO0(key-poke.wav)
+ $0724 DEFB $F4,$09,$35,$A9                 ; POKE.
+; #AUDIO0(key-print.wav)
+ $0728 DEFB $F5,$09,$27,$4C,$0B,$91         ; PRINT.
+; #AUDIO0(key-plot.wav)
+ $072E DEFB $F6,$09,$2D,$17,$91             ; PLOT.
+; #AUDIO0(key-run.wav)
+ $0733 DEFB $F7,$27,$0F,$8B                 ; RUN.
+; #AUDIO0(key-save.wav)
+ $0737 DEFB $F8,$37,$14,$A3                 ; SAVE.
+; #AUDIO0(key-randomize.wav)
  $073B DEFB $F9,$27,$58,$0B,$15,$0F,$10,$06 ; {RANDOMIZE.
- $0743 DEFB $AB                             ; #AUDIO0(key-randomize.wav)}
- $0744 DEFB $FA,$4C,$A8                     ; IF. #AUDIO0(key-if.wav)
- $0747 DEFB $FC,$15,$27,$BA                 ; DRAW. #AUDIO0(key-draw.wav)
- $074B DEFB $FD,$08,$2D,$AF                 ; CLEAR. #AUDIO0(key-clear.wav)
- $074F DEFB $FE,$27,$4C,$11,$34,$8B         ; RETURN. #AUDIO0(key-return.wav)
- $0755 DEFB $FF,$08,$17,$09,$93             ; COPY. #AUDIO0(key-copy.wav)
+ $0743 DEFB $AB                             ; }
+; #AUDIO0(key-if.wav)
+ $0744 DEFB $FA,$4C,$A8                     ; IF.
+; #AUDIO0(key-draw.wav)
+ $0747 DEFB $FC,$15,$27,$BA                 ; DRAW.
+; #AUDIO0(key-clear.wav)
+ $074B DEFB $FD,$08,$2D,$AF                 ; CLEAR.
+; #AUDIO0(key-return.wav)
+ $074F DEFB $FE,$27,$4C,$11,$34,$8B         ; RETURN.
+; #AUDIO0(key-copy.wav)
+ $0755 DEFB $FF,$08,$17,$09,$93             ; COPY.
  $075A DEFB $00                             ; Table end.
 
 ; Banner Addresses
