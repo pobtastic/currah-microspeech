@@ -7,7 +7,7 @@
 > $0000 @rom
 > $0000 @set-handle-unsupported-macros=1
 > $0000 @org=$0000
-> $0000 @expand=#DEF1(#SKOOLKID(addr)(name)#HTML(<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/#EVAL({addr},16,4).html">){name}#HTML(</a>))
+> $0000 @expand=#DEF1(#SKOOLKID(addr)(name)#HTML(<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/#IF({{mode[base]}}==16)(hex/)asm/#IF({{mode[base]}}==16)(#EVAL({addr},16,4),#EVAL({addr})).html">){name}#HTML(</a>))
 > $0000 @expand=#DEF(#FACT()(anchor,text) #LINK(Facts#$anchor)($text))
 
 b $0000 Banner Characters
