@@ -3,8 +3,18 @@
 [Page:Changelog]
 SectionType=BulletPoints
 
+[Changelog:20261025]
+-
+
+- Added write-up facts for history, hardware, intonation, the
+  machine-code API, BASIC use, supporting software and related
+  machines.
+- Extended #LINK(Credits)(Credits) with a reading list.
+
 [Changelog:20261021]
 -
+
+- Added a #LINK(Credits)(Credits) page.
 - Added a #LINK(TryIt)(Try s$) page that speaks a speech string.
 - Added audio players for the AL2 set and the dictionary.
 

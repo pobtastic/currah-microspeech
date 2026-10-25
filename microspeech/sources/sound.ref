@@ -5,9 +5,23 @@ SectionPrefix=Audio
 
 [Audio:allophones:AL2 Allophones]
 The #FACT(sp0256,SP0256-AL2) set, as written by #R$0166. These
-are recordings of a real chip, not a simulated core. Bit 6
+are recordings of a real chip, not a simulated core. The samples
+derive from CPCWiki's AL2 WAV set (via ExtremeElectronics), which
+CPCWiki notes has some allophone lengths wrong. Bit 6
 (high intonation) is not applied here; the
 #R$0447 entries play it where the ROM sets that bit.
+
+The AL2 set is 59 allophones plus 5 pauses, each analysed with
+LPC. Datasheet pause lengths are PA1-PA5 = 10 / 30 / 50 / 100 /
+200 ms (datasheet nominal; CPCWiki computes 6.4 / 25.6 / 44.8 /
+96.0 / 198.4 ms from the ROM); the datasheet also gives a sample
+word for each ID (for example OY "boy", AY "sky"). The
+#FACT(sstring,s$) interpreter never maps a character or name to
+three IDs: #N$00 (PA1), #N$02 (PA3) and #N$36 (DH2). The s$
+tables give 61 of the 64 IDs; with the key dictionary (which uses
+PA1) the ROM gives 62, never PA3 or DH2; the manual names only 0
+and 54 as unimplemented, so it misses PA3. See the AL2
+datasheet linked from #LINK(Credits)(Credits).
 
 #TABLE(default,centre,centre,centre)
 { =h ID | =h Name | =h Sample }

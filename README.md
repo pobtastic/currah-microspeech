@@ -2,7 +2,7 @@ Currah disassemblies
 ====================
 
 A disassembly of the [Spectrum](https://en.wikipedia.org/wiki/ZX_Spectrum)
-hardware from [Currah](https://en.wikipedia.org/wiki/Currah);
+hardware from [Currah](https://en.wikipedia.org/wiki/Currah).
 
 ### 1983:
 * [μSpeech](https://en.wikipedia.org/wiki/Currah)
@@ -19,7 +19,7 @@ make a clone of the [SkoolKit repository](https://github.com/skoolkid/skoolkit)
 and point the environment variable SKOOLKIT_HOME at it. Then:
 
     $ cd microspeech
-    $ utils/mkhtml.py
+    $ make html
 
 Disclaimer
 ----------

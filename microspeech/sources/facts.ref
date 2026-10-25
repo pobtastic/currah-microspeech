@@ -8,12 +8,14 @@ IM1 handler always jumps to #R$0038, so this ROM runs first on
 every interrupt; every exit jumps back to #R$0038 to page the
 Spectrum ROM in and let IM1 finish.
 
-The ROM is mirrored from #N$0800 to #N$0FFF. Speech itself is
+The ROM is mirrored from #N$0800 to #N$0FFF (per
+<a href="https://sourceforge.net/p/fuse-emulator/patches/142/" rel="noopener noreferrer nofollow">Fuse patch #142</a>).
+Speech itself is
 produced by the #FACT(sp0256,SP0256) chip, fed one allophone at
-a time from a short workspace just below
-*#SKOOLKID$5CB2(RAMTOP).
+a time from a short workspace at the top of the reserved area,
+between *#SKOOLKID$5CB2(RAMTOP) and the UDGs.
 
-#TABLE(default,centre)
+#TABLE(default,centre,centre)
 { =h Range | =h Contents }
 { #N$0000-#N$0037 | Banner bitmaps }
 { #N$0038-#N$03AE | Interrupt and helpers }
@@ -31,28 +33,43 @@ by one page and plants the workspace (low byte #N$57). After
 that, each interrupt at #R$00B7:
 
 #LIST
-{ Ticks *#SKOOLKID$5C78(FRAMES), because this ROM owns IM1 }
-{ Ticks the two keyboard-state timer pairs }
+{ Compensates for the second IM1 pass: one *#SKOOLKID$5C78(FRAMES) increment and one *#SKOOLKID$5C00(KSTATE) counter decrement per frame }
 { Expands the BASIC string #FACT(sstring,s$) if it exists }
-{ Speaks a new key from *#SKOOLKID$5C08(LAST_K) if keys is #N$01 }
-{ Sends the next queued allophone if the #FACT(sp0256,SP0256) is idle }
+{ Speaks a new key from *#SKOOLKID$5C08(LAST_K) if key speech is enabled }
+{ Sends the next queued allophone if the #FACT(sp0256,SP0256) can take one }
 LIST#
 
-Letters, tokens and symbols become allophone IDs through
-#R$0447. A parenthesised name such as "(SH)" picks an allophone
-directly (see #R$02EB). The queued IDs sit in the workspace
-buffer and grow downwards; when the #FACT(sp0256,SP0256) is
-ready, #R$0166 writes one ID and shuffles the rest down.
+Key voices map letters, tokens and symbols to allophone IDs
+through #R$0447. The #FACT(sstring,s$) path uses #R$03AF /
+#R$03CA / #R$03E5 instead. A parenthesised name such as "(SH)"
+picks an allophone directly (see #R$02EB). The queued IDs sit
+in the workspace buffer and grow downwards; when the
+#FACT(sp0256,SP0256) is ready, #R$0166 writes one ID and
+shuffles the rest up (towards the queue head).
+
+Any access to #R$0038 toggles the ROM in or out: opcode fetch,
+memory read or write, and <code>IN</code> / <code>OUT</code>. Addresses in #N$1000-#N$1FFF
+mirror #N$1000 for status reads and allophone writes (<code>IN</code> / <code>OUT</code>
+included); #N$2000 is not mirrored. #N$3000 / #N$3001 decode as
+0011xxxx xxxxxxx0 (low) and 0011xxxx xxxxxxx1 (high); only
+writes or <code>OUT</code> work there. Only the low 6 bits reach the chip
+(AL2 A1-A6; A7/A8 tied low). #N$1000-#N$3FFF respond only while
+this ROM is paged in. Of the bits returned by a #N$1000 read,
+only bit 0 (busy / inverted load request) has a known meaning.
+See
+<a href="https://maziac.github.io/currah_uspeech_tests/#findings" rel="noopener noreferrer nofollow">maziac's findings</a>
+and
+<a href="https://github.com/mamedev/mame/blob/master/src/devices/bus/spectrum/uspeech.cpp" rel="noopener noreferrer nofollow">MAME uspeech.cpp</a>.
 
 [Fact:workspace:Speech Workspace]
 The workspace is a few bytes in the page of
 *#SKOOLKID$5CB4(P_RAMT). #R$0354 reads index #N$00 as the byte
-at low address #N$57, index #N$01 as #N$56, and so on. A 48K
+at low address #N($57), index #N$01 as #N($56), and so on. A 48K
 machine uses #N$FF57; a 16K machine uses #N$7F57.
 #R$0081 lowers *#SKOOLKID$5CB2(RAMTOP) by one page so BASIC
 stays out of this block.
 
-#TABLE(default,centre,centre)
+#TABLE(default,centre,centre,centre)
 { =h Index | =h Address | =h Purpose }
 { #N$00 | #N$57 | Flags }
 { #N$01 | #N$56 | Cleared on install }
@@ -64,18 +81,23 @@ The live pointer is a word, so its high byte sits at #N$55
 (install first writes the workspace page there). The allophone
 buffer begins at the address of index #N$06 and grows down
 towards the new *#SKOOLKID$5CB2(RAMTOP). #R$0375 sets carry
-when the pointer has dropped into that reserved page.
+when the pointer has run out of that reserved page (at or below *#SKOOLKID$5CB2(RAMTOP)).
 
 Flags at index #N$00:
 
-#TABLE(default,centre)
+#TABLE(default,centre,centre)
 { =h Bit | =h Meaning }
-{ 1 | Key speech (set when keys is #N$01) }
-{ 2 | Workspace live (set while installing, reset when ready) }
+{ 1 | Key speech (set at install, and when keys is #N$01) }
+{ 2 | Second pass (set before chaining to the Spectrum IM1 routine, reset when this ROM is re-entered) }
 { 4 | A key is already being spoken }
-{ 6 | High intonation (set for uppercase, reset for lowercase) }
+{ 6 | High intonation (set for codes below "a", reset for codes at or above "a") }
 { 7 | Banner not yet drawn }
 TABLE#
+
+Manual chapter 6 instead lists bit 7 as the copyright/banner flag
+(reset after the message), bit 1 as key voice (set at first),
+bits 4 and 2 as used in the keyboard scan, and bits 6, 5, 3 and
+0 as spare. The meanings above for bits 6 and 2 come from the code.
 
 [Fact:sp0256:SP0256 Speech Synthesiser]
 The μSpeech speaks through a General Instrument SP0256-AL2
@@ -83,12 +105,22 @@ chip. #R$0166 feeds it one allophone at a time from the
 workspace queue.
 
 #N$1000 is the allophone port. Reading it returns status; bit 0
-set means the chip is still speaking. Writing an allophone ID
-starts that sound; writing #N$00 silences the chip.
+is the inverted load request (set while the chip's input buffer
+is full). Writing an allophone ID starts that sound; writing
+#N$00 queues PA1 (nominally 10 ms), which stops the chip repeating
+the tail of its last allophone (see maziac's
+<a href="https://maziac.github.io/currah_uspeech_tests/#findings" rel="noopener noreferrer nofollow">Allophone loop</a>
+finding, and CPCWiki's
+<a href="https://www.cpcwiki.eu/index.php/SP0256_Allophones" rel="noopener noreferrer nofollow">SP0256 Allophones</a>
+page, which advises sending PA1 after the last allophone to mute
+it). That repeat behaviour is why a key voice left on during
+LOAD can give a continuous "e", and why BEEP can draw out an
+allophone (manual Appendix III).
 
-Intonation is selected first by writing the same ID to #N$3000
-(low) or #N$3001 (high). Bit 6 of the queued byte chooses the
-port; #R$017F then writes the ID to #N$1000.
+#FACT(intonation,Intonation) is selected by writing to #N$3000
+(low pitch) or #N$3001 (high pitch). Bit 6 of the queued byte
+chooses the port; #R$017F then writes the ID to #N$1000 (the
+chip ignores bits 6 and 7).
 
 The IDs themselves are the AL2 allophone set stored in #R$0447.
 Hear every ID on the #LINK(Sound)(Allophones) page.
@@ -96,23 +128,56 @@ Hear every ID on the #LINK(Sound)(Allophones) page.
 [Fact:sstring:BASIC Speech String]
 Programs speak by assigning the BASIC string variable s$. On each
 interrupt #R$00DD looks that name up with #R$01CD (name code #N$53)
-and, if it exists, calls #R$021F.
+and, if it exists, calls #R$021F. A program must follow LET s$=
+with PAUSE 1 so the interrupt sees each new s$ (manual chapter 2).
 
 #R$021F ignores an empty string, and also ignores a string whose
 first character is "*" or "?". Those two markers mean the text has
 already been spoken, or could not be parsed.
 
 Anything else is expanded into the allophone buffer. A full stop
-queues a short pause. A "(" starts a parenthesised allophone name
-(see #R$02EB). Other characters are mapped through #R$03AF.
+queues two PA5 pauses (the longest). A "(" starts a parenthesised
+allophone name (see #R$02EB). Bracketed groups take their
+intonation from their last character (for (aer) and (ear), the
+middle letter): (oUu) is flat, (ouU) goes
+up (chapter 4); this matches #R$035E being applied to every
+character. Other characters are mapped through #R$03AF.
 
 After a successful pass the first character of s$ is overwritten
-with "*". If a character cannot be mapped, it is overwritten with
-"?" instead. Either way the next interrupt will skip the string
-until a program assigns s$ again.
+with "*". If a character cannot be mapped, the first character and
+the character after the error (or the last character) are
+overwritten with "?" instead. Either way the next interrupt will
+skip the string until a program assigns s$ again.
 
 The separate numeric variable keys (#N$01) enables speaking each
 key press from *#SKOOLKID$5C08(LAST_K); that path does not use s$.
+The keys variable survives NEW. Key voices stay silent until the
+first ENTER after power-up, after NEW, or after a report; the
+manual says the unit "will remain silent until the first ENTER
+is pressed after a power up, a NEW, or after a 'report' has been
+printed at the bottom of the screen." Every BASIC keyword and
+printable character is voiced except "~"; all graphics characters
+are spoken as "graphic". User speech takes priority over key
+voices. Any report other than OK empties the buffer (chapter 2); that
+is the *#SKOOLKID$5C3A(ERR_NR) test at #R$016D.
+
+*#SKOOLKID$5CB2(RAMTOP) drops by 256 bytes on install (to #N$FE57
+on 48K). The manual says do not CLEAR above #N$FF50 (48K) or
+#N$7E57 (16K). The re-install check at #R$0050(#N$0050)-#N$005A
+only goes off when *#SKOOLKID$5CB2(RAMTOP) is at or above the
+workspace base (#N$FF51 on 48K, #N$7F51 on 16K), so the code
+itself accepts CLEAR up to #N$7F50 on 16K; the manual's 16K
+figure is just the *#SKOOLKID$5CB2(RAMTOP) install sets and is
+stricter than the code needs, while its 48K figure #N$FF50
+matches the code. A CLEAR into the header forces a re-install with
+a new banner (chapter 5); that is ProbeWorkspace at #R$0050 /
+#R$0057. A buffer only 200 bytes long holds over 30 seconds
+(chapter 2); the default buffer is #N$FA bytes.
+
+Sources:
+<a href="https://maziac.github.io/currah_uspeech_tests/data/currah_manual.pdf" rel="noopener noreferrer nofollow">manual transcription PDF</a>
+and the
+<a href="https://archive.org/stream/currahuspeech/Currah_uSPEECH_djvu.txt" rel="noopener noreferrer nofollow">archive.org OCR</a>.
 
 The #LINK(TryIt)(Try s$) page runs this parser in the browser
 and plays the resulting #FACT(sp0256,SP0256) allophones.
@@ -120,7 +185,7 @@ and plays the resulting #FACT(sp0256,SP0256) allophones.
 [Fact:punctuation:Key Speech Remap]
 When a new key arrives in *#SKOOLKID$5C08(LAST_K), #R$0100 turns it
 into a dictionary key and looks it up in #R$0447. Letters are
-uppercased, and codes #N$80-#N$A4 (block graphics) all use key
+uppercased, and codes #N$80-#N$A4 (block graphics and UDGs) all use key
 #N$80. Everything else is offered to #R$042D first.
 
 #R$011D searches the #N$0D keys at #R$042D. A miss keeps the original
@@ -187,8 +252,9 @@ entries of #R$03AF.
 Those values are summed; the sum is the lookup key.
 
 Most sums are searched for in the #N$36 bytes from #R$03AF, and the
-matching allophone is #N$35 bytes later. Five sums are handled
-separately and go through the suffix tables instead:
+matching allophone is #N$36 bytes later,
+in #R$03E5. Five sums are handled separately and go through the
+suffix tables instead:
 
 #TABLE(default,centre,centre)
 { =h Sum | =h Letter used }
@@ -200,7 +266,7 @@ separately and go through the suffix tables instead:
 TABLE#
 
 #R$0336 takes that letter, normalises it, and searches #R$041B. The
-parallel byte #N$08 later in #R$0424 is the allophone. A letter that
+parallel byte #N$09 later in #R$0424 is the allophone. A letter that
 is not in #R$041B makes the group invalid.
 
 #TABLE(default,centre,centre)
@@ -215,3 +281,124 @@ is not in #R$041B makes the group invalid.
 { "E" | #N$2F (XR) }
 { "W" | #N$20 (AW) }
 TABLE#
+
+[Fact:intonation:Intonation]
+A write to #N$3000 or #N$3001 changes the #FACT(sp0256,SP0256)
+oscillator clock, not the volume. In
+<a href="https://github.com/mamedev/mame/blob/master/src/devices/bus/spectrum/uspeech.cpp" rel="noopener noreferrer nofollow">MAME uspeech.cpp</a>
+#N$3000 sets 3,050,000 Hz and #N$3001 sets 3,260,000 Hz
+("oscillator frequency read from hardware").
+
+<a href="https://maziac.github.io/currah_uspeech_tests/#findings" rel="noopener noreferrer nofollow">maziac</a>
+measured real hardware: the high setting is about 7% higher in
+pitch and the volume does not change; the new frequency takes
+about 0.05-0.5 s to settle; the data byte written is ignored
+(only the address matters); and bit 6 of the byte written to
+#N$1000 has no effect on the chip.
+
+The manual says the pitch is "ramped" so that the change is
+smooth (chapter 4). The datasheet's nominal crystal is 3.12 MHz;
+Kio's simulation of the Currah oscillator gives about 3.05 MHz
+(see
+<a href="https://maziac.github.io/currah_uspeech_tests/#the-hardware" rel="noopener noreferrer nofollow">maziac</a>),
+so this unit should not be described as running at 3.12 MHz. On
+<a href="https://k1.spdns.de/Vintage/Sinclair/82/Peripherals/Currah%20uSpeech/" rel="noopener noreferrer nofollow">k1.spdns.de</a>
+Kio writes: "Address bit A0 set's [sic] intonation to low frequency
+(A0=0: ~3MHz clock / ~10kHz samples) or high frequency (A0=1:
+approx. 7% higher). The shift in frequency is soft and takes
+around 0.05 to 0.5 seconds, the timing seems to vary (Thomas
+Busse). The data value written is not used."
+#R$0184-#R$018D select the port from bit 6 of the queued byte.
+
+[Fact:mcapi:Machine-Code API]
+Manual chapter 6 calls it a "six-byte header" but lists seven
+addresses (#N$FF57-#N$FF51; the last is the first queue byte):
+
+#TABLE(default,centre,centre,centre)
+{ =h Address | =h Decimal | =h Purpose }
+{ #N$FF57 | 65367 | Flags }
+{ #N$FF56 | 65366 | Spare }
+{ #N$FF55 / #N$FF54 | 65365 / 65364 | Buffer pointer (high, then low) }
+{ #N$FF53 / #N$FF52 | 65363 / 65362 | Spare }
+{ #N$FF51 | 65361 | Next allophone / queue start }
+TABLE#
+
+Buffer bytes are laid out as: bit 7 = 0, bit 6 = intonation up,
+bits 0-5 = allophone. A worked example is "he(ll)(oo)" = 27, 7,
+62, 53, with the "e" intoned up as 71. This matches the
+workspace indexes in #FACT(workspace,Speech Workspace) (#N$57
+flags, #N$54/#N$55 pointer, #N$51 queue start) and the <code>LDDR</code>
+shuffle at #R$01A1 ("the entire contents of the buffer is moved
+up by one"). 16K addresses are the 48K ones minus 32768.
+
+[Fact:history:History]
+Made by Currah Computor Components Ltd, Hartlepool (the original
+manual spells it "Computor"; Spectrum Computing and the
+transcription often spell it "Computer"). Addresses in the
+original printing: Hollymount, Wooler Road, Hartlepool,
+Cleveland TS26 0HA; the transcription gives Graythrop [sic]
+(Graythorp) Industrial Estate, Hartlepool TS25 2DF, so the two
+printings differ.
+
+Released in 1983 at £29.95
+(<a href="https://spectrumcomputing.co.uk/entry/1000081/Hardware/Currah_MicroSpeech" rel="noopener noreferrer nofollow">Spectrum Computing</a>).
+dk'tronics took over Currah in 1985 and kept making the unit;
+many dk'tronics titles supported it (for example Maziacs and
+Zig Zag). See
+<a href="https://en.wikipedia.org/wiki/Currah" rel="noopener noreferrer nofollow">Wikipedia: Currah</a>
+and
+<a href="https://k1.spdns.de/Vintage/Sinclair/82/Peripherals/Currah%20uSpeech/" rel="noopener noreferrer nofollow">k1.spdns.de</a>.
+A "Currah microSpeech Dictionary" was advertised at £3.50
+(Home Computing Weekly #90, 27 November 1984, p.5).
+
+The string at #R$0793 is "Anson"; Mark Anson is named as author
+on the 1983 programming manual title page
+(<a href="https://archive.org/stream/currahuspeech/Currah_uSPEECH_djvu.txt" rel="noopener noreferrer nofollow">archive.org</a>).
+That he also wrote the ROM is an inference from the string; no
+source says so outright. The known ROM dump is 2,048 bytes,
+CRC32 ce7cf52e (same dump in MAME and Fuse).
+
+[Fact:hardware:Hardware]
+Inside: a 2K ROM, the SP0256-AL2 and a ULA. The case clips
+together with no screws. The board maziac opened has pin 12
+(SER OUT) of the SP0256 removed.
+
+Leads: a UHF lead with a phono plug, a 3.5 mm line lead into the
+Spectrum's MIC socket, and a UHF trimmer screw at the top right.
+Speech and the Spectrum's own sound are mixed into the UHF
+signal, so they come out of the TV speaker. The line lead can
+also be used as a high-impedance output to a tape recorder or
+amplifier (Appendix II). Mixing sound into the UHF signal can
+cause colour "patterning" (Appendix VI). It works behind
+Interface 1 (Appendix IV).
+
+Sources: the
+<a href="https://maziac.github.io/currah_uspeech_tests/data/currah_manual.pdf" rel="noopener noreferrer nofollow">manual</a>
+and
+<a href="https://maziac.github.io/currah_uspeech_tests/" rel="noopener noreferrer nofollow">maziac</a>.
+
+[Fact:software:Supporting Software]
+<a href="https://spectrumcomputing.co.uk/entry/1000081/Hardware/Currah_MicroSpeech" rel="noopener noreferrer nofollow">Spectrum Computing</a>
+lists 86 entries (about 83 distinct titles, as of October 2026).
+Verified there include Lunar Jetman, Booty, Rockfall, Rockfall
+II, Maziacs, Zig Zag, Spectrum Voice Chess, Terrahawks, Max
+Headroom and Twin Kingdom Valley. The list includes modern
+homebrew, so filter by year for period-only titles. Rockfall II
+detects the unit by toggling paging and comparing #N$0039 with
+#N$F1 (<code>POP #REGaf</code>; the Spectrum ROM has #N($E5),
+<code>PUSH #REGhl</code>, there). The test works because #R$0038
+/ #N$0039 here are <code>PUSH #REGaf</code> /
+<code>POP #REGaf</code>.
+
+[Fact:related:Related Machines]
+Currah Speech 64 for the Commodore 64 (1984) is a cartridge with
+an SP0256-AL2; in the USA it was sold as "Voice Messenger" for
+$49.95 by Currah Technology, Boston
+(<a href="https://www.c64-wiki.com/wiki/Voice_Messenger" rel="noopener noreferrer nofollow">C64-Wiki</a>,
+<a href="https://www.computinghistory.org.uk/det/11717/Currah%20Speech%2064/" rel="noopener noreferrer nofollow">Centre for Computing History</a>).
+Other Spectrum SP0256 units include the Cheetah Sweet Talker,
+the dk'tronics Speech Synthesiser (which
+<a href="https://sourceforge.net/p/fuse-emulator/patches/142/" rel="noopener noreferrer nofollow">Fuse patch #142</a>
+describes as "probably a rebranded μSpeech") and the Fuller
+Orator. That patch (closed-accepted; milestone v1.7.0; created
+2007-08-29 by Stuart Brady) is the Fuse uspeech support.

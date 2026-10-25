@@ -7,14 +7,15 @@
 > $0000 @rom
 > $0000 @set-handle-unsupported-macros=1
 > $0000 @org=$0000
-> $0000 @expand=#DEF1(#SKOOLKID(addr)(name)#HTML(<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/#IF({{mode[base]}}==16)(hex/)asm/#IF({{mode[base]}}==16)(#EVAL({addr},16,4),#EVAL({addr})).html">){name}#HTML(</a>))
+> $0000 @expand=#DEF1(#SKOOLKID(addr,anchor=0)(name)#HTML(<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/#IF({{mode[base]}}==16)(hex/)asm/#IF({{mode[base]}}==16)(#EVAL({addr},16,4),#EVAL({addr})).html#IF({anchor})(#CHR(35)#IF({{mode[base]}}==16)(#EVAL({anchor},16,4),#EVAL({anchor})))">){name}#HTML(</a>))
 > $0000 @expand=#DEF(#FACT()(anchor,text) #LINK(Facts#$anchor)($text))
 
 b $0000 Banner Characters
 @ $0000 label=BannerCharacters
 D $0000 Seven 8x8 bitmaps used by #R$01AB with #R$0798 to print
-. "speech system © CURRAH 1983" into the display file. The inverse
-. letters here are "RRAH"; "CU" live at #R$0798(#N$07F0).
+. "Speech System © CURRAH 1983" into the display file. The inverse
+. letters here are "R", "A" and "H" ("R" is used twice); "CU" live
+. at #R$0798(#N$07F0).
   $0000,$08 #UDGTABLE { #UDG(#PC) } TABLE#
   $0008,$08 #UDGTABLE { #UDG(#PC) } TABLE#
   $0010,$08 #UDGTABLE { #UDG(#PC) } TABLE#
@@ -29,47 +30,56 @@ D $0038 Any access to #R$0038 (including this opcode fetch) pages
 . the μSpeech ROM in or out. The Spectrum IM1 handler lands here,
 . so this ROM runs first. Every exit jumps back to #R$0038, which
 . pages the Spectrum ROM in and lets IM1 finish.
-  $0038,$02 Keep #REGaf unchanged.
-  $003A,$01 Disable interrupts.
+  $0038,$02 #HTML[Preserve #REGaf (this <code>PUSH</code>/<code>POP</code> pair is what Rockfall II checks for).]
+  $003A,$01 Keep further interrupts out while the μSpeech ROM is paged in.
   $003B,$04 Stash #REGhl, #REGaf, #REGbc and #REGde on the stack.
-N $003F The speech workspace is a short block just below
-. *#SKOOLKID$5CB2(RAMTOP) (low byte #N$57). A 48K machine uses
-. #N$FF57; a 16K machine uses #N$7F57.
+N $003F The speech workspace is a short block at the top of the
+. reserved area, between *#SKOOLKID$5CB2(RAMTOP) and the UDGs
+. (low byte #N$57). A 48K machine uses #N$FF57; a 16K machine
+. uses #N$7F57.
   $003F,$03 Fetch *#SKOOLKID$5CB2(RAMTOP).
   $0042,$05 Jump to #R$0050 if the low byte is not #N$57.
-  $0047,$05 Jump to #R$0081 if this is a 48K machine.
-  $004C,$04 Jump to #R$0081 if this is a 16K machine.
-N $0050 *#SKOOLKID$5CB2(RAMTOP) is not the installed workspace yet.
+  $0047,$05 Jump to #R$0081 if *#SKOOLKID$5CB2(RAMTOP) is still the
+. 48K power-on value (#N$FF57).
+  $004C,$04 Jump to #R$0081 if it is still the 16K power-on value
+. (#N$7F57).
+N $0050 *#SKOOLKID$5CB2(RAMTOP) is not a power-on value; probe
+. the speech workspace below it.
 @ $0050 label=ProbeWorkspace
-  $0050,$05 Call #R$0354 for the saved buffer pointer.
+  $0050,$05 Call #R$0354 for the address of the queue head (index
+. #N$06).
   $0055,$02 Copy the workspace address to #REGbc.
-  $0057,$05 Call #R$0375 and jump to #R$0081 if the reserved block
-. is already below *#SKOOLKID$5CB2(RAMTOP).
+  $0057,$05 Call #R$0375 and jump to #R$0081 to reinstall if the
+. workspace is no longer protected by *#SKOOLKID$5CB2(RAMTOP).
   $005C,$03 Call #R$037F.
   $005F,$03 Call #R$0375.
-  $0062,$03 Call #R$03A2 if the pointer is out of range.
+  $0062,$03 Call #R$03A2 if the buffer pointer is at or below
+. *#SKOOLKID$5CB2(RAMTOP).
   $0065,$04 Call #R$0354 for the flags byte.
-  $0069,$04 Jump to #R$00B7 if the workspace is already live.
-  $006D,$02 Mark the workspace as being installed.
+  $0069,$04 Jump to #R$00B7 if this is the second pass of this
+. interrupt.
+  $006D,$02 Flag that the next entry is the second pass.
   $006F,$04 Restore #REGde, #REGbc, #REGaf and #REGhl from the stack.
-N $0073 Page the Spectrum ROM back in so IM1 can run.
+N $0073 Let the Spectrum's IM1 routine (#SKOOLKID$0038(MASK_INT))
+. scan the keyboard first. When it returns, control goes to
+. #R$0038, which pages this ROM back in for the second pass.
 @ $0073 label=ReturnToSpectrum
-  $0073,$04 No operation.
-  $0077,$03 Set the return address to #R$0038.
-  $007A,$01 Stash the return address on the stack.
-  $007B,$02 Move #REGsp down two bytes.
-  $007D,$01 Restore #REGhl from the stack.
-  $007E,$03 Jump to #R$0038.
+  $0073,$04 Leave two copies of #REGhl below the stack.
+  $0077,$04 Stack #R$0038 over the first copy, as the return address
+. for the Spectrum IM1 routine.
+  $007B,$03 Restore #REGhl from the stack.
+  $007E,$03 Jump to #R$0038 to page the Spectrum ROM in.
 N $0081 Wait a few frames, then reserve a page below
 . *#SKOOLKID$5CB2(RAMTOP) for the speech workspace.
 @ $0081 label=InstallWorkspace
   $0081,$08 Jump to #R$01A3 if *#SKOOLKID$5C78(FRAMES) is still less than #N$05.
   $0089,$04 Call #R$0354 for the flags byte.
-  $008D,$04 Lower *#SKOOLKID$5CB2(RAMTOP) by one page.
+  $008D,$04 Set *#SKOOLKID$5CB2(RAMTOP) one page below the workspace page.
   $0091,$03 Write #N$82 to the flags byte.
   $0094,$03 Clear workspace index #N$01.
-  $0097,$02 Store the workspace page in index #N$02.
-  $0099,$03 Write #N$51 to the buffer pointer (index #N$03).
+  $0097,$02 Store the workspace page as the high byte of the
+. buffer pointer (index #N$02).
+  $0099,$03 Write #N$51 as its low byte (index #N$03): an empty queue.
   $009C,$04 Clear workspace indexes #N$04 and #N$05.
   $00A0,$03 Fetch the new *#SKOOLKID$5CB2(RAMTOP).
 N $00A3 Plant a sentinel and move the machine stack below the
@@ -78,35 +88,46 @@ N $00A3 Plant a sentinel and move the machine stack below the
   $00A3,$03 Write a #N$3E sentinel at the new
 . *#SKOOLKID$5CB2(RAMTOP).
   $00A6,$01 Write #N$00 beneath it.
-  $00A7,$01 Point #REGsp at the new *#SKOOLKID$5CB2(RAMTOP).
+  $00A7,$01 Point #REGsp one byte below the new *#SKOOLKID$5CB2(RAMTOP).
   $00A8,$04 Clear the two bytes below the new stack.
+N $00AC Install abandons the interrupted program: #SKOOLKID$0038(MASK_INT)
+. returns to #SKOOLKID$12A2,$12A9(MAIN_1), re-entering the BASIC main
+. loop with a fresh stack.
   $00AC,$03 Write the error stack to *#SKOOLKID$5C3D(ERR_SP).
-  $00AF,$03 Set the return address to #SKOOLKID$12A9(MAIN-5).
+  $00AF,$03 Set the return address to #SKOOLKID$12A2,$12A9(MAIN_1) in MAIN_EXEC.
   $00B2,$01 Stash the return address on the stack.
-  $00B3,$01 Enable interrupts.
+  $00B3,$01 Re-enable interrupts before handing over to the Spectrum ROM.
   $00B4,$03 Jump to #R$0038.
-N $00B7 The workspace is live. Draw the banner once, then speak.
+N $00B7 Second pass: clear the pass flag, then draw the banner once
+. and speak.
 @ $00B7 label=ServiceSpeech
-  $00B7,$02 Clear the "installing" flag.
+  $00B7,$02 Clear the second-pass flag.
   $00B9,$05 Call #R$01AB if the banner has not been drawn yet.
-N $00BE Keep *#SKOOLKID$5C78(FRAMES) moving while this ROM owns the
-. interrupt.
+N $00BE The Spectrum IM1 routine runs twice per frame (see #R$0073),
+. so take one off *#SKOOLKID$5C78(FRAMES) to compensate for the
+. extra increment.
   $00BE,$03 Fetch the *#SKOOLKID$5C78(FRAMES) word.
-  $00C1,$04 Jump to #R$00C9 if *#SKOOLKID$5C78(FRAMES) is non-zero.
-  $00C5,$04 Decrease the third *#SKOOLKID$5C78(FRAMES) byte.
+  $00C1,$04 Jump to #R$00C9 if the low word of *#SKOOLKID$5C78(FRAMES)
+. is non-zero.
+  $00C5,$04 Decrease the high byte of *#SKOOLKID$5C78(FRAMES) if the
+. low word is about to wrap.
 @ $00C9 label=ServiceSpeech_Tick
-  $00C9,$07 Decrease the *#SKOOLKID$5C78(FRAMES) word.
-N $00D0 Tick the two keyboard-state timer pairs.
+  $00C9,$07 Decrease the low word of *#SKOOLKID$5C78(FRAMES).
+N $00D0 Likewise add one to the repeat and delay counters in each
+. half of *#SKOOLKID$5C00(KSTATE), to compensate for
+. #SKOOLKID$02BF(KEYBOARD)'s extra decrement. (When a set is free
+. these counters just drift upwards; #SKOOLKID$02BF(KEYBOARD)
+. reloads them when a new key arrives.)
   $00D0,$06 Point at the keyboard-state timers (#N$04 bytes apart).
   $00D6,$03 Call #R$034B.
-  $00D9,$01 Move back one byte.
+  $00D9,$01 Move back to the five-call counters (#N$5C01 and #N$5C05).
   $00DA,$03 Call #R$034B.
 N $00DD Programs speak by assigning the BASIC string #FACT(sstring,s$). Look
 . it up and expand it into allophones if it exists.
   $00DD,$05 Call #R$01CD for "#FACT(sstring,s$)".
   $00E2,$03 Call #R$021F if #FACT(sstring,s$) exists.
   $00E5,$03 Call #R$02AD.
-  $00E8,$03 Jump to #R$0166 if key speech is enabled.
+  $00E8,$03 Jump to #R$0166 if key speech is disabled.
   $00EB,$04 Call #R$0354 for the flags byte.
   $00EF,$03 Fetch *#SKOOLKID$5C3B(FLAGS).
   $00F2,$04 Jump to #R$00FC if no new key was pressed.
@@ -121,7 +142,8 @@ N $0100 A new key is in *#SKOOLKID$5C08(LAST_K); turn it into allophones.
   $0105,$04 Jump to #R$0111 if the code is #N$7B or higher.
   $0109,$04 Jump to #R$0111 if the code is below "a".
   $010D,$04 Convert a lowercase letter to uppercase and jump to #R$012C.
-N $0111 Not a letter. Block graphics share key #N$80; other
+N $0111 Not a letter. Graphics characters (block graphics and UDGs)
+. share key #N$80; other
 . symbols go through #R$042D.
 @ $0111 label=ServiceSpeech_NotLetter
   $0111,$04 Jump to #R$011D if the code is #N$A5 or higher.
@@ -148,11 +170,10 @@ N $012C Look the key up in #R$0447.
 N $0143 Copy the matching allophones into the speech buffer.
 @ $0143 label=ServiceSpeech_Copy
   $0143,$01 Move to the first allophone of this entry.
-  $0144,$05 Call #R$0393 and jump to #R$0151 if the buffer pointers
-. already match.
+  $0144,$05 Call #R$0393 and jump to #R$0151 if the queue is empty.
   $0149,$01 Step the buffer pointer on one byte.
-  $014A,$04 Jump to #R$0166 if the previous allophone is not a terminator.
-  $014E,$03 Call #R$03A2.
+  $014A,$04 Jump to #R$0166 (leaving the key unspoken) if the last queued allophone does not have bit 7 set.
+  $014E,$03 Call #R$03A2 to empty the queue so the new key word replaces the previous one.
 @ $0151 label=ServiceSpeech_Store
   $0151,$03 Queue this allophone in the speech buffer.
   $0154,$05 Call #R$0375 and jump to #R$0160 if the buffer has hit
@@ -165,41 +186,56 @@ N $0143 Copy the matching allophones into the speech buffer.
 @ $0163 label=ServiceSpeech_Commit
   $0163,$03 Call #R$038A.
 N $0166 The #FACT(sp0256,SP0256) is the speech-synthesiser chip. Read its
-. busy flag at #N$1000 and send the next queued allophone if
-. it is idle.
+. status at #N$1000 (bit 0 is the inverted load request) and send
+. the next queued allophone if the input buffer can take one.
 @ $0166 label=FeedAllophone
   $0166,$03 Read the #FACT(sp0256,SP0256) status from #N$1000.
-  $0169,$04 Jump to #R$01A3 if the chip is still busy.
-  $016D,$03 Fetch *#SKOOLKID$5C3A(ERR_NR).
-  $0170,$04 Call #R$03A2 if BASIC is not reporting an error.
-  $0174,$05 Call #R$0393 and jump to #R$017F if there is something left to say.
-  $0179,$06 Silence the #FACT(sp0256,SP0256) and jump to #R$01A3.
-N $017F The #FACT(sp0256,SP0256) is idle; write the next queued allophone.
+  $0169,$04 Jump to #R$01A3 if the chip's input buffer is full.
+N $016D The manual notes that "the unit will remain silent until
+. the first ENTER is pressed after a power up, a NEW, or after a
+. 'report' has been printed at the bottom of the screen." On every
+. interrupt that reaches this code where bit 7 of
+. *#SKOOLKID$5C3A(ERR_NR) is reset (an error code is waiting),
+. this code empties the speech queue through #R$03A2, so nothing
+. is spoken until the ROM sets *#SKOOLKID$5C3A(ERR_NR) back to
+. #N$FF; that happens when ENTER is pressed and on the editor's
+. error paths (#SKOOLKID$107F,$1085(ED_ERROR) and
+. #SKOOLKID$111D,$1172(ED_FULL) in the Spectrum ROM). The
+. power-on and NEW cases are from the manual (chapter 2 also
+. says any report other than OK has this effect).
+  $016D,$07 Empty the speech queue (#R$03A2) if BASIC is reporting an
+. error (bit 7 of *#SKOOLKID$5C3A(ERR_NR) reset).
+  $0174,$05 Call #R$0393 and jump to #R$017F if anything is queued.
+  $0179,$06 Keep the chip fed with PA1 (silence) and jump to #R$01A3.
+N $017F The #FACT(sp0256,SP0256) can take an allophone; write the next
+. queued one.
 @ $017F label=FeedAllophone_Write
   $017F,$05 Call #R$0354 for the next allophone.
-  $0184,$03 Use the low-intonation port (#N$3000).
-  $0187,$04 Jump to #R$018C if bit 6 is reset.
-  $018B,$01 Use the high-intonation port instead (#N$3001).
+  $0184,$08 Point at #N$3000 (low pitch) or #N$3001 (high pitch) by
+. bit 6.
 @ $018C label=FeedAllophone_Port
-  $018C,$01 Select the intonation.
-  $018D,$03 Write the allophone to the #FACT(sp0256,SP0256).
-  $0190,$03 Work out how many bytes remain in the queue.
+  $018C,$01 Select the pitch (only the address matters; it switches
+. the speech chip's clock between about 3.05 MHz and 3.26 MHz
+. (MAME's values; see #FACT(intonation,Intonation))).
+  $018D,$03 Write the allophone to the speech port (the chip ignores
+. bits 6 and 7).
+  $0190,$03 Work out the queue length (including the allophone just sent).
   $0193,$01 Step the queue pointer on one byte.
-  $0194,$01 Stash the remaining length on the stack.
+  $0194,$01 Stash the queue length on the stack.
   $0195,$03 Call #R$038A.
   $0198,$05 Call #R$0354 for the queue start.
   $019D,$03 Point the copy at the previous queue byte.
-  $01A0,$01 Restore the remaining length from the stack.
-  $01A1,$02 Shuffle the queued allophones down.
+  $01A0,$01 Restore the queue length from the stack.
+  $01A1,$02 Move the rest of the queue up one byte.
 N $01A3 Restore the Spectrum registers and page its ROM back in.
 @ $01A3 label=ExitInterrupt
   $01A3,$04 Restore #REGde, #REGbc, #REGaf and #REGhl from the stack.
-  $01A7,$01 Enable interrupts.
+  $01A7,$01 Re-enable interrupts before handing over to the Spectrum ROM.
   $01A8,$03 Jump to #R$0038.
 
 c $01AB Print Banner
 @ $01AB label=PrintBanner
-D $01AB Copy the "speech system © CURRAH 1983" bitmaps into
+D $01AB Copy the "Speech System © CURRAH 1983" bitmaps into
 . the display file, using #R$075B.
 R $01AB HL Workspace flags pointer
   $01AB,$03 Start at the top of the display file.
@@ -230,9 +266,9 @@ R $01CD O:HL Pointer to the variable
 R $01CD O:F Z flag set if the name was found
   $01CD,$01 Keep the name code in #REGb.
   $01CE,$03 Fetch *#SKOOLKID$5C3B(FLAGS).
-  $01D1,$03 Jump to #R$0209 if bit 7 is not set.
+  $01D1,$03 Jump to #R$0209 if bit 7 is not set (checking syntax).
   $01D4,$03 Fetch *#SKOOLKID$5CB6(CHINFO).
-  $01D7,$04 Jump to #R$01DE if it is #N$F4.
+  $01D7,$04 Jump to #R$01DE if it is #N$F4 (the low byte of #SKOOLKID$09F4(PRINT_OUT)).
   $01DB,$03 Jump to #R$0209 if it is not #N$00.
 N $01DE Walk *#SKOOLKID$5C4B(VARS) for the requested name.
 @ $01DE label=FindVariable_Start
@@ -246,14 +282,14 @@ N $01DE Walk *#SKOOLKID$5C4B(VARS) for the requested name.
   $01F2,$04 Jump to #R$020D if the type is #N$E0.
   $01F6,$04 Jump to #R$0201 if the type is #N$C0.
   $01FA,$04 Jump to #R$0201 if the type is #N$80.
-  $01FE,$03 Return if the type is not a simple numeric.
+  $01FE,$03 Return (with Z clear) unless the type is #N$40 (a string).
 @ $0201 label=FindVariable_SkipWord
   $0201,$08 Skip the following length word and jump to #R$01E1.
 @ $0209 label=FindVariable_Miss
   $0209,$03 Clear the Z flag.
   $020C,$01 Return.
-@ $020D label=FindVariable_SkipArray
-  $020D,$04 Skip the array header.
+@ $020D label=FindVariable_SkipFor
+  $020D,$04 Skip the limit, step, looping line and statement of a FOR-NEXT control variable.
 @ $0211 label=FindVariable_SkipNumeric
   $0211,$06 Skip the numeric value and jump to #R$01E1.
 @ $0217 label=FindVariable_SkipName
@@ -288,12 +324,13 @@ N $023A Convert the next character of #FACT(sstring,s$) into allophones.
   $023B,$02 Fetch the next character from #FACT(sstring,s$).
   $023D,$03 Call #R$035E.
   $0240,$04 Jump to #R$0250 if this is not a full stop.
-  $0244,$02 Queue a short pause.
+  $0244,$02 Load #REGa with PA5 (the longest pause) for a full stop.
   $0246,$01 Restore the buffer pointer from the stack.
-  $0247,$02 Write the pause to the speech buffer.
+  $0247,$02 Queue the first PA5.
   $0249,$04 Call #R$0375 and return if the buffer is full.
   $024D,$01 Stash the buffer pointer on the stack.
-  $024E,$02 Jump to #R$0280.
+  $024E,$02 Jump to #R$0280 to queue a second PA5, with the
+. intonation bit.
 N $0250 A "(" starts a parenthesised allophone name.
 @ $0250 label=ParseSpeechString_TestGroup
   $0250,$04 Jump to #R$025C if this is not "(".
@@ -305,27 +342,33 @@ N $025C Map the character through #R$03AF.
   $025C,$01 Stash the string pointer on the stack.
   $025D,$0A Search #R$03AF and jump to #R$027A if this letter is known.
   $0267,$02 Restore the string pointer and the buffer pointer from the stack.
-N $0269 This character is not in the key tables; mark #FACT(sstring,s$)
-. with "?".
+N $0269 This character is not valid. Put a "?" on the character after
+. it (or on the last character), and then on the first character.
 @ $0269 label=ParseSpeechString_Mark
-  $0269,$02 Step past this character.
+  $0269,$02 Point #REGde one past the end of #FACT(sstring,s$) and
+. #REGhl at the next character.
 @ $026B label=ParseSpeechString_Bound
-  $026B,$05 Test whether the string pointer has reached the end
-. of #FACT(sstring,s$).
-  $0270,$02 Jump to #R$0275 if it has.
-  $0272,$01 Move back one character.
+  $026B,$07 Jump to #R$0275 if #REGhl is still inside
+. #FACT(sstring,s$).
+  $0272,$01 Otherwise move back to the last character.
   $0273,$02 Jump to #R$026B.
+N $0275 The "?" path and the buffer-full returns never reach #R$038A, so
+. allophones already queued for this string are discarded. On
+. buffer-full, #FACT(sstring,s$) is left unmarked and is retried on
+. every interrupt. An #FACT(sstring,s$) too long for the buffer never
+. speaks.
 @ $0275 label=ParseSpeechString_Query
-  $0275,$05 Mark #FACT(sstring,s$) with "?" and jump to #R$02A3.
+  $0275,$05 Write "?" there and jump to #R$02A3 to write another over
+. the first character.
 @ $027A label=ParseSpeechString_Mapped
-  $027A,$05 Fetch the mapped allophone from #R$03CA.
+  $027A,$05 Fetch the allophone at the same index in #R$03E5.
   $027F,$01 Restore the string pointer from the stack.
 N $0280 Apply intonation and queue the allophone.
 @ $0280 label=ParseSpeechString_Store
   $0280,$01 Keep the allophone in #REGb.
   $0281,$01 Set the flags-byte index.
   $0282,$01 Stash the string pointer on the stack.
-  $0283,$03 Call #R$0354.
+  $0283,$03 Call #R$0354 for the flags byte.
   $0286,$01 Restore the string pointer from the stack.
   $0287,$02,b$01 Keep only bit 6 (intonation).
   $0289,$01 Apply the intonation bit to the allophone.
@@ -334,7 +377,7 @@ N $0280 Apply intonation and queue the allophone.
   $028D,$04 Call #R$0375 and return if the buffer is full.
   $0291,$06 Jump to #R$023A if there are still characters left
 . in #FACT(sstring,s$).
-  $0297,$03 Write a terminator to the speech buffer.
+  $0297,$03 Write PA1 (#N$00) to the speech buffer to end the phrase.
   $029A,$04 Call #R$0375 and return if the buffer is full.
   $029E,$03 Call #R$038A.
   $02A1,$02 Use "*" as the "already spoken" marker.
@@ -350,26 +393,27 @@ c $02AD Test Keys Variable
 @ $02AD label=TestKeysVariable
 D $02AD Look up the BASIC variable "keys".
 . A value of #N$01 enables speaking each key press.
-R $02AD O:F Z flag set if key speech is enabled
+R $02AD O:F Z flag set if key speech is disabled
   $02AD,$05 Call #R$01CD for "keys".
   $02B2,$02 Jump to #R$02DD if it was not found.
   $02B4,$01 Move to the first letter of the name.
   $02B5,$06 Jump to #R$02DD if this is not "e".
   $02BB,$06 Jump to #R$02DD if the next letter is not "y".
   $02C1,$06 Jump to #R$02DD if the next letter is not "s".
-  $02C7,$05 Jump to #R$02DD if the name has not ended.
-  $02CC,$04 Jump to #R$02DD if the value header is not empty.
-  $02D0,$03 Jump to #R$02E4 if keys is #N$00.
-  $02D3,$04 Jump to #R$02DD if keys is not #N$01.
+  $02C7,$05 Jump to #R$02DD unless keys is held as a small integer
+. (first byte #N$00).
+  $02CC,$04 Jump to #R$02DD if keys is negative.
+  $02D0,$03 Jump to #R$02E4 if the low byte of keys is #N$00.
+  $02D3,$04 Jump to #R$02DD if the low byte of keys is not #N$01 (leave the setting unchanged).
   $02D7,$04 Call #R$0354 for the flags byte.
   $02DB,$02 Enable key speech.
 @ $02DD label=TestKeysVariable_State
   $02DD,$04 Call #R$0354 for the flags byte.
-  $02E1,$02 Set the Z flag from the key-speech flag.
+  $02E1,$02 Set the Z flag if key speech is disabled.
   $02E3,$01 Return.
 N $02E4 keys is #N$00; turn key speech off.
 @ $02E4 label=TestKeysVariable_Off
-  $02E4,$03 Call #R$0354.
+  $02E4,$03 Call #R$0354 for the flags byte.
   $02E7,$04 Disable key speech and jump to #R$02DD.
 
 c $02EB Parse Allophone Group
@@ -377,7 +421,8 @@ c $02EB Parse Allophone Group
 D $02EB Read a parenthesised allophone name from the speech string
 . (for example "(AA)" or "(SH)"). Letters are normalised, checked
 . against #R$03AF, and summed; the sum selects an allophone from
-. the parallel tables.
+. #R$03E5 (via #R$03CA). Groups with sums #N$5C/#N$64/#N$66/#N$68/#N$78
+. are finished from #R$041B and #R$0424.
 R $02EB HL Current string pointer
 R $02EB O:A Mapped allophone
 R $02EB O:F Carry set if the group is invalid
@@ -406,25 +451,25 @@ N $0309 The name has ended; the running total selects the allophone.
   $0312,$04 Jump to #R$0335 if the sum is #N$5C.
   $0316,$04 Jump to #R$0335 if the sum is #N$66.
   $031A,$04 Jump to #R$0331 if the sum is #N$78.
-N $031E Look the sum up across both character-key tables.
-  $031E,$03 Search #N$36 bytes of the character-key tables.
+N $031E Look the sum up in #R$03AF and #R$03CA.
+  $031E,$03 Search the #N$36 bytes of #R$03AF and #R$03CA.
   $0321,$01 Stash the string pointer on the stack.
   $0322,$05 Search #R$03AF for the name sum.
-  $0327,$03 Use the parallel mapped value (#N$35 bytes on).
+  $0327,$03 Point at the same index in #R$03E5 (#REGhl is one past the match).
 @ $032A label=ParseAllophoneGroup_Offset
   $032A,$02 Jump to #R$0348 if no match was found.
   $032C,$02 Fetch the mapped allophone from the parallel table.
-  $032E,$01 Set the flags from the mapped allophone.
+  $032E,$01 Clear the carry flag (valid group).
   $032F,$01 Restore the string pointer from the stack.
   $0330,$01 Return.
-N $0331 Sum #N$78 uses the character before the ")".
+N $0331 Sum #N$78 uses the character two before the ")" (the middle letter of "(aer)" or "(ear)").
 @ $0331 label=ParseAllophoneGroup_Prev
   $0331,$01 Stash the string pointer on the stack.
   $0332,$01 Move back to the previous character.
   $0333,$02 Jump to #R$0336.
 @ $0335 label=ParseAllophoneGroup_Look
   $0335,$01 Stash the string pointer on the stack.
-N $0336 Map the previous character through the suffix tables.
+N $0336 Map the selected character through the suffix tables.
 @ $0336 label=ParseAllophoneGroup_Suffix
   $0336,$02 Fetch the previous character.
   $0338,$03 Call #R$035E.
@@ -435,7 +480,7 @@ N $0348 The name sum is not in the key tables; restore the
 @ $0348 label=ParseAllophoneGroup_Fail
   $0348,$01 Restore the string pointer from the stack.
 @ $0349 label=ParseAllophoneGroup_Carry
-  $0349,$01 Set the carry flag.
+  $0349,$01 Set the carry flag to signal an invalid group.
   $034A,$01 Return.
 
 c $034B Increment Pair
@@ -464,13 +509,13 @@ R $0354 O:HL Address of that index
 N $0357 The slot is #N$57 minus the index, in the page of
 . *#SKOOLKID$5CB4(P_RAMT).
   $0357,$05 Calculate the address of this workspace index.
-  $035C,$01 Fetch the byte.
+  $035C,$01 Fetch the workspace byte.
   $035D,$01 Return.
 
 c $035E Normalise Character
 @ $035E label=NormaliseCharacter
 D $035E Convert a character towards the dictionary alphabet,
-. and set workspace bit 6 for intonation (uppercase vs lowercase).
+. and set workspace bit 6 for intonation (set for codes below "a").
 R $035E A Character
 R $035E O:A Normalised character
   $035E,$01 Stash #REGhl on the stack.
@@ -479,11 +524,11 @@ R $035E O:A Normalised character
   $0364,$01 Restore the character.
 N $0365 Fold the letter into the dictionary alphabet. "A" and
 . "a" both become #N$21.
-  $0365,$04 Jump to #R$036F if this is not a lowercase letter.
-  $0369,$02 Subtract #N$40 from a lowercase letter.
+  $0365,$04 Jump to #R$036F if the character is below "a".
+  $0369,$02 Subtract #N$40 from a character at or above "a".
   $036B,$04 Use low intonation and jump to #R$0373.
-@ $036F label=NormaliseCharacter_Upper
-  $036F,$02 Subtract #N$20 from an uppercase letter.
+@ $036F label=NormaliseCharacter_BelowA
+  $036F,$02 Subtract #N$20 from a character below "a".
   $0371,$02 Use high intonation.
 @ $0373 label=NormaliseCharacter_Done
   $0373,$01 Restore #REGhl from the stack.
@@ -493,9 +538,9 @@ c $0375 Check Memory
 @ $0375 label=CheckMemory
 D $0375 Compare the speech-buffer pointer with
 . *#SKOOLKID$5CB2(RAMTOP). Carry is set when the pointer has
-. dropped into the reserved workspace.
+. run out of the reserved page (at or below *#SKOOLKID$5CB2(RAMTOP)).
 R $0375 BC Buffer pointer
-R $0375 O:F Carry set if #REGbc is below *#SKOOLKID$5CB2(RAMTOP)
+R $0375 O:F Carry set if #REGbc is at or below *#SKOOLKID$5CB2(RAMTOP)
   $0375,$01 Stash #REGhl on the stack.
   $0376,$03 Fetch *#SKOOLKID$5CB2(RAMTOP).
   $0379,$04 Compare *#SKOOLKID$5CB2(RAMTOP) with the buffer pointer.
@@ -520,69 +565,97 @@ R $038A BC Buffer pointer
   $038F,$03 Write the two-byte buffer pointer.
   $0392,$01 Return.
 
-c $0393 Compare Buffer
-@ $0393 label=CompareBuffer
-D $0393 Compare the live buffer pointer with the saved pointer
-. in the workspace.
-R $0393 O:F Z flag set when the two pointers match
+c $0393 Is Queue Empty
+@ $0393 label=IsQueueEmpty
+D $0393 Compare the buffer pointer with the address of the queue head.
+R $0393 O:F Z flag set if the queue is empty
   $0393,$01 Stash #REGhl on the stack.
-  $0394,$05 Call #R$0354 for the saved pointer.
+  $0394,$05 Call #R$0354 for the address of the queue head.
   $0399,$03 Call #R$037F.
   $039C,$02 Compare the two pointers.
   $039E,$01 Restore #REGhl from the stack.
   $039F,$02 Clear the carry flag.
   $03A1,$01 Return.
 
-c $03A2 Reset Buffer Pointer
-@ $03A2 label=ResetBufferPointer
-D $03A2 Copy the saved queue pointer back over the live buffer pointer.
+c $03A2 Empty Queue
+@ $03A2 label=EmptyQueue
+D $03A2 Reset the buffer pointer to the queue head, discarding
+. anything still queued.
 R $03A2 O:BC Restored buffer pointer
   $03A2,$02 Select workspace index #N$06.
   $03A4,$01 Stash #REGhl on the stack.
-  $03A5,$03 Call #R$0354.
-  $03A8,$02 Copy the saved pointer to #REGbc.
+  $03A5,$03 Call #R$0354 for the address of the queue head.
+  $03A8,$02 Copy the queue-head address to #REGbc.
   $03AA,$03 Call #R$038A.
   $03AD,$01 Restore #REGhl from the stack.
   $03AE,$01 Return.
 
 b $03AF Character Keys
 @ $03AF label=CharacterKeys
-D $03AF Letters and symbols that can appear in an allophone name.
-. The matching allophone is #N$35 bytes later in #R$03CA.
-  $03AF,$1B,$1B
+D $03AF The #N$1B normalised characters (see #R$035E) allowed in
+. #FACT(sstring,s$): "a"-"z" except "q" and "x", then ",", "'" and
+. space. The first #N$18 are also the letters allowed in an
+. allophone name. Searched by #R$025C and #R$02EB.
+D $03AF The allophone for each key is at the same index in #R$03E5
+. (#REGhl is left one past the match, then #N$35 is added).
+  $03AF,$01 Key #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
+L $03AF,$01,$1B
 
-b $03CA Mapped Characters
+b $03CA Allophone Name Sums
 @ $03CA label=MappedCharacters
-D $03CA Parallel table to #R$03AF.
-  $03CA,$1B,$1B
+D $03CA The sums of the normalised letters of each parenthesised
+. allophone name, searched along with #R$03AF by #R$02EB. The
+. allophone for each sum is at the same index in the second half of
+. #R$03E5.
+D $03CA Note that "(gg)" and "(ck)" both sum to #N$4E and "(gg)"
+. finds the "(ck)" entry first, so it gives KK2. The second #N$4E
+. (the seventh sum) and its GG2 allophone are never reached.
+. Manual Appendix I documents "(gg)" as GG2 (#N$3D) and "(ck)" as
+. KK2 (#N$29), so the ROM gives "(gg)" the "(ck)" sound instead of
+. the manual's GG2; that confirms the unused GG2 entry was meant
+. for "(gg)".
+  $03CA,$01 Name sum #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
+L $03CA,$01,$1B
 
 b $03E5 Allophone Values
 @ $03E5 label=AllophoneValues
-D $03E5 Extra allophone bytes used when a parenthesised group
-. is closed. Hear the IDs on the #LINK(Sound)(Allophones) page.
-  $03E5,$36,$12
+D $03E5 Shared allophone value table: #N$1B allophones for the
+. characters in #R$03AF (used by #R$027A), followed by #N$1B
+. allophones for the name sums in #R$03CA (used by #R$032A). Hear
+. the IDs on the #LINK(Sound)(Allophones) page.
+  $03E5,$1B,$01 Allophones for the characters in #R$03AF.
+@ $0400 label=GroupAllophones
+  $0400,$1B,$01 Allophones for the name sums in #R$03CA.
 
 b $041B Suffix Keys
 @ $041B label=SuffixKeys
-D $041B Suffix letters used after certain allophone-name sums.
-. The matching value is #N$08 bytes later in #R$0424.
-  $041B,$09,$09
+D $041B Suffix letters used after certain allophone-name sums,
+. searched by #R$0336. The matching value is #N$09 bytes later in
+. #R$0424.
+  $041B,$01 Suffix letter #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$09)).
+L $041B,$01,$09
 
 b $0424 Suffix Values
 @ $0424 label=SuffixValues
-D $0424 Parallel table to #R$041B.
-  $0424,$09,$09
+D $0424 Allophone IDs for the suffix letters in #R$041B, used by
+. #R$0336.
+  $0424,$01 Allophone #N(#PEEK(#PC)).
+L $0424,$01,$09
 
 b $042D Punctuation Keys
 @ $042D label=PunctuationKeys
-D $042D Punctuation and token bytes spoken from *#SKOOLKID$5C08(LAST_K).
-. The replacement is #N$0C bytes later in #R$043A.
-  $042D,$0D,$0D
+D $042D Punctuation and token bytes spoken from *#SKOOLKID$5C08(LAST_K),
+. searched by #R$011D. The replacement is #N$0D bytes later in
+. #R$043A.
+  $042D,$01 Key #N(#PEEK(#PC)): dictionary key #N(#PEEK(#PC+$0D)).
+L $042D,$01,$0D
 
 b $043A Punctuation Values
 @ $043A label=PunctuationValues
-D $043A Parallel table to #R$042D.
-  $043A,$0D,$0D
+D $043A Dictionary keys for the characters in #R$042D, used by
+. #R$011D.
+  $043A,$01 Dictionary key #N(#PEEK(#PC)).
+L $043A,$01,$0D
 
 b $0447 Allophone Dictionary
 @ $0447 label=AllophoneDictionary
@@ -609,7 +682,7 @@ N $0462 #AUDIO0(key-ink.wav)
 N $0466 #AUDIO0(key-paper.wav)
   $0466,$06 PAPER.
 N $046C #AUDIO0(key-graphics.wav)
-  $046C,$07 Block graphics.
+  $046C,$07 Graphics characters (block graphics and UDGs).
 N $0473 #AUDIO0(key-flash.wav)
   $0473,$05 FLASH.
 N $0478 #AUDIO0(key-bright.wav)
@@ -657,7 +730,7 @@ N $0512 #AUDIO0(key-und.wav)
 N $051A #AUDIO0(key-star.wav)
   $051A,$04 "*".
 N $051E #AUDIO0(key-grave.wav)
-  $051E,$05 "`".
+  $051E,$05 "£".
 N $0523 #AUDIO0(key-plus.wav)
   $0523,$06 "+".
 N $0529 #AUDIO0(key-minus.wav)
@@ -665,7 +738,7 @@ N $0529 #AUDIO0(key-minus.wav)
 N $0530 #AUDIO0(key-space.wav)
   $0530,$06 Space.
 N $0536 #AUDIO0(key-hat.wav)
-  $0536,$05 "^".
+  $0536,$05 "↑".
 N $053B #AUDIO0(key-query.wav)
   $053B,$06 "?".
 N $0541 #AUDIO0(key-pipe.wav)
@@ -914,46 +987,49 @@ N $0755 #AUDIO0(key-copy.wav)
 
 w $075B Banner Addresses
 @ $075B label=BannerAddresses
-D $075B Pointers to the 8x8 bitmaps that spell
-. "speech system © CURRAH 1983". #N$FFFF ends the list.
-  $075B,$02 #N$07A0 ("s").
-  $075D,$02 #N$07A8 ("p").
-  $075F,$02 #N$07B0 ("e").
-  $0761,$02 #N$07B0 ("e").
-  $0763,$02 #N$07B8 ("c").
-  $0765,$02 #N$07C0 ("h").
-  $0767,$02 #N$0798 (space).
-  $0769,$02 #N$07A0 ("s").
-  $076B,$02 #N$07C8 ("y").
-  $076D,$02 #N$07E0 ("s").
-  $076F,$02 #N$07D8 ("t").
-  $0771,$02 #N$07B0 ("e").
-  $0773,$02 #N$07D0 ("m").
-  $0775,$02 #N$0798 (space).
-  $0777,$02 #N$07E8 (copyright).
-  $0779,$02 #N$0798 (space).
-  $077B,$02 #N$07F0 ("C").
-  $077D,$02 #N$07F8 ("U").
-  $077F,$02 #N$0008 ("R").
-  $0781,$02 #N$0008 ("R").
-  $0783,$02 #N$0010 ("A").
-  $0785,$02 #N$0018 ("H").
-  $0787,$02 #N$0798 (space).
-  $0789,$02 #N$0020 ("1").
-  $078B,$02 #N$0028 ("9").
-  $078D,$02 #N$0030 ("8").
-  $078F,$02 #N$0000 ("3").
+D $075B Pointers to the 8x8 bitmaps in #R$0000 and #R$0798 that spell
+. "Speech System © CURRAH 1983", used by #R$01AB. A high byte of #N$FF
+. ends the list.
+  $075B,$02 #R$0798(#N$07A0) ("S").
+  $075D,$02 #R$0798(#N$07A8) ("p").
+  $075F,$02 #R$0798(#N$07B0) ("e").
+  $0761,$02 #R$0798(#N$07B0) ("e").
+  $0763,$02 #R$0798(#N$07B8) ("c").
+  $0765,$02 #R$0798(#N$07C0) ("h").
+  $0767,$02 #R$0798 (space).
+  $0769,$02 #R$0798(#N$07A0) ("S").
+  $076B,$02 #R$0798(#N$07C8) ("y").
+  $076D,$02 #R$0798(#N$07E0) ("s").
+  $076F,$02 #R$0798(#N$07D8) ("t").
+  $0771,$02 #R$0798(#N$07B0) ("e").
+  $0773,$02 #R$0798(#N$07D0) ("m").
+  $0775,$02 #R$0798 (space).
+  $0777,$02 #R$0798(#N$07E8) (copyright).
+  $0779,$02 #R$0798 (space).
+  $077B,$02 #R$0798(#N$07F0) ("C").
+  $077D,$02 #R$0798(#N$07F8) ("U").
+  $077F,$02 #R$0000(#N($0008,$04,$04)) ("R").
+  $0781,$02 #R$0000(#N($0008,$04,$04)) ("R").
+  $0783,$02 #R$0000(#N($0010,$04,$04)) ("A").
+  $0785,$02 #R$0000(#N($0018,$04,$04)) ("H").
+  $0787,$02 #R$0798 (space).
+  $0789,$02 #R$0000(#N($0020,$04,$04)) ("1").
+  $078B,$02 #R$0000(#N($0028,$04,$04)) ("9").
+  $078D,$02 #R$0000(#N($0030,$04,$04)) ("8").
+  $078F,$02 #R$0000(#N($0000,$04,$04)) ("3").
   $0791,$02 Terminator.
 
 t $0793 Programmer Credit
 @ $0793 label=ProgrammerCredit
-D $0793 Name stored after the banner address table.
+D $0793 #HTML[Mark Anson ("Anson"), named on the programming manual
+. title page (see <a href="https://archive.org/stream/currahuspeech/Currah_uSPEECH_djvu.txt" rel="noopener noreferrer nofollow">archive.org</a>).]
   $0793,$05 "Anson".
 
 b $0798 Banner Bitmaps
 @ $0798 label=BannerBitmaps
-D $0798 Space, "speech system" letters, the copyright mark and
-. inverse "CU". Inverse "RRAH" and the "1983" digits live at #R$0000.
+D $0798 Space, "Speech System" letters, the copyright mark and
+. inverse "CU". Inverse "R", "A" and "H" and the "1983" digits live at #R$0000.
+. Reached by #R$01AB through #R$075B.
   $0798,$08 #UDGTABLE { #UDG(#PC) } TABLE#
   $07A0,$08 #UDGTABLE { #UDG(#PC) } TABLE#
   $07A8,$08 #UDGTABLE { #UDG(#PC) } TABLE#

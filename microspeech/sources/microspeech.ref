@@ -1,9 +1,11 @@
+; Copyright 2026 Paul Maddern (paul@arcadegeek.co.uk)
+
 ;
 ; SkoolKit ref file for the Currah μSpeech
 ;
 ; To build the HTML disassembly, run these commands:
-;   sna2skool.py -H -o 0 -c sources/microspeech.ctl CURRAH.ROM > sources/microspeech.skool
-;   utils/mkhtml.py
+;   sna2skool.py -H -o 0 --ini ListRefs=2 -c sources/microspeech.ctl CURRAH.ROM > sources/microspeech.skool
+;   make html
 
 [Config]
 Expand=#INCLUDE(Expand)
@@ -12,8 +14,8 @@ GameDir=microspeech
 
 [Game]
 Game=Currah μSpeech
-Copyright=&copy; 1983 Currah &copy; 2024 ArcadeGeek LTD.
-Repository=https://github.com/pobtastic/currah/
+Copyright=&copy; 1983 Currah Computor Components Ltd. &copy; 2024 ArcadeGeek LTD.
+Repository=https://github.com/pobtastic/currah-microspeech
 LinkInternalOperands=1
 AddressAnchor={address#IF({base}==16)(:04x)}
 
@@ -47,6 +49,9 @@ audio/*.wav={AudioPath}
 JavaScript=allophones.js;uspeech.js
 PageContent=#INCLUDE(TryIt)
 
+[Page:Credits]
+PageContent=#INCLUDE(Credits)
+
 [TryIt]
 <link rel="stylesheet" type="text/css" href="../uspeech.css" />
 <div class="uspeech">
@@ -78,19 +83,22 @@ PageContent=#INCLUDE(TryIt)
   <p>Queued allophones (bit 6 set means high intonation). Click
   one to hear it alone:</p>
   <div id="uspeech-tokens" class="uspeech-tokens"></div>
-  <p>A full stop queues a sentence pause. A space is a word
-  pause, a comma is a phrase pause, and an apostrophe is a
-  short pause. Uppercase raises the pitch. Q and X are not
-  letters in this alphabet; write "kw" and "ks" instead.</p>
+  <p>A full stop queues two PA5 pauses (the longest). A space
+  is a word pause, a comma is a phrase pause (one PA5), and an
+  apostrophe is a short pause. Uppercase raises the pitch by
+  about 1.07×. Q and X are not letters in this alphabet; write
+  "kw" and "ks" instead.</p>
   <p>The parser follows #R$021F and #R$02EB. Samples are
   recordings of a real AL2 chip, concatenated in the browser;
   they are close to the unit, not a cycle-accurate
-  #FACT(sp0256,SP0256) core.</p>
+  #FACT(sp0256,SP0256) core. The samples derive from CPCWiki's
+  AL2 WAV set (via ExtremeElectronics), which CPCWiki notes has
+  some allophone lengths wrong.</p>
 </div>
 
 [Credits]
 <div>
-  <p>This work would not be possible without the efforts of;</p>
+  <p>This work would not be possible without the efforts of:</p>
   <dl>
     <dt>CURRAH μSPEECH programming manual (1983)</dt>
     <dd><a href="https://maziac.github.io/currah_uspeech_tests/data/currah_manual.pdf" rel="noopener noreferrer nofollow">https://maziac.github.io/currah_uspeech_tests/data/currah_manual.pdf</a></dd>
@@ -98,15 +106,34 @@ PageContent=#INCLUDE(TryIt)
     <dd><a href="https://bitsavers.org/components/gi/speech/General_Instrument_-_SP0256A-AL2_datasheet_(Radio_Shack_276-1784)_-_Apr1984.pdf" rel="noopener noreferrer nofollow">https://bitsavers.org/components/gi/speech/General_Instrument_-_SP0256A-AL2_datasheet_(Radio_Shack_276-1784)_-_Apr1984.pdf</a></dd>
     <dt>SkoolKit Spectrum ROM disassembly</dt>
     <dd><a href="https://skoolkit.ca/disassemblies/rom/" rel="noopener noreferrer nofollow">https://skoolkit.ca/disassemblies/rom/</a></dd>
-    <dt>Gunther Strube — currah_uspeech_tests</dt>
-    <dd><a href="https://github.com/maziac/currah_uspeech_tests" rel="noopener noreferrer nofollow">https://github.com/maziac/currah_uspeech_tests</a></dd>
+    <dt>maziac — currah_uspeech_tests</dt>
+    <dd><a href="https://github.com/maziac/currah_uspeech_tests" rel="noopener noreferrer nofollow">https://github.com/maziac/currah_uspeech_tests</a> (<a href="https://maziac.github.io/currah_uspeech_tests/" rel="noopener noreferrer nofollow">maziac thanks Kio (Günter Woigk)</a>)</dd>
     <dt>Spectrum Computing — Currah MicroSpeech</dt>
     <dd><a href="https://spectrumcomputing.co.uk/entry/1000081/Hardware/Currah_MicroSpeech" rel="noopener noreferrer nofollow">https://spectrumcomputing.co.uk/entry/1000081/Hardware/Currah_MicroSpeech</a></dd>
     <dt>CPCWiki — SP0256 allophone list and chip recordings</dt>
     <dd><a href="https://www.cpcwiki.eu/index.php/SP0256_Allophones" rel="noopener noreferrer nofollow">https://www.cpcwiki.eu/index.php/SP0256_Allophones</a></dd>
     <dt>ExtremeElectronics — packed AL2 PCM samples</dt>
     <dd><a href="https://github.com/ExtremeElectronics/RC2040" rel="noopener noreferrer nofollow">https://github.com/ExtremeElectronics/RC2040</a></dd>
+    <dt>Kio (<a href="https://www.cpcwiki.eu/index.php/Kio" rel="noopener noreferrer nofollow">Günter Woigk</a>) — Currah μSpeech hardware notes</dt>
+    <dd><a href="https://k1.spdns.de/Vintage/Sinclair/82/Peripherals/Currah%20uSpeech/" rel="noopener noreferrer nofollow">https://k1.spdns.de/Vintage/Sinclair/82/Peripherals/Currah%20uSpeech/</a></dd>
+    <dt>MAME — uspeech.cpp</dt>
+    <dd><a href="https://github.com/mamedev/mame/blob/master/src/devices/bus/spectrum/uspeech.cpp" rel="noopener noreferrer nofollow">https://github.com/mamedev/mame/blob/master/src/devices/bus/spectrum/uspeech.cpp</a></dd>
+    <dt>archive.org OCR text of the original manual (Mark Anson, 1983)</dt>
+    <dd><a href="https://archive.org/stream/currahuspeech/Currah_uSPEECH_djvu.txt" rel="noopener noreferrer nofollow">https://archive.org/stream/currahuspeech/Currah_uSPEECH_djvu.txt</a></dd>
+    <dt>Fuse emulator uspeech patch #142</dt>
+    <dd><a href="https://sourceforge.net/p/fuse-emulator/patches/142/" rel="noopener noreferrer nofollow">https://sourceforge.net/p/fuse-emulator/patches/142/</a></dd>
+    <dt>SZX uspeech block</dt>
+    <dd><a href="https://www.spectaculator.com/docs/zx-state/uspeech.html" rel="noopener noreferrer nofollow">https://www.spectaculator.com/docs/zx-state/uspeech.html</a></dd>
   </dl>
   <p>These pages were a great help when working out the paging, the
   allophone set and the BASIC interface.</p>
+  <p>Period reviews and features indexed on Spectrum Computing
+  include Sinclair User #21 (Dec 1983) p.40; Your Spectrum #1
+  (Jan 1984) p.33 and #9 (Nov 1984) p.52; Personal Computer News
+  #34 (2 Nov 1983) p.39, #40 (14 Dec 1983) supplement "PCN
+  Micropaedia v13 part 2: Peripherals" p.321, and #49 (18 Feb
+  1984) p.36; C&amp;VG #28 (Feb 1984) p.156; ZX Computing #14
+  (Aug 1984) p.33 and #17 (Feb 1985) p.115; Sinclair User Annual
+  1984 p.39; Crash v1 #1 (Feb 1984) p.26 and v1 #2 (Mar 1984)
+  p.42; and Computer Choice (Apr 1984) p.34.</p>
 </div>

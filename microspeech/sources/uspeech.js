@@ -26,7 +26,7 @@
   var SUFFIX_VALUES = [0x0E, 0x16, 0x0D, 0x05, 0x1D, 0x38, 0x3C, 0x2F, 0x20];
   var COMBINED_KEYS = CHARACTER_KEYS.concat(MAPPED_CHARACTERS);
   var NAME_KEYS = CHARACTER_KEYS.slice(0, 0x18);
-  var HIGH_RATE = 1.18;
+  var HIGH_RATE = 1.07;
 
   var audioCtx = null;
   var pcmBuffers = null;
@@ -157,6 +157,8 @@
       folded = normalise(code);
       high = folded.high;
       if (folded.value === 0x0E) {
+        // ROM queues PA5 once here, then again via $0280 with intonation.
+        tokens.push(token(ch, 0x04, false, "pause"));
         tokens.push(token(ch, 0x04, high, "pause"));
         i += 1;
         continue;
