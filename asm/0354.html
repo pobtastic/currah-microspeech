@@ -39,7 +39,7 @@ Next: <a href="035E.html">035E</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Used by the routines at <a href="0038.html">HandleInterrupt</a>, <a href="021F.html">ParseSpeechString</a>, <a href="02AD.html">TestKeysVariable</a>, <a href="035E.html">NormaliseCharacter</a>, <a href="037F.html">ReadBufferPointer</a>, <a href="038A.html">WriteBufferPointer</a>, <a href="0393.html">CompareBuffer</a> and <a href="03A2.html">ResetBufferPointer</a>.
+Used by the routines at <a href="0038.html">HandleInterrupt</a>, <a href="021F.html">ParseSpeechString</a>, <a href="02AD.html">TestKeysVariable</a>, <a href="035E.html">NormaliseCharacter</a>, <a href="037F.html">ReadBufferPointer</a>, <a href="038A.html">WriteBufferPointer</a>, <a href="0393.html">IsQueueEmpty</a> and <a href="03A2.html">EmptyQueue</a>.
 </div>
 <div class="paragraph">
 Fetch a byte from the speech workspace. The block lives in the page of *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB4.html">P_RAMT</a>, at low byte 57-index.
@@ -110,7 +110,7 @@ The slot is 57 minus the index, in the page of *<a rel="noopener nofollow" href=
 <td class="asm-label"></td>
 <td class="address-1"><span id="035c"></span>035C</td>
 <td class="instruction">LD A,(HL)</td>
-<td class="comment-1" rowspan="1">Fetch the byte.</td>
+<td class="comment-1" rowspan="1">Fetch the workspace byte.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -132,9 +132,9 @@ Next: <a href="035E.html">035E</a>
 </table>
 <footer>
 <div class="release"></div>
-<div class="copyright">&copy; 1983 Currah &copy; 2024 ArcadeGeek LTD.</div>
+<div class="copyright">&copy; 1983 Currah Computor Components Ltd. &copy; 2024 ArcadeGeek LTD.</div>
 <div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
-<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah/">Source code</a>.</div>
+<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah-microspeech">Source code</a>.</div>
 <div><a href="../dec/asm/852.html">Switch to decimal</a>.</div>
 </footer>
 </body>

@@ -54,20 +54,23 @@ aria-describedby="uspeech-status">he(ll)(oo)</textarea>
 <p>Queued allophones (bit 6 set means high intonation). Click
 one to hear it alone:</p>
 <div id="uspeech-tokens" class="uspeech-tokens"></div>
-<p>A full stop queues a sentence pause. A space is a word
-pause, a comma is a phrase pause, and an apostrophe is a
-short pause. Uppercase raises the pitch. Q and X are not
-letters in this alphabet; write "kw" and "ks" instead.</p>
+<p>A full stop queues two PA5 pauses (the longest). A space
+is a word pause, a comma is a phrase pause (one PA5), and an
+apostrophe is a short pause. Uppercase raises the pitch by
+about 1.07×. Q and X are not letters in this alphabet; write
+"kw" and "ks" instead.</p>
 <p>The parser follows <a href="../asm/021F.html">ParseSpeechString</a> and <a href="../asm/02EB.html">ParseAllophoneGroup</a>. Samples are
 recordings of a real AL2 chip, concatenated in the browser;
 they are close to the unit, not a cycle-accurate
-<a href="facts.html#sp0256">SP0256</a> core.</p>
+<a href="facts.html#sp0256">SP0256</a> core. The samples derive from CPCWiki's
+AL2 WAV set (via ExtremeElectronics), which CPCWiki notes has
+some allophone lengths wrong.</p>
 </div>
 <footer>
 <div class="release"></div>
-<div class="copyright">&copy; 1983 Currah &copy; 2024 ArcadeGeek LTD.</div>
+<div class="copyright">&copy; 1983 Currah Computor Components Ltd. &copy; 2024 ArcadeGeek LTD.</div>
 <div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
-<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah/">Source code</a>.</div>
+<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah-microspeech">Source code</a>.</div>
 <div><a href="../dec/reference/tryit.html">Switch to decimal</a>.</div>
 </footer>
 </body>

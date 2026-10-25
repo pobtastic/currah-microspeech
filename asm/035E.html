@@ -42,7 +42,7 @@ Next: <a href="0375.html">0375</a>
 Used by the routines at <a href="021F.html">ParseSpeechString</a> and <a href="02EB.html">ParseAllophoneGroup</a>.
 </div>
 <div class="paragraph">
-Convert a character towards the dictionary alphabet, and set workspace bit 6 for intonation (uppercase vs lowercase).
+Convert a character towards the dictionary alphabet, and set workspace bit 6 for intonation (set for codes below "a").
 </div>
 </div>
 <table class="input">
@@ -108,18 +108,18 @@ Fold the letter into the dictionary alphabet. "A" and "a" both become 21.
 <td class="asm-label"></td>
 <td class="address-1"><span id="0365"></span>0365</td>
 <td class="instruction">CP $61</td>
-<td class="comment-1" rowspan="2">Jump to <a href="035E.html#036f">NormaliseCharacter_Upper</a> if this is not a lowercase letter.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="035E.html#036f">NormaliseCharacter_BelowA</a> if the character is below "a".</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="0367"></span>0367</td>
-<td class="instruction">JR C,<a href="035E.html#036f">NormaliseCharacter_Upper</a></td>
+<td class="instruction">JR C,<a href="035E.html#036f">NormaliseCharacter_BelowA</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="0369"></span>0369</td>
 <td class="instruction">SUB $40</td>
-<td class="comment-1" rowspan="1">Subtract 40 from a lowercase letter.</td>
+<td class="comment-1" rowspan="1">Subtract 40 from a character at or above "a".</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -133,10 +133,10 @@ Fold the letter into the dictionary alphabet. "A" and "a" both become 21.
 <td class="instruction">JR <a href="035E.html#0373">NormaliseCharacter_Done</a></td>
 </tr>
 <tr>
-<td class="asm-label">NormaliseCharacter_Upper</td>
+<td class="asm-label">NormaliseCharacter_BelowA</td>
 <td class="address-2"><span id="036f"></span>036F</td>
 <td class="instruction">SUB $20</td>
-<td class="comment-1" rowspan="1">Subtract 20 from an uppercase letter.</td>
+<td class="comment-1" rowspan="1">Subtract 20 from a character below "a".</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -170,9 +170,9 @@ Next: <a href="0375.html">0375</a>
 </table>
 <footer>
 <div class="release"></div>
-<div class="copyright">&copy; 1983 Currah &copy; 2024 ArcadeGeek LTD.</div>
+<div class="copyright">&copy; 1983 Currah Computor Components Ltd. &copy; 2024 ArcadeGeek LTD.</div>
 <div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
-<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah/">Source code</a>.</div>
+<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah-microspeech">Source code</a>.</div>
 <div><a href="../dec/asm/862.html">Switch to decimal</a>.</div>
 </footer>
 </body>

@@ -48,7 +48,7 @@ Any access to <a href="0038.html">HandleInterrupt</a> (including this opcode fet
 <td class="asm-label">HandleInterrupt</td>
 <td class="address-2"><span id="0038"></span>0038</td>
 <td class="instruction">PUSH AF</td>
-<td class="comment-1" rowspan="2">Keep <span class="register">AF</span> unchanged.</td>
+<td class="comment-1" rowspan="2">Preserve <span class="register">AF</span> (this <code>PUSH</code>/<code>POP</code> pair is what Rockfall II checks for).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -59,7 +59,7 @@ Any access to <a href="0038.html">HandleInterrupt</a> (including this opcode fet
 <td class="asm-label"></td>
 <td class="address-1"><span id="003a"></span>003A</td>
 <td class="instruction">DI</td>
-<td class="comment-1" rowspan="1">Disable interrupts.</td>
+<td class="comment-1" rowspan="1">Keep further interrupts out while the μSpeech ROM is paged in.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -87,7 +87,7 @@ Any access to <a href="0038.html">HandleInterrupt</a> (including this opcode fet
 <span id="003f"></span>
 <div class="comments">
 <div class="paragraph">
-The speech workspace is a short block just below *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB2.html">RAMTOP</a> (low byte 57). A 48K machine uses FF57; a 16K machine uses 7F57.
+The speech workspace is a short block at the top of the reserved area, between *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB2.html">RAMTOP</a> and the UDGs (low byte 57). A 48K machine uses FF57; a 16K machine uses 7F57.
 </div>
 </div>
 </td>
@@ -118,7 +118,7 @@ The speech workspace is a short block just below *<a rel="noopener nofollow" hre
 <td class="asm-label"></td>
 <td class="address-1"><span id="0047"></span>0047</td>
 <td class="instruction">LD A,H</td>
-<td class="comment-1" rowspan="3">Jump to <a href="0038.html#0081">InstallWorkspace</a> if this is a 48K machine.</td>
+<td class="comment-1" rowspan="3">Jump to <a href="0038.html#0081">InstallWorkspace</a> if *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB2.html">RAMTOP</a> is still the 48K power-on value (FF57).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -134,7 +134,7 @@ The speech workspace is a short block just below *<a rel="noopener nofollow" hre
 <td class="asm-label"></td>
 <td class="address-1"><span id="004c"></span>004C</td>
 <td class="instruction">CP $7F</td>
-<td class="comment-1" rowspan="2">Jump to <a href="0038.html#0081">InstallWorkspace</a> if this is a 16K machine.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="0038.html#0081">InstallWorkspace</a> if it is still the 16K power-on value (7F57).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -146,7 +146,7 @@ The speech workspace is a short block just below *<a rel="noopener nofollow" hre
 <span id="0050"></span>
 <div class="comments">
 <div class="paragraph">
-*<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB2.html">RAMTOP</a> is not the installed workspace yet.
+*<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB2.html">RAMTOP</a> is not a power-on value; probe the speech workspace below it.
 </div>
 </div>
 </td>
@@ -155,7 +155,7 @@ The speech workspace is a short block just below *<a rel="noopener nofollow" hre
 <td class="asm-label">ProbeWorkspace</td>
 <td class="address-2"><span id="0050"></span>0050</td>
 <td class="instruction">LD A,$06</td>
-<td class="comment-1" rowspan="2">Call <a href="0354.html">ReadWorkspace</a> for the saved buffer pointer.</td>
+<td class="comment-1" rowspan="2">Call <a href="0354.html">ReadWorkspace</a> for the address of the queue head (index 06).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -177,7 +177,7 @@ The speech workspace is a short block just below *<a rel="noopener nofollow" hre
 <td class="asm-label"></td>
 <td class="address-1"><span id="0057"></span>0057</td>
 <td class="instruction">CALL <a href="0375.html">CheckMemory</a></td>
-<td class="comment-1" rowspan="2">Call <a href="0375.html">CheckMemory</a> and jump to <a href="0038.html#0081">InstallWorkspace</a> if the reserved block is already below *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB2.html">RAMTOP</a>.</td>
+<td class="comment-1" rowspan="2">Call <a href="0375.html">CheckMemory</a> and jump to <a href="0038.html#0081">InstallWorkspace</a> to reinstall if the workspace is no longer protected by *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB2.html">RAMTOP</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -199,8 +199,8 @@ The speech workspace is a short block just below *<a rel="noopener nofollow" hre
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="0062"></span>0062</td>
-<td class="instruction">CALL C,<a href="03A2.html">ResetBufferPointer</a></td>
-<td class="comment-1" rowspan="1">Call <a href="03A2.html">ResetBufferPointer</a> if the pointer is out of range.</td>
+<td class="instruction">CALL C,<a href="03A2.html">EmptyQueue</a></td>
+<td class="comment-1" rowspan="1">Call <a href="03A2.html">EmptyQueue</a> if the buffer pointer is at or below *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB2.html">RAMTOP</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -217,7 +217,7 @@ The speech workspace is a short block just below *<a rel="noopener nofollow" hre
 <td class="asm-label"></td>
 <td class="address-1"><span id="0069"></span>0069</td>
 <td class="instruction">BIT 2,A</td>
-<td class="comment-1" rowspan="2">Jump to <a href="0038.html#00b7">ServiceSpeech</a> if the workspace is already live.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="0038.html#00b7">ServiceSpeech</a> if this is the second pass of this interrupt.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -228,7 +228,7 @@ The speech workspace is a short block just below *<a rel="noopener nofollow" hre
 <td class="asm-label"></td>
 <td class="address-1"><span id="006d"></span>006D</td>
 <td class="instruction">SET 2,(HL)</td>
-<td class="comment-1" rowspan="1">Mark the workspace as being installed.</td>
+<td class="comment-1" rowspan="1">Flag that the next entry is the second pass.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -256,7 +256,7 @@ The speech workspace is a short block just below *<a rel="noopener nofollow" hre
 <span id="0073"></span>
 <div class="comments">
 <div class="paragraph">
-Page the Spectrum ROM back in so IM1 can run.
+Let the Spectrum's IM1 routine (<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/0038.html">MASK_INT</a>) scan the keyboard first. When it returns, control goes to <a href="0038.html">HandleInterrupt</a>, which pages this ROM back in for the second pass.
 </div>
 </div>
 </td>
@@ -265,7 +265,7 @@ Page the Spectrum ROM back in so IM1 can run.
 <td class="asm-label">ReturnToSpectrum</td>
 <td class="address-1"><span id="0073"></span>0073</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="4">No operation.</td>
+<td class="comment-1" rowspan="4">Leave two copies of <span class="register">HL</span> below the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -286,19 +286,18 @@ Page the Spectrum ROM back in so IM1 can run.
 <td class="asm-label"></td>
 <td class="address-1"><span id="0077"></span>0077</td>
 <td class="instruction">LD HL,$0038</td>
-<td class="comment-1" rowspan="1">Set the return address to <a href="0038.html">HandleInterrupt</a>.</td>
+<td class="comment-1" rowspan="2">Stack <a href="0038.html">HandleInterrupt</a> over the first copy, as the return address for the Spectrum IM1 routine.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="007a"></span>007A</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1">Stash the return address on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="007b"></span>007B</td>
 <td class="instruction">DEC SP</td>
-<td class="comment-1" rowspan="2">Move <span class="register">SP</span> down two bytes.</td>
+<td class="comment-1" rowspan="3">Restore <span class="register">HL</span> from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -309,13 +308,12 @@ Page the Spectrum ROM back in so IM1 can run.
 <td class="asm-label"></td>
 <td class="address-1"><span id="007d"></span>007D</td>
 <td class="instruction">POP HL</td>
-<td class="comment-1" rowspan="1">Restore <span class="register">HL</span> from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="007e"></span>007E</td>
 <td class="instruction">JP <a href="0038.html#0038">HandleInterrupt</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="0038.html">HandleInterrupt</a>.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="0038.html">HandleInterrupt</a> to page the Spectrum ROM in.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -358,7 +356,7 @@ Wait a few frames, then reserve a page below *<a rel="noopener nofollow" href="h
 <td class="asm-label"></td>
 <td class="address-1"><span id="008d"></span>008D</td>
 <td class="instruction">DEC H</td>
-<td class="comment-1" rowspan="2">Lower *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB2.html">RAMTOP</a> by one page.</td>
+<td class="comment-1" rowspan="2">Set *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB2.html">RAMTOP</a> one page below the workspace page.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -396,7 +394,7 @@ Wait a few frames, then reserve a page below *<a rel="noopener nofollow" href="h
 <td class="asm-label"></td>
 <td class="address-1"><span id="0097"></span>0097</td>
 <td class="instruction">DEC HL</td>
-<td class="comment-1" rowspan="2">Store the workspace page in index 02.</td>
+<td class="comment-1" rowspan="2">Store the workspace page as the high byte of the buffer pointer (index 02).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -407,7 +405,7 @@ Wait a few frames, then reserve a page below *<a rel="noopener nofollow" href="h
 <td class="asm-label"></td>
 <td class="address-1"><span id="0099"></span>0099</td>
 <td class="instruction">DEC HL</td>
-<td class="comment-1" rowspan="2">Write 51 to the buffer pointer (index 03).</td>
+<td class="comment-1" rowspan="2">Write 51 as its low byte (index 03): an empty queue.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -472,7 +470,7 @@ Plant a sentinel and move the machine stack below the new *<a rel="noopener nofo
 <td class="asm-label"></td>
 <td class="address-1"><span id="00a7"></span>00A7</td>
 <td class="instruction">LD SP,HL</td>
-<td class="comment-1" rowspan="1">Point <span class="register">SP</span> at the new *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB2.html">RAMTOP</a>.</td>
+<td class="comment-1" rowspan="1">Point <span class="register">SP</span> one byte below the new *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB2.html">RAMTOP</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -496,6 +494,16 @@ Plant a sentinel and move the machine stack below the new *<a rel="noopener nofo
 <td class="instruction">LD (HL),A</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="00ac"></span>
+<div class="comments">
+<div class="paragraph">
+Install abandons the interrupted program: <a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/0038.html">MASK_INT</a> returns to <a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/12A2.html&#35;12A9">MAIN_1</a>, re-entering the BASIC main loop with a fresh stack.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="00ac"></span>00AC</td>
 <td class="instruction">LD ($5C3D),HL</td>
@@ -505,7 +513,7 @@ Plant a sentinel and move the machine stack below the new *<a rel="noopener nofo
 <td class="asm-label"></td>
 <td class="address-1"><span id="00af"></span>00AF</td>
 <td class="instruction">LD DE,$12A9</td>
-<td class="comment-1" rowspan="1">Set the return address to <a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/12A9.html">MAIN-5</a>.</td>
+<td class="comment-1" rowspan="1">Set the return address to <a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/12A2.html&#35;12A9">MAIN_1</a> in MAIN_EXEC.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -517,7 +525,7 @@ Plant a sentinel and move the machine stack below the new *<a rel="noopener nofo
 <td class="asm-label"></td>
 <td class="address-1"><span id="00b3"></span>00B3</td>
 <td class="instruction">EI</td>
-<td class="comment-1" rowspan="1">Enable interrupts.</td>
+<td class="comment-1" rowspan="1">Re-enable interrupts before handing over to the Spectrum ROM.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -530,7 +538,7 @@ Plant a sentinel and move the machine stack below the new *<a rel="noopener nofo
 <span id="00b7"></span>
 <div class="comments">
 <div class="paragraph">
-The workspace is live. Draw the banner once, then speak.
+Second pass: clear the pass flag, then draw the banner once and speak.
 </div>
 </div>
 </td>
@@ -539,7 +547,7 @@ The workspace is live. Draw the banner once, then speak.
 <td class="asm-label">ServiceSpeech</td>
 <td class="address-2"><span id="00b7"></span>00B7</td>
 <td class="instruction">RES 2,(HL)</td>
-<td class="comment-1" rowspan="1">Clear the "installing" flag.</td>
+<td class="comment-1" rowspan="1">Clear the second-pass flag.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -557,7 +565,7 @@ The workspace is live. Draw the banner once, then speak.
 <span id="00be"></span>
 <div class="comments">
 <div class="paragraph">
-Keep *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C78.html">FRAMES</a> moving while this ROM owns the interrupt.
+The Spectrum IM1 routine runs twice per frame (see <a href="0038.html#0073">ReturnToSpectrum</a>), so take one off *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C78.html">FRAMES</a> to compensate for the extra increment.
 </div>
 </div>
 </td>
@@ -572,7 +580,7 @@ Keep *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex
 <td class="asm-label"></td>
 <td class="address-1"><span id="00c1"></span>00C1</td>
 <td class="instruction">LD A,H</td>
-<td class="comment-1" rowspan="3">Jump to <a href="0038.html#00c9">ServiceSpeech_Tick</a> if *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C78.html">FRAMES</a> is non-zero.</td>
+<td class="comment-1" rowspan="3">Jump to <a href="0038.html#00c9">ServiceSpeech_Tick</a> if the low word of *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C78.html">FRAMES</a> is non-zero.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -588,7 +596,7 @@ Keep *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex
 <td class="asm-label"></td>
 <td class="address-1"><span id="00c5"></span>00C5</td>
 <td class="instruction">LD HL,$5C7A</td>
-<td class="comment-1" rowspan="2">Decrease the third *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C78.html">FRAMES</a> byte.</td>
+<td class="comment-1" rowspan="2">Decrease the high byte of *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C78.html">FRAMES</a> if the low word is about to wrap.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -599,7 +607,7 @@ Keep *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex
 <td class="asm-label">ServiceSpeech_Tick</td>
 <td class="address-2"><span id="00c9"></span>00C9</td>
 <td class="instruction">LD HL,($5C78)</td>
-<td class="comment-1" rowspan="3">Decrease the *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C78.html">FRAMES</a> word.</td>
+<td class="comment-1" rowspan="3">Decrease the low word of *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C78.html">FRAMES</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -616,7 +624,7 @@ Keep *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex
 <span id="00d0"></span>
 <div class="comments">
 <div class="paragraph">
-Tick the two keyboard-state timer pairs.
+Likewise add one to the repeat and delay counters in each half of *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C00.html">KSTATE</a>, to compensate for <a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/02BF.html">KEYBOARD</a>'s extra decrement. (When a set is free these counters just drift upwards; <a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/02BF.html">KEYBOARD</a> reloads them when a new key arrives.)
 </div>
 </div>
 </td>
@@ -642,7 +650,7 @@ Tick the two keyboard-state timer pairs.
 <td class="asm-label"></td>
 <td class="address-1"><span id="00d9"></span>00D9</td>
 <td class="instruction">DEC HL</td>
-<td class="comment-1" rowspan="1">Move back one byte.</td>
+<td class="comment-1" rowspan="1">Move back to the five-call counters (5C01 and 5C05).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -687,7 +695,7 @@ Programs speak by assigning the BASIC string <a href="../reference/facts.html#ss
 <td class="asm-label"></td>
 <td class="address-1"><span id="00e8"></span>00E8</td>
 <td class="instruction">JP Z,<a href="0038.html#0166">FeedAllophone</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="0038.html#0166">FeedAllophone</a> if key speech is enabled.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="0038.html#0166">FeedAllophone</a> if key speech is disabled.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -805,7 +813,7 @@ A new key is in *<a rel="noopener nofollow" href="https://skoolkit.ca/disassembl
 <span id="0111"></span>
 <div class="comments">
 <div class="paragraph">
-Not a letter. Block graphics share key 80; other symbols go through <a href="042D.html">PunctuationKeys</a>.
+Not a letter. Graphics characters (block graphics and UDGs) share key 80; other symbols go through <a href="042D.html">PunctuationKeys</a>.
 </div>
 </div>
 </td>
@@ -995,8 +1003,8 @@ Copy the matching allophones into the speech buffer.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="0144"></span>0144</td>
-<td class="instruction">CALL <a href="0393.html">CompareBuffer</a></td>
-<td class="comment-1" rowspan="2">Call <a href="0393.html">CompareBuffer</a> and jump to <a href="0038.html#0151">ServiceSpeech_Store</a> if the buffer pointers already match.</td>
+<td class="instruction">CALL <a href="0393.html">IsQueueEmpty</a></td>
+<td class="comment-1" rowspan="2">Call <a href="0393.html">IsQueueEmpty</a> and jump to <a href="0038.html#0151">ServiceSpeech_Store</a> if the queue is empty.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -1013,7 +1021,7 @@ Copy the matching allophones into the speech buffer.
 <td class="asm-label"></td>
 <td class="address-1"><span id="014a"></span>014A</td>
 <td class="instruction">LD A,(BC)</td>
-<td class="comment-1" rowspan="3">Jump to <a href="0038.html#0166">FeedAllophone</a> if the previous allophone is not a terminator.</td>
+<td class="comment-1" rowspan="3">Jump to <a href="0038.html#0166">FeedAllophone</a> (leaving the key unspoken) if the last queued allophone does not have bit 7 set.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -1028,8 +1036,8 @@ Copy the matching allophones into the speech buffer.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="014e"></span>014E</td>
-<td class="instruction">CALL <a href="03A2.html">ResetBufferPointer</a></td>
-<td class="comment-1" rowspan="1">Call <a href="03A2.html">ResetBufferPointer</a>.</td>
+<td class="instruction">CALL <a href="03A2.html">EmptyQueue</a></td>
+<td class="comment-1" rowspan="1">Call <a href="03A2.html">EmptyQueue</a> to empty the queue so the new key word replaces the previous one.</td>
 </tr>
 <tr>
 <td class="asm-label">ServiceSpeech_Store</td>
@@ -1098,7 +1106,7 @@ Copy the matching allophones into the speech buffer.
 <span id="0166"></span>
 <div class="comments">
 <div class="paragraph">
-The <a href="../reference/facts.html#sp0256">SP0256</a> is the speech-synthesiser chip. Read its busy flag at 1000 and send the next queued allophone if it is idle.
+The <a href="../reference/facts.html#sp0256">SP0256</a> is the speech-synthesiser chip. Read its status at 1000 (bit 0 is the inverted load request) and send the next queued allophone if the input buffer can take one.
 </div>
 </div>
 </td>
@@ -1113,7 +1121,7 @@ The <a href="../reference/facts.html#sp0256">SP0256</a> is the speech-synthesise
 <td class="asm-label"></td>
 <td class="address-1"><span id="0169"></span>0169</td>
 <td class="instruction">BIT 0,A</td>
-<td class="comment-1" rowspan="2">Jump to <a href="0038.html#01a3">ExitInterrupt</a> if the chip is still busy.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="0038.html#01a3">ExitInterrupt</a> if the chip's input buffer is full.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -1121,27 +1129,36 @@ The <a href="../reference/facts.html#sp0256">SP0256</a> is the speech-synthesise
 <td class="instruction">JR NZ,<a href="0038.html#01a3">ExitInterrupt</a></td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="016d"></span>
+<div class="comments">
+<div class="paragraph">
+The manual notes that "the unit will remain silent until the first ENTER is pressed after a power up, a NEW, or after a 'report' has been printed at the bottom of the screen." On every interrupt that reaches this code where bit 7 of *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C3A.html">ERR_NR</a> is reset (an error code is waiting), this code empties the speech queue through <a href="03A2.html">EmptyQueue</a>, so nothing is spoken until the ROM sets *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C3A.html">ERR_NR</a> back to FF; that happens when ENTER is pressed and on the editor's error paths (<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/107F.html&#35;1085">ED_ERROR</a> and <a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/111D.html&#35;1172">ED_FULL</a> in the Spectrum ROM). The power-on and NEW cases are from the manual (chapter 2 also says any report other than OK has this effect).
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="016d"></span>016D</td>
 <td class="instruction">LD A,($5C3A)</td>
-<td class="comment-1" rowspan="1">Fetch *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C3A.html">ERR_NR</a>.</td>
+<td class="comment-1" rowspan="3">Empty the speech queue (<a href="03A2.html">EmptyQueue</a>) if BASIC is reporting an error (bit 7 of *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C3A.html">ERR_NR</a> reset).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="0170"></span>0170</td>
 <td class="instruction">RLA</td>
-<td class="comment-1" rowspan="2">Call <a href="03A2.html">ResetBufferPointer</a> if BASIC is not reporting an error.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="0171"></span>0171</td>
-<td class="instruction">CALL NC,<a href="03A2.html">ResetBufferPointer</a></td>
+<td class="instruction">CALL NC,<a href="03A2.html">EmptyQueue</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="0174"></span>0174</td>
-<td class="instruction">CALL <a href="0393.html">CompareBuffer</a></td>
-<td class="comment-1" rowspan="2">Call <a href="0393.html">CompareBuffer</a> and jump to <a href="0038.html#017f">FeedAllophone_Write</a> if there is something left to say.</td>
+<td class="instruction">CALL <a href="0393.html">IsQueueEmpty</a></td>
+<td class="comment-1" rowspan="2">Call <a href="0393.html">IsQueueEmpty</a> and jump to <a href="0038.html#017f">FeedAllophone_Write</a> if anything is queued.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -1152,7 +1169,7 @@ The <a href="../reference/facts.html#sp0256">SP0256</a> is the speech-synthesise
 <td class="asm-label"></td>
 <td class="address-1"><span id="0179"></span>0179</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="3">Silence the <a href="../reference/facts.html#sp0256">SP0256</a> and jump to <a href="0038.html#01a3">ExitInterrupt</a>.</td>
+<td class="comment-1" rowspan="3">Keep the chip fed with PA1 (silence) and jump to <a href="0038.html#01a3">ExitInterrupt</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -1169,7 +1186,7 @@ The <a href="../reference/facts.html#sp0256">SP0256</a> is the speech-synthesise
 <span id="017f"></span>
 <div class="comments">
 <div class="paragraph">
-The <a href="../reference/facts.html#sp0256">SP0256</a> is idle; write the next queued allophone.
+The <a href="../reference/facts.html#sp0256">SP0256</a> can take an allophone; write the next queued one.
 </div>
 </div>
 </td>
@@ -1189,13 +1206,12 @@ The <a href="../reference/facts.html#sp0256">SP0256</a> is idle; write the next 
 <td class="asm-label"></td>
 <td class="address-1"><span id="0184"></span>0184</td>
 <td class="instruction">LD DE,$3000</td>
-<td class="comment-1" rowspan="1">Use the low-intonation port (3000).</td>
+<td class="comment-1" rowspan="4">Point at 3000 (low pitch) or 3001 (high pitch) by bit 6.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="0187"></span>0187</td>
 <td class="instruction">BIT 6,A</td>
-<td class="comment-1" rowspan="2">Jump to <a href="0038.html#018c">FeedAllophone_Port</a> if bit 6 is reset.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -1206,25 +1222,24 @@ The <a href="../reference/facts.html#sp0256">SP0256</a> is idle; write the next 
 <td class="asm-label"></td>
 <td class="address-1"><span id="018b"></span>018B</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="1">Use the high-intonation port instead (3001).</td>
 </tr>
 <tr>
 <td class="asm-label">FeedAllophone_Port</td>
 <td class="address-2"><span id="018c"></span>018C</td>
 <td class="instruction">LD (DE),A</td>
-<td class="comment-1" rowspan="1">Select the intonation.</td>
+<td class="comment-1" rowspan="1">Select the pitch (only the address matters; it switches the speech chip's clock between about 3.05 MHz and 3.26 MHz (MAME's values; see <a href="../reference/facts.html#intonation">Intonation</a>)).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="018d"></span>018D</td>
 <td class="instruction">LD ($1000),A</td>
-<td class="comment-1" rowspan="1">Write the allophone to the <a href="../reference/facts.html#sp0256">SP0256</a>.</td>
+<td class="comment-1" rowspan="1">Write the allophone to the speech port (the chip ignores bits 6 and 7).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="0190"></span>0190</td>
 <td class="instruction">OR A</td>
-<td class="comment-1" rowspan="2">Work out how many bytes remain in the queue.</td>
+<td class="comment-1" rowspan="2">Work out the queue length (including the allophone just sent).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -1241,7 +1256,7 @@ The <a href="../reference/facts.html#sp0256">SP0256</a> is idle; write the next 
 <td class="asm-label"></td>
 <td class="address-1"><span id="0194"></span>0194</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="1">Stash the remaining length on the stack.</td>
+<td class="comment-1" rowspan="1">Stash the queue length on the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -1280,13 +1295,13 @@ The <a href="../reference/facts.html#sp0256">SP0256</a> is idle; write the next 
 <td class="asm-label"></td>
 <td class="address-1"><span id="01a0"></span>01A0</td>
 <td class="instruction">POP BC</td>
-<td class="comment-1" rowspan="1">Restore the remaining length from the stack.</td>
+<td class="comment-1" rowspan="1">Restore the queue length from the stack.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="01a1"></span>01A1</td>
 <td class="instruction">LDDR</td>
-<td class="comment-1" rowspan="1">Shuffle the queued allophones down.</td>
+<td class="comment-1" rowspan="1">Move the rest of the queue up one byte.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -1323,7 +1338,7 @@ Restore the Spectrum registers and page its ROM back in.
 <td class="asm-label"></td>
 <td class="address-1"><span id="01a7"></span>01A7</td>
 <td class="instruction">EI</td>
-<td class="comment-1" rowspan="1">Enable interrupts.</td>
+<td class="comment-1" rowspan="1">Re-enable interrupts before handing over to the Spectrum ROM.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -1345,9 +1360,9 @@ Next: <a href="01AB.html">01AB</a>
 </table>
 <footer>
 <div class="release"></div>
-<div class="copyright">&copy; 1983 Currah &copy; 2024 ArcadeGeek LTD.</div>
+<div class="copyright">&copy; 1983 Currah Computor Components Ltd. &copy; 2024 ArcadeGeek LTD.</div>
 <div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
-<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah/">Source code</a>.</div>
+<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah-microspeech">Source code</a>.</div>
 <div><a href="../dec/asm/56.html">Switch to decimal</a>.</div>
 </footer>
 </body>

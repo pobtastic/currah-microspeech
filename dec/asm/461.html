@@ -79,13 +79,13 @@ Walk the BASIC variable area looking for the name code in <span class="register"
 <td class="asm-label"></td>
 <td class="address-1"><span id="462"></span>00462</td>
 <td class="instruction">LD A,(23611)</td>
-<td class="comment-1" rowspan="1">Fetch *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C3B.html">FLAGS</a>.</td>
+<td class="comment-1" rowspan="1">Fetch *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23611.html">FLAGS</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="465"></span>00465</td>
 <td class="instruction">RLA</td>
-<td class="comment-1" rowspan="2">Jump to <a href="461.html#521">FindVariable_Miss</a> if bit 7 is not set.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="461.html#521">FindVariable_Miss</a> if bit 7 is not set (checking syntax).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -96,13 +96,13 @@ Walk the BASIC variable area looking for the name code in <span class="register"
 <td class="asm-label"></td>
 <td class="address-1"><span id="468"></span>00468</td>
 <td class="instruction">LD A,(23734)</td>
-<td class="comment-1" rowspan="1">Fetch *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB6.html">CHINFO</a>.</td>
+<td class="comment-1" rowspan="1">Fetch *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23734.html">CHINFO</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="471"></span>00471</td>
 <td class="instruction">CP 244</td>
-<td class="comment-1" rowspan="2">Jump to <a href="461.html#478">FindVariable_Start</a> if it is 244.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="461.html#478">FindVariable_Start</a> if it is 244 (the low byte of <a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/2548.html">PRINT_OUT</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -125,7 +125,7 @@ Walk the BASIC variable area looking for the name code in <span class="register"
 <span id="478"></span>
 <div class="comments">
 <div class="paragraph">
-Walk *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C4B.html">VARS</a> for the requested name.
+Walk *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23627.html">VARS</a> for the requested name.
 </div>
 </div>
 </td>
@@ -134,7 +134,7 @@ Walk *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex
 <td class="asm-label">FindVariable_Start</td>
 <td class="address-2"><span id="478"></span>00478</td>
 <td class="instruction">LD HL,(23627)</td>
-<td class="comment-1" rowspan="1">Start at *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C4B.html">VARS</a>.</td>
+<td class="comment-1" rowspan="1">Start at *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23627.html">VARS</a>.</td>
 </tr>
 <tr>
 <td class="asm-label">FindVariable_Loop</td>
@@ -156,7 +156,7 @@ Walk *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex
 <td class="asm-label"></td>
 <td class="address-1"><span id="484"></span>00484</td>
 <td class="instruction">CP 128</td>
-<td class="comment-1" rowspan="2">Jump to <a href="461.html#521">FindVariable_Miss</a> if this is the end of *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C4B.html">VARS</a>.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="461.html#521">FindVariable_Miss</a> if this is the end of *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23627.html">VARS</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -195,12 +195,12 @@ Walk *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex
 <td class="asm-label"></td>
 <td class="address-1"><span id="498"></span>00498</td>
 <td class="instruction">CP 224</td>
-<td class="comment-1" rowspan="2">Jump to <a href="461.html#525">FindVariable_SkipArray</a> if the type is 224.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="461.html#525">FindVariable_SkipFor</a> if the type is 224.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="500"></span>00500</td>
-<td class="instruction">JR Z,<a href="461.html#525">FindVariable_SkipArray</a></td>
+<td class="instruction">JR Z,<a href="461.html#525">FindVariable_SkipFor</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -228,7 +228,7 @@ Walk *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex
 <td class="asm-label"></td>
 <td class="address-1"><span id="510"></span>00510</td>
 <td class="instruction">CP 64</td>
-<td class="comment-1" rowspan="2">Return if the type is not a simple numeric.</td>
+<td class="comment-1" rowspan="2">Return (with Z clear) unless the type is 64 (a string).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -289,10 +289,10 @@ Walk *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex
 <td class="comment-1" rowspan="1">Return.</td>
 </tr>
 <tr>
-<td class="asm-label">FindVariable_SkipArray</td>
+<td class="asm-label">FindVariable_SkipFor</td>
 <td class="address-2"><span id="525"></span>00525</td>
 <td class="instruction">LD DE,13</td>
-<td class="comment-1" rowspan="2">Skip the array header.</td>
+<td class="comment-1" rowspan="2">Skip the limit, step, looping line and statement of a FOR-NEXT control variable.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -357,9 +357,9 @@ Next: <a href="543.html">00543</a>
 </table>
 <footer>
 <div class="release"></div>
-<div class="copyright">&copy; 1983 Currah &copy; 2024 ArcadeGeek LTD.</div>
+<div class="copyright">&copy; 1983 Currah Computor Components Ltd. &copy; 2024 ArcadeGeek LTD.</div>
 <div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
-<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah/">Source code</a>.</div>
+<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah-microspeech">Source code</a>.</div>
 <div><a href="../../asm/01CD.html">Switch to hexadecimal</a>.</div>
 </footer>
 </body>

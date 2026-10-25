@@ -42,7 +42,7 @@ Next: <a href="037F.html">037F</a>
 Used by the routines at <a href="0038.html">HandleInterrupt</a> and <a href="021F.html">ParseSpeechString</a>.
 </div>
 <div class="paragraph">
-Compare the speech-buffer pointer with *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB2.html">RAMTOP</a>. Carry is set when the pointer has dropped into the reserved workspace.
+Compare the speech-buffer pointer with *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB2.html">RAMTOP</a>. Carry is set when the pointer has run out of the reserved page (at or below *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB2.html">RAMTOP</a>).
 </div>
 </div>
 <table class="input">
@@ -60,7 +60,7 @@ Compare the speech-buffer pointer with *<a rel="noopener nofollow" href="https:/
 </tr>
 <tr>
 <td class="register">F</td>
-<td class="register-desc">Carry set if <span class="register">BC</span> is below *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB2.html">RAMTOP</a></td>
+<td class="register-desc">Carry set if <span class="register">BC</span> is at or below *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB2.html">RAMTOP</a></td>
 </tr>
 </table>
 </td>
@@ -119,9 +119,9 @@ Next: <a href="037F.html">037F</a>
 </table>
 <footer>
 <div class="release"></div>
-<div class="copyright">&copy; 1983 Currah &copy; 2024 ArcadeGeek LTD.</div>
+<div class="copyright">&copy; 1983 Currah Computor Components Ltd. &copy; 2024 ArcadeGeek LTD.</div>
 <div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
-<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah/">Source code</a>.</div>
+<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah-microspeech">Source code</a>.</div>
 <div><a href="../dec/asm/885.html">Switch to decimal</a>.</div>
 </footer>
 </body>

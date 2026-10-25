@@ -39,7 +39,10 @@ Next: <a href="03CA.html">03CA</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Letters and symbols that can appear in an allophone name. The matching allophone is 35 bytes later in <a href="03CA.html">MappedCharacters</a>.
+The 1B normalised characters (see <a href="035E.html">NormaliseCharacter</a>) allowed in <a href="../reference/facts.html#sstring">s$</a>: "a"-"z" except "q" and "x", then ",", "'" and space. The first 18 are also the letters allowed in an allophone name. Searched by <a href="021F.html#025c">ParseSpeechString_Map</a> and <a href="02EB.html">ParseAllophoneGroup</a>.
+</div>
+<div class="paragraph">
+The allophone for each key is at the same index in <a href="03E5.html">AllophoneValues</a> (<span class="register">HL</span> is left one past the match, then 35 is added).
 </div>
 </div>
 </td>
@@ -47,8 +50,164 @@ Letters and symbols that can appear in an allophone name. The matching allophone
 <tr>
 <td class="asm-label">CharacterKeys</td>
 <td class="address-1"><span id="03af"></span>03AF</td>
-<td class="instruction">DEFB $21,$22,$23,$24,$25,$26,$27,$28,$29,$2A,$2B,$2C,$2D,$2E,$2F,$30,$32,$33,$34,$35,$36,$37,$39,$3A,$0C,$07,$00</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">DEFB $21</td>
+<td class="comment-1" rowspan="1">Key 21: allophone 18.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="03b0"></span>03B0</td>
+<td class="instruction">DEFB $22</td>
+<td class="comment-1" rowspan="1">Key 22: allophone 1C.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="03b1"></span>03B1</td>
+<td class="instruction">DEFB $23</td>
+<td class="comment-1" rowspan="1">Key 23: allophone 08.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="03b2"></span>03B2</td>
+<td class="instruction">DEFB $24</td>
+<td class="comment-1" rowspan="1">Key 24: allophone 15.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="03b3"></span>03B3</td>
+<td class="instruction">DEFB $25</td>
+<td class="comment-1" rowspan="1">Key 25: allophone 07.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="03b4"></span>03B4</td>
+<td class="instruction">DEFB $26</td>
+<td class="comment-1" rowspan="1">Key 26: allophone 28.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="03b5"></span>03B5</td>
+<td class="instruction">DEFB $27</td>
+<td class="comment-1" rowspan="1">Key 27: allophone 24.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="03b6"></span>03B6</td>
+<td class="instruction">DEFB $28</td>
+<td class="comment-1" rowspan="1">Key 28: allophone 1B.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="03b7"></span>03B7</td>
+<td class="instruction">DEFB $29</td>
+<td class="comment-1" rowspan="1">Key 29: allophone 0C.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="03b8"></span>03B8</td>
+<td class="instruction">DEFB $2A</td>
+<td class="comment-1" rowspan="1">Key 2A: allophone 0A.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="03b9"></span>03B9</td>
+<td class="instruction">DEFB $2B</td>
+<td class="comment-1" rowspan="1">Key 2B: allophone 2A.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="03ba"></span>03BA</td>
+<td class="instruction">DEFB $2C</td>
+<td class="comment-1" rowspan="1">Key 2C: allophone 2D.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="03bb"></span>03BB</td>
+<td class="instruction">DEFB $2D</td>
+<td class="comment-1" rowspan="1">Key 2D: allophone 10.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="03bc"></span>03BC</td>
+<td class="instruction">DEFB $2E</td>
+<td class="comment-1" rowspan="1">Key 2E: allophone 0B.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="03bd"></span>03BD</td>
+<td class="instruction">DEFB $2F</td>
+<td class="comment-1" rowspan="1">Key 2F: allophone 17.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="03be"></span>03BE</td>
+<td class="instruction">DEFB $30</td>
+<td class="comment-1" rowspan="1">Key 30: allophone 09.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="03bf"></span>03BF</td>
+<td class="instruction">DEFB $32</td>
+<td class="comment-1" rowspan="1">Key 32: allophone 27.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="03c0"></span>03C0</td>
+<td class="instruction">DEFB $33</td>
+<td class="comment-1" rowspan="1">Key 33: allophone 37.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="03c1"></span>03C1</td>
+<td class="instruction">DEFB $34</td>
+<td class="comment-1" rowspan="1">Key 34: allophone 11.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="03c2"></span>03C2</td>
+<td class="instruction">DEFB $35</td>
+<td class="comment-1" rowspan="1">Key 35: allophone 0F.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="03c3"></span>03C3</td>
+<td class="instruction">DEFB $36</td>
+<td class="comment-1" rowspan="1">Key 36: allophone 23.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="03c4"></span>03C4</td>
+<td class="instruction">DEFB $37</td>
+<td class="comment-1" rowspan="1">Key 37: allophone 2E.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="03c5"></span>03C5</td>
+<td class="instruction">DEFB $39</td>
+<td class="comment-1" rowspan="1">Key 39: allophone 31.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="03c6"></span>03C6</td>
+<td class="instruction">DEFB $3A</td>
+<td class="comment-1" rowspan="1">Key 3A: allophone 2B.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="03c7"></span>03C7</td>
+<td class="instruction">DEFB $0C</td>
+<td class="comment-1" rowspan="1">Key 0C: allophone 04.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="03c8"></span>03C8</td>
+<td class="instruction">DEFB $07</td>
+<td class="comment-1" rowspan="1">Key 07: allophone 01.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="03c9"></span>03C9</td>
+<td class="instruction">DEFB $00</td>
+<td class="comment-1" rowspan="1">Key 00: allophone 03.</td>
 </tr>
 </table>
 <table class="asm-navigation">
@@ -64,9 +223,9 @@ Next: <a href="03CA.html">03CA</a>
 </table>
 <footer>
 <div class="release"></div>
-<div class="copyright">&copy; 1983 Currah &copy; 2024 ArcadeGeek LTD.</div>
+<div class="copyright">&copy; 1983 Currah Computor Components Ltd. &copy; 2024 ArcadeGeek LTD.</div>
 <div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
-<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah/">Source code</a>.</div>
+<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah-microspeech">Source code</a>.</div>
 <div><a href="../dec/asm/943.html">Switch to decimal</a>.</div>
 </footer>
 </body>

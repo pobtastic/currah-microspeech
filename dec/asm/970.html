@@ -33,13 +33,16 @@ Next: <a href="997.html">00997</a>
 </td>
 </tr>
 </table>
-<div class="description">00970: Mapped Characters</div>
+<div class="description">00970: Allophone Name Sums</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Parallel table to <a href="943.html">CharacterKeys</a>.
+The sums of the normalised letters of each parenthesised allophone name, searched along with <a href="943.html">CharacterKeys</a> by <a href="747.html">ParseAllophoneGroup</a>. The allophone for each sum is at the same index in the second half of <a href="997.html">AllophoneValues</a>.
+</div>
+<div class="paragraph">
+Note that "(gg)" and "(ck)" both sum to 78 and "(gg)" finds the "(ck)" entry first, so it gives KK2. The second 78 (the seventh sum) and its GG2 allophone are never reached. Manual Appendix I documents "(gg)" as GG2 (61) and "(ck)" as KK2 (41), so the ROM gives "(gg)" the "(ck)" sound instead of the manual's GG2; that confirms the unused GG2 entry was meant for "(gg)".
 </div>
 </div>
 </td>
@@ -47,8 +50,164 @@ Parallel table to <a href="943.html">CharacterKeys</a>.
 <tr>
 <td class="asm-label">MappedCharacters</td>
 <td class="address-1"><span id="970"></span>00970</td>
-<td class="instruction">DEFB 66,90,68,78,72,74,78,80,82,88,94,114,97,83,85,77,87,95,75,91,93,98,123,117,137,153,128</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">DEFB 66</td>
+<td class="comment-1" rowspan="1">Name sum 66: allophone 20.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="971"></span>00971</td>
+<td class="instruction">DEFB 90</td>
+<td class="comment-1" rowspan="1">Name sum 90: allophone 20.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="972"></span>00972</td>
+<td class="instruction">DEFB 68</td>
+<td class="comment-1" rowspan="1">Name sum 68: allophone 63.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="973"></span>00973</td>
+<td class="instruction">DEFB 78</td>
+<td class="comment-1" rowspan="1">Name sum 78: allophone 41.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="974"></span>00974</td>
+<td class="instruction">DEFB 72</td>
+<td class="comment-1" rowspan="1">Name sum 72: allophone 33.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="975"></span>00975</td>
+<td class="instruction">DEFB 74</td>
+<td class="comment-1" rowspan="1">Name sum 74: allophone 19.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="976"></span>00976</td>
+<td class="instruction">DEFB 78</td>
+<td class="comment-1" rowspan="1">Name sum 78: allophone 61.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="977"></span>00977</td>
+<td class="instruction">DEFB 80</td>
+<td class="comment-1" rowspan="1">Name sum 80: allophone 57.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="978"></span>00978</td>
+<td class="instruction">DEFB 82</td>
+<td class="comment-1" rowspan="1">Name sum 82: allophone 6.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="979"></span>00979</td>
+<td class="instruction">DEFB 88</td>
+<td class="comment-1" rowspan="1">Name sum 88: allophone 62.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="980"></span>00980</td>
+<td class="instruction">DEFB 94</td>
+<td class="comment-1" rowspan="1">Name sum 94: allophone 53.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="981"></span>00981</td>
+<td class="instruction">DEFB 114</td>
+<td class="comment-1" rowspan="1">Name sum 114: allophone 25.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="982"></span>00982</td>
+<td class="instruction">DEFB 97</td>
+<td class="comment-1" rowspan="1">Name sum 97: allophone 58.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="983"></span>00983</td>
+<td class="instruction">DEFB 83</td>
+<td class="comment-1" rowspan="1">Name sum 83: allophone 59.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="984"></span>00984</td>
+<td class="instruction">DEFB 85</td>
+<td class="comment-1" rowspan="1">Name sum 85: allophone 44.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="985"></span>00985</td>
+<td class="instruction">DEFB 77</td>
+<td class="comment-1" rowspan="1">Name sum 77: allophone 26.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="986"></span>00986</td>
+<td class="instruction">DEFB 87</td>
+<td class="comment-1" rowspan="1">Name sum 87: allophone 51.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="987"></span>00987</td>
+<td class="instruction">DEFB 95</td>
+<td class="comment-1" rowspan="1">Name sum 95: allophone 48.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="988"></span>00988</td>
+<td class="instruction">DEFB 75</td>
+<td class="comment-1" rowspan="1">Name sum 75: allophone 50.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="989"></span>00989</td>
+<td class="instruction">DEFB 91</td>
+<td class="comment-1" rowspan="1">Name sum 91: allophone 37.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="990"></span>00990</td>
+<td class="instruction">DEFB 93</td>
+<td class="comment-1" rowspan="1">Name sum 93: allophone 30.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="991"></span>00991</td>
+<td class="instruction">DEFB 98</td>
+<td class="comment-1" rowspan="1">Name sum 98: allophone 38.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="992"></span>00992</td>
+<td class="instruction">DEFB 123</td>
+<td class="comment-1" rowspan="1">Name sum 123: allophone 53.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="993"></span>00993</td>
+<td class="instruction">DEFB 117</td>
+<td class="comment-1" rowspan="1">Name sum 117: allophone 34.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="994"></span>00994</td>
+<td class="instruction">DEFB 137</td>
+<td class="comment-1" rowspan="1">Name sum 137: allophone 52.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="995"></span>00995</td>
+<td class="instruction">DEFB 153</td>
+<td class="comment-1" rowspan="1">Name sum 153: allophone 31.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="996"></span>00996</td>
+<td class="instruction">DEFB 128</td>
+<td class="comment-1" rowspan="1">Name sum 128: allophone 18.</td>
 </tr>
 </table>
 <table class="asm-navigation">
@@ -64,9 +223,9 @@ Next: <a href="997.html">00997</a>
 </table>
 <footer>
 <div class="release"></div>
-<div class="copyright">&copy; 1983 Currah &copy; 2024 ArcadeGeek LTD.</div>
+<div class="copyright">&copy; 1983 Currah Computor Components Ltd. &copy; 2024 ArcadeGeek LTD.</div>
 <div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
-<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah/">Source code</a>.</div>
+<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah-microspeech">Source code</a>.</div>
 <div><a href="../../asm/03CA.html">Switch to hexadecimal</a>.</div>
 </footer>
 </body>

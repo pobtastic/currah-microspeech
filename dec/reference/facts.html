@@ -30,6 +30,12 @@ gtag('config', 'G-75RERFCHBG');
 <li><a href="#punctuation">Key Speech Remap</a></li>
 <li><a href="#dictionary">Allophone Dictionary</a></li>
 <li><a href="#suffixes">Allophone Name Suffixes</a></li>
+<li><a href="#intonation">Intonation</a></li>
+<li><a href="#mcapi">Machine-Code API</a></li>
+<li><a href="#history">History</a></li>
+<li><a href="#hardware">Hardware</a></li>
+<li><a href="#software">Supporting Software</a></li>
+<li><a href="#related">Related Machines</a></li>
 </ul>
 <div><span id="theory-of-operation"></span></div>
 <div class="box box-1">
@@ -43,10 +49,12 @@ every interrupt; every exit jumps back to <a href="../asm/56.html">HandleInterru
 Spectrum ROM in and let IM1 finish.
 </div>
 <div class="paragraph">
-The ROM is mirrored from 2048 to 4095. Speech itself is
+The ROM is mirrored from 2048 to 4095 (per
+<a href="https://sourceforge.net/p/fuse-emulator/patches/142/" rel="noopener noreferrer nofollow">Fuse patch #142</a>).
+Speech itself is
 produced by the <a href="facts.html#sp0256">SP0256</a> chip, fed one allophone at
-a time from a short workspace just below
-*<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB2.html">RAMTOP</a>.
+a time from a short workspace at the top of the reserved area,
+between *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23730.html">RAMTOP</a> and the UDGs.
 </div>
 <div class="paragraph">
 <table class="default">
@@ -56,62 +64,78 @@ a time from a short workspace just below
 </tr>
 <tr>
 <td class="centre" colspan="1" rowspan="1">0-55</td>
-<td class="" colspan="1" rowspan="1">Banner bitmaps</td>
+<td class="centre" colspan="1" rowspan="1">Banner bitmaps</td>
 </tr>
 <tr>
 <td class="centre" colspan="1" rowspan="1">56-942</td>
-<td class="" colspan="1" rowspan="1">Interrupt and helpers</td>
+<td class="centre" colspan="1" rowspan="1">Interrupt and helpers</td>
 </tr>
 <tr>
 <td class="centre" colspan="1" rowspan="1">943-1882</td>
-<td class="" colspan="1" rowspan="1">Keys, suffixes and dictionary</td>
+<td class="centre" colspan="1" rowspan="1">Keys, suffixes and dictionary</td>
 </tr>
 <tr>
 <td class="centre" colspan="1" rowspan="1">1883-1938</td>
-<td class="" colspan="1" rowspan="1">Banner address list</td>
+<td class="centre" colspan="1" rowspan="1">Banner address list</td>
 </tr>
 <tr>
 <td class="centre" colspan="1" rowspan="1">1939-1943</td>
-<td class="" colspan="1" rowspan="1">"Anson"</td>
+<td class="centre" colspan="1" rowspan="1">"Anson"</td>
 </tr>
 <tr>
 <td class="centre" colspan="1" rowspan="1">1944-2047</td>
-<td class="" colspan="1" rowspan="1">More banner bitmaps</td>
+<td class="centre" colspan="1" rowspan="1">More banner bitmaps</td>
 </tr>
 <tr>
 <td class="centre" colspan="1" rowspan="1">2048-4095</td>
-<td class="" colspan="1" rowspan="1">Mirror of this ROM</td>
+<td class="centre" colspan="1" rowspan="1">Mirror of this ROM</td>
 </tr>
 <tr>
 <td class="centre" colspan="1" rowspan="1">4096</td>
-<td class="" colspan="1" rowspan="1"><a href="facts.html#sp0256">SP0256</a> allophone / status</td>
+<td class="centre" colspan="1" rowspan="1"><a href="facts.html#sp0256">SP0256</a> allophone / status</td>
 </tr>
 <tr>
 <td class="centre" colspan="1" rowspan="1">12288 / 12289</td>
-<td class="" colspan="1" rowspan="1">Low / high intonation</td>
+<td class="centre" colspan="1" rowspan="1">Low / high intonation</td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-On the first few frames <a href="../asm/56.html#129">InstallWorkspace</a> lowers *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB2.html">RAMTOP</a>
+On the first few frames <a href="../asm/56.html#129">InstallWorkspace</a> lowers *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23730.html">RAMTOP</a>
 by one page and plants the workspace (low byte 87). After
 that, each interrupt at <a href="../asm/56.html#183">ServiceSpeech</a>:
 </div>
 <div class="paragraph">
 <ul class="">
-<li>Ticks *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C78.html">FRAMES</a>, because this ROM owns IM1</li>
-<li>Ticks the two keyboard-state timer pairs</li>
+<li>Compensates for the second IM1 pass: one *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23672.html">FRAMES</a> increment and one *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23552.html">KSTATE</a> counter decrement per frame</li>
 <li>Expands the BASIC string <a href="facts.html#sstring">s$</a> if it exists</li>
-<li>Speaks a new key from *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C08.html">LAST_K</a> if keys is 1</li>
-<li>Sends the next queued allophone if the <a href="facts.html#sp0256">SP0256</a> is idle</li>
+<li>Speaks a new key from *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23560.html">LAST_K</a> if key speech is enabled</li>
+<li>Sends the next queued allophone if the <a href="facts.html#sp0256">SP0256</a> can take one</li>
 </ul>
 </div>
 <div class="paragraph">
-Letters, tokens and symbols become allophone IDs through
-<a href="../asm/1095.html">AllophoneDictionary</a>. A parenthesised name such as "(SH)" picks an allophone
-directly (see <a href="../asm/747.html">ParseAllophoneGroup</a>). The queued IDs sit in the workspace
-buffer and grow downwards; when the <a href="facts.html#sp0256">SP0256</a> is
-ready, <a href="../asm/56.html#358">FeedAllophone</a> writes one ID and shuffles the rest down.
+Key voices map letters, tokens and symbols to allophone IDs
+through <a href="../asm/1095.html">AllophoneDictionary</a>. The <a href="facts.html#sstring">s$</a> path uses <a href="../asm/943.html">CharacterKeys</a> /
+<a href="../asm/970.html">MappedCharacters</a> / <a href="../asm/997.html">AllophoneValues</a> instead. A parenthesised name such as "(SH)"
+picks an allophone directly (see <a href="../asm/747.html">ParseAllophoneGroup</a>). The queued IDs sit
+in the workspace buffer and grow downwards; when the
+<a href="facts.html#sp0256">SP0256</a> is ready, <a href="../asm/56.html#358">FeedAllophone</a> writes one ID and
+shuffles the rest up (towards the queue head).
+</div>
+<div class="paragraph">
+Any access to <a href="../asm/56.html">HandleInterrupt</a> toggles the ROM in or out: opcode fetch,
+memory read or write, and <code>IN</code> / <code>OUT</code>. Addresses in 4096-8191
+mirror 4096 for status reads and allophone writes (<code>IN</code> / <code>OUT</code>
+included); 8192 is not mirrored. 12288 / 12289 decode as
+0011xxxx xxxxxxx0 (low) and 0011xxxx xxxxxxx1 (high); only
+writes or <code>OUT</code> work there. Only the low 6 bits reach the chip
+(AL2 A1-A6; A7/A8 tied low). 4096-16383 respond only while
+this ROM is paged in. Of the bits returned by a 4096 read,
+only bit 0 (busy / inverted load request) has a known meaning.
+See
+<a href="https://maziac.github.io/currah_uspeech_tests/#findings" rel="noopener noreferrer nofollow">maziac's findings</a>
+and
+<a href="https://github.com/mamedev/mame/blob/master/src/devices/bus/spectrum/uspeech.cpp" rel="noopener noreferrer nofollow">MAME uspeech.cpp</a>.
 </div>
 </div>
 <div><span id="workspace"></span></div>
@@ -119,10 +143,10 @@ ready, <a href="../asm/56.html#358">FeedAllophone</a> writes one ID and shuffles
 <div class="box-title">Speech Workspace</div>
 <div class="paragraph">
 The workspace is a few bytes in the page of
-*<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB4.html">P_RAMT</a>. <a href="../asm/852.html">ReadWorkspace</a> reads index 0 as the byte
-at low address 87 index 1 as 86 and so on. A 48K
+*<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23732.html">P_RAMT</a>. <a href="../asm/852.html">ReadWorkspace</a> reads index 0 as the byte
+at low address 87, index 1 as 86, and so on. A 48K
 machine uses 65367; a 16K machine uses 32599.
-<a href="../asm/56.html#129">InstallWorkspace</a> lowers *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB2.html">RAMTOP</a> by one page so BASIC
+<a href="../asm/56.html#129">InstallWorkspace</a> lowers *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23730.html">RAMTOP</a> by one page so BASIC
 stays out of this block.
 </div>
 <div class="paragraph">
@@ -135,22 +159,22 @@ stays out of this block.
 <tr>
 <td class="centre" colspan="1" rowspan="1">0</td>
 <td class="centre" colspan="1" rowspan="1">87</td>
-<td class="" colspan="1" rowspan="1">Flags</td>
+<td class="centre" colspan="1" rowspan="1">Flags</td>
 </tr>
 <tr>
 <td class="centre" colspan="1" rowspan="1">1</td>
 <td class="centre" colspan="1" rowspan="1">86</td>
-<td class="" colspan="1" rowspan="1">Cleared on install</td>
+<td class="centre" colspan="1" rowspan="1">Cleared on install</td>
 </tr>
 <tr>
 <td class="centre" colspan="1" rowspan="1">3</td>
 <td class="centre" colspan="1" rowspan="1">84</td>
-<td class="" colspan="1" rowspan="1">Live buffer pointer (low, then high)</td>
+<td class="centre" colspan="1" rowspan="1">Live buffer pointer (low, then high)</td>
 </tr>
 <tr>
 <td class="centre" colspan="1" rowspan="1">6</td>
 <td class="centre" colspan="1" rowspan="1">81</td>
-<td class="" colspan="1" rowspan="1">Saved queue start / first allophone</td>
+<td class="centre" colspan="1" rowspan="1">Saved queue start / first allophone</td>
 </tr>
 </table>
 </div>
@@ -158,8 +182,8 @@ stays out of this block.
 The live pointer is a word, so its high byte sits at 85
 (install first writes the workspace page there). The allophone
 buffer begins at the address of index 6 and grows down
-towards the new *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB2.html">RAMTOP</a>. <a href="../asm/885.html">CheckMemory</a> sets carry
-when the pointer has dropped into that reserved page.
+towards the new *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23730.html">RAMTOP</a>. <a href="../asm/885.html">CheckMemory</a> sets carry
+when the pointer has run out of that reserved page (at or below *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23730.html">RAMTOP</a>).
 </div>
 <div class="paragraph">
 Flags at index 0:
@@ -172,25 +196,31 @@ Flags at index 0:
 </tr>
 <tr>
 <td class="centre" colspan="1" rowspan="1">1</td>
-<td class="" colspan="1" rowspan="1">Key speech (set when keys is 1)</td>
+<td class="centre" colspan="1" rowspan="1">Key speech (set at install, and when keys is 1)</td>
 </tr>
 <tr>
 <td class="centre" colspan="1" rowspan="1">2</td>
-<td class="" colspan="1" rowspan="1">Workspace live (set while installing, reset when ready)</td>
+<td class="centre" colspan="1" rowspan="1">Second pass (set before chaining to the Spectrum IM1 routine, reset when this ROM is re-entered)</td>
 </tr>
 <tr>
 <td class="centre" colspan="1" rowspan="1">4</td>
-<td class="" colspan="1" rowspan="1">A key is already being spoken</td>
+<td class="centre" colspan="1" rowspan="1">A key is already being spoken</td>
 </tr>
 <tr>
 <td class="centre" colspan="1" rowspan="1">6</td>
-<td class="" colspan="1" rowspan="1">High intonation (set for uppercase, reset for lowercase)</td>
+<td class="centre" colspan="1" rowspan="1">High intonation (set for codes below "a", reset for codes at or above "a")</td>
 </tr>
 <tr>
 <td class="centre" colspan="1" rowspan="1">7</td>
-<td class="" colspan="1" rowspan="1">Banner not yet drawn</td>
+<td class="centre" colspan="1" rowspan="1">Banner not yet drawn</td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+Manual chapter 6 instead lists bit 7 as the copyright/banner flag
+(reset after the message), bit 1 as key voice (set at first),
+bits 4 and 2 as used in the keyboard scan, and bits 6, 5, 3 and
+0 as spare. The meanings above for bits 6 and 2 come from the code.
 </div>
 </div>
 <div><span id="sp0256"></span></div>
@@ -203,13 +233,23 @@ workspace queue.
 </div>
 <div class="paragraph">
 4096 is the allophone port. Reading it returns status; bit 0
-set means the chip is still speaking. Writing an allophone ID
-starts that sound; writing 0 silences the chip.
+is the inverted load request (set while the chip's input buffer
+is full). Writing an allophone ID starts that sound; writing
+0 queues PA1 (nominally 10 ms), which stops the chip repeating
+the tail of its last allophone (see maziac's
+<a href="https://maziac.github.io/currah_uspeech_tests/#findings" rel="noopener noreferrer nofollow">Allophone loop</a>
+finding, and CPCWiki's
+<a href="https://www.cpcwiki.eu/index.php/SP0256_Allophones" rel="noopener noreferrer nofollow">SP0256 Allophones</a>
+page, which advises sending PA1 after the last allophone to mute
+it). That repeat behaviour is why a key voice left on during
+LOAD can give a continuous "e", and why BEEP can draw out an
+allophone (manual Appendix III).
 </div>
 <div class="paragraph">
-Intonation is selected first by writing the same ID to 12288
-(low) or 12289 (high). Bit 6 of the queued byte chooses the
-port; <a href="../asm/56.html#383">FeedAllophone_Write</a> then writes the ID to 4096.
+<a href="facts.html#intonation">Intonation</a> is selected by writing to 12288
+(low pitch) or 12289 (high pitch). Bit 6 of the queued byte
+chooses the port; <a href="../asm/56.html#383">FeedAllophone_Write</a> then writes the ID to 4096 (the
+chip ignores bits 6 and 7).
 </div>
 <div class="paragraph">
 The IDs themselves are the AL2 allophone set stored in <a href="../asm/1095.html">AllophoneDictionary</a>.
@@ -222,7 +262,8 @@ Hear every ID on the <a href="../sound/sounds.html">Allophones</a> page.
 <div class="paragraph">
 Programs speak by assigning the BASIC string variable s$. On each
 interrupt <a href="../asm/56.html#221">221</a> looks that name up with <a href="../asm/461.html">FindVariable</a> (name code 83)
-and, if it exists, calls <a href="../asm/543.html">ParseSpeechString</a>.
+and, if it exists, calls <a href="../asm/543.html">ParseSpeechString</a>. A program must follow LET s$=
+with PAUSE 1 so the interrupt sees each new s$ (manual chapter 2).
 </div>
 <div class="paragraph">
 <a href="../asm/543.html">ParseSpeechString</a> ignores an empty string, and also ignores a string whose
@@ -231,18 +272,52 @@ already been spoken, or could not be parsed.
 </div>
 <div class="paragraph">
 Anything else is expanded into the allophone buffer. A full stop
-queues a short pause. A "(" starts a parenthesised allophone name
-(see <a href="../asm/747.html">ParseAllophoneGroup</a>). Other characters are mapped through <a href="../asm/943.html">CharacterKeys</a>.
+queues two PA5 pauses (the longest). A "(" starts a parenthesised
+allophone name (see <a href="../asm/747.html">ParseAllophoneGroup</a>). Bracketed groups take their
+intonation from their last character (for (aer) and (ear), the
+middle letter): (oUu) is flat, (ouU) goes
+up (chapter 4); this matches <a href="../asm/862.html">NormaliseCharacter</a> being applied to every
+character. Other characters are mapped through <a href="../asm/943.html">CharacterKeys</a>.
 </div>
 <div class="paragraph">
 After a successful pass the first character of s$ is overwritten
-with "*". If a character cannot be mapped, it is overwritten with
-"?" instead. Either way the next interrupt will skip the string
-until a program assigns s$ again.
+with "*". If a character cannot be mapped, the first character and
+the character after the error (or the last character) are
+overwritten with "?" instead. Either way the next interrupt will
+skip the string until a program assigns s$ again.
 </div>
 <div class="paragraph">
 The separate numeric variable keys (1) enables speaking each
-key press from *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C08.html">LAST_K</a>; that path does not use s$.
+key press from *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23560.html">LAST_K</a>; that path does not use s$.
+The keys variable survives NEW. Key voices stay silent until the
+first ENTER after power-up, after NEW, or after a report; the
+manual says the unit "will remain silent until the first ENTER
+is pressed after a power up, a NEW, or after a 'report' has been
+printed at the bottom of the screen." Every BASIC keyword and
+printable character is voiced except "~"; all graphics characters
+are spoken as "graphic". User speech takes priority over key
+voices. Any report other than OK empties the buffer (chapter 2); that
+is the *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23610.html">ERR_NR</a> test at <a href="../asm/56.html#365">365</a>.
+</div>
+<div class="paragraph">
+*<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23730.html">RAMTOP</a> drops by 256 bytes on install (to 65111
+on 48K). The manual says do not CLEAR above 65360 (48K) or
+32343 (16K). The re-install check at <a href="../asm/56.html#80">80</a>-90
+only goes off when *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23730.html">RAMTOP</a> is at or above the
+workspace base (65361 on 48K, 32593 on 16K), so the code
+itself accepts CLEAR up to 32592 on 16K; the manual's 16K
+figure is just the *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23730.html">RAMTOP</a> install sets and is
+stricter than the code needs, while its 48K figure 65360
+matches the code. A CLEAR into the header forces a re-install with
+a new banner (chapter 5); that is ProbeWorkspace at <a href="../asm/56.html#80">ProbeWorkspace</a> /
+<a href="../asm/56.html#87">87</a>. A buffer only 200 bytes long holds over 30 seconds
+(chapter 2); the default buffer is 250 bytes.
+</div>
+<div class="paragraph">
+Sources:
+<a href="https://maziac.github.io/currah_uspeech_tests/data/currah_manual.pdf" rel="noopener noreferrer nofollow">manual transcription PDF</a>
+and the
+<a href="https://archive.org/stream/currahuspeech/Currah_uSPEECH_djvu.txt" rel="noopener noreferrer nofollow">archive.org OCR</a>.
 </div>
 <div class="paragraph">
 The <a href="tryit.html">Try s$</a> page runs this parser in the browser
@@ -253,9 +328,9 @@ and plays the resulting <a href="facts.html#sp0256">SP0256</a> allophones.
 <div class="box box-1">
 <div class="box-title">Key Speech Remap</div>
 <div class="paragraph">
-When a new key arrives in *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C08.html">LAST_K</a>, <a href="../asm/56.html#256">ServiceSpeech_Key</a> turns it
+When a new key arrives in *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23560.html">LAST_K</a>, <a href="../asm/56.html#256">ServiceSpeech_Key</a> turns it
 into a dictionary key and looks it up in <a href="../asm/1095.html">AllophoneDictionary</a>. Letters are
-uppercased, and codes 128-164 (block graphics) all use key
+uppercased, and codes 128-164 (block graphics and UDGs) all use key
 128. Everything else is offered to <a href="../asm/1069.html">PunctuationKeys</a> first.
 </div>
 <div class="paragraph">
@@ -381,8 +456,9 @@ Those values are summed; the sum is the lookup key.
 </div>
 <div class="paragraph">
 Most sums are searched for in the 54 bytes from <a href="../asm/943.html">CharacterKeys</a>, and the
-matching allophone is 53 bytes later. Five sums are handled
-separately and go through the suffix tables instead:
+matching allophone is 54 bytes later,
+in <a href="../asm/997.html">AllophoneValues</a>. Five sums are handled separately and go through the
+suffix tables instead:
 </div>
 <div class="paragraph">
 <table class="default">
@@ -414,7 +490,7 @@ separately and go through the suffix tables instead:
 </div>
 <div class="paragraph">
 <a href="../asm/747.html#822">ParseAllophoneGroup_Suffix</a> takes that letter, normalises it, and searches <a href="../asm/1051.html">SuffixKeys</a>. The
-parallel byte 8 later in <a href="../asm/1060.html">SuffixValues</a> is the allophone. A letter that
+parallel byte 9 later in <a href="../asm/1060.html">SuffixValues</a> is the allophone. A letter that
 is not in <a href="../asm/1051.html">SuffixKeys</a> makes the group invalid.
 </div>
 <div class="paragraph">
@@ -462,11 +538,188 @@ is not in <a href="../asm/1051.html">SuffixKeys</a> makes the group invalid.
 </table>
 </div>
 </div>
+<div><span id="intonation"></span></div>
+<div class="box box-2">
+<div class="box-title">Intonation</div>
+<div class="paragraph">
+A write to 12288 or 12289 changes the <a href="facts.html#sp0256">SP0256</a>
+oscillator clock, not the volume. In
+<a href="https://github.com/mamedev/mame/blob/master/src/devices/bus/spectrum/uspeech.cpp" rel="noopener noreferrer nofollow">MAME uspeech.cpp</a>
+12288 sets 3,050,000 Hz and 12289 sets 3,260,000 Hz
+("oscillator frequency read from hardware").
+</div>
+<div class="paragraph">
+<a href="https://maziac.github.io/currah_uspeech_tests/#findings" rel="noopener noreferrer nofollow">maziac</a>
+measured real hardware: the high setting is about 7% higher in
+pitch and the volume does not change; the new frequency takes
+about 0.05-0.5 s to settle; the data byte written is ignored
+(only the address matters); and bit 6 of the byte written to
+4096 has no effect on the chip.
+</div>
+<div class="paragraph">
+The manual says the pitch is "ramped" so that the change is
+smooth (chapter 4). The datasheet's nominal crystal is 3.12 MHz;
+Kio's simulation of the Currah oscillator gives about 3.05 MHz
+(see
+<a href="https://maziac.github.io/currah_uspeech_tests/#the-hardware" rel="noopener noreferrer nofollow">maziac</a>),
+so this unit should not be described as running at 3.12 MHz. On
+<a href="https://k1.spdns.de/Vintage/Sinclair/82/Peripherals/Currah%20uSpeech/" rel="noopener noreferrer nofollow">k1.spdns.de</a>
+Kio writes: "Address bit A0 set's [sic] intonation to low frequency
+(A0=0: ~3MHz clock / ~10kHz samples) or high frequency (A0=1:
+approx. 7% higher). The shift in frequency is soft and takes
+around 0.05 to 0.5 seconds, the timing seems to vary (Thomas
+Busse). The data value written is not used."
+<a href="../asm/56.html#388">388</a>-<a href="../asm/56.html#397">397</a> select the port from bit 6 of the queued byte.
+</div>
+</div>
+<div><span id="mcapi"></span></div>
+<div class="box box-1">
+<div class="box-title">Machine-Code API</div>
+<div class="paragraph">
+Manual chapter 6 calls it a "six-byte header" but lists seven
+addresses (65367-65361; the last is the first queue byte):
+</div>
+<div class="paragraph">
+<table class="default">
+<tr>
+<th colspan="1" rowspan="1">Address</th>
+<th colspan="1" rowspan="1">Decimal</th>
+<th colspan="1" rowspan="1">Purpose</th>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">65367</td>
+<td class="centre" colspan="1" rowspan="1">65367</td>
+<td class="centre" colspan="1" rowspan="1">Flags</td>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">65366</td>
+<td class="centre" colspan="1" rowspan="1">65366</td>
+<td class="centre" colspan="1" rowspan="1">Spare</td>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">65365 / 65364</td>
+<td class="centre" colspan="1" rowspan="1">65365 / 65364</td>
+<td class="centre" colspan="1" rowspan="1">Buffer pointer (high, then low)</td>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">65363 / 65362</td>
+<td class="centre" colspan="1" rowspan="1">65363 / 65362</td>
+<td class="centre" colspan="1" rowspan="1">Spare</td>
+</tr>
+<tr>
+<td class="centre" colspan="1" rowspan="1">65361</td>
+<td class="centre" colspan="1" rowspan="1">65361</td>
+<td class="centre" colspan="1" rowspan="1">Next allophone / queue start</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+Buffer bytes are laid out as: bit 7 = 0, bit 6 = intonation up,
+bits 0-5 = allophone. A worked example is "he(ll)(oo)" = 27, 7,
+62, 53, with the "e" intoned up as 71. This matches the
+workspace indexes in <a href="facts.html#workspace">Speech Workspace</a> (87
+flags, 84/85 pointer, 81 queue start) and the <code>LDDR</code>
+shuffle at <a href="../asm/56.html#417">417</a> ("the entire contents of the buffer is moved
+up by one"). 16K addresses are the 48K ones minus 32768.
+</div>
+</div>
+<div><span id="history"></span></div>
+<div class="box box-2">
+<div class="box-title">History</div>
+<div class="paragraph">
+Made by Currah Computor Components Ltd, Hartlepool (the original
+manual spells it "Computor"; Spectrum Computing and the
+transcription often spell it "Computer"). Addresses in the
+original printing: Hollymount, Wooler Road, Hartlepool,
+Cleveland TS26 0HA; the transcription gives Graythrop [sic]
+(Graythorp) Industrial Estate, Hartlepool TS25 2DF, so the two
+printings differ.
+</div>
+<div class="paragraph">
+Released in 1983 at £29.95
+(<a href="https://spectrumcomputing.co.uk/entry/1000081/Hardware/Currah_MicroSpeech" rel="noopener noreferrer nofollow">Spectrum Computing</a>).
+dk'tronics took over Currah in 1985 and kept making the unit;
+many dk'tronics titles supported it (for example Maziacs and
+Zig Zag). See
+<a href="https://en.wikipedia.org/wiki/Currah" rel="noopener noreferrer nofollow">Wikipedia: Currah</a>
+and
+<a href="https://k1.spdns.de/Vintage/Sinclair/82/Peripherals/Currah%20uSpeech/" rel="noopener noreferrer nofollow">k1.spdns.de</a>.
+A "Currah microSpeech Dictionary" was advertised at £3.50
+(Home Computing Weekly #90, 27 November 1984, p.5).
+</div>
+<div class="paragraph">
+The string at <a href="../asm/1939.html">ProgrammerCredit</a> is "Anson"; Mark Anson is named as author
+on the 1983 programming manual title page
+(<a href="https://archive.org/stream/currahuspeech/Currah_uSPEECH_djvu.txt" rel="noopener noreferrer nofollow">archive.org</a>).
+That he also wrote the ROM is an inference from the string; no
+source says so outright. The known ROM dump is 2,048 bytes,
+CRC32 ce7cf52e (same dump in MAME and Fuse).
+</div>
+</div>
+<div><span id="hardware"></span></div>
+<div class="box box-1">
+<div class="box-title">Hardware</div>
+<div class="paragraph">
+Inside: a 2K ROM, the SP0256-AL2 and a ULA. The case clips
+together with no screws. The board maziac opened has pin 12
+(SER OUT) of the SP0256 removed.
+</div>
+<div class="paragraph">
+Leads: a UHF lead with a phono plug, a 3.5 mm line lead into the
+Spectrum's MIC socket, and a UHF trimmer screw at the top right.
+Speech and the Spectrum's own sound are mixed into the UHF
+signal, so they come out of the TV speaker. The line lead can
+also be used as a high-impedance output to a tape recorder or
+amplifier (Appendix II). Mixing sound into the UHF signal can
+cause colour "patterning" (Appendix VI). It works behind
+Interface 1 (Appendix IV).
+</div>
+<div class="paragraph">
+Sources: the
+<a href="https://maziac.github.io/currah_uspeech_tests/data/currah_manual.pdf" rel="noopener noreferrer nofollow">manual</a>
+and
+<a href="https://maziac.github.io/currah_uspeech_tests/" rel="noopener noreferrer nofollow">maziac</a>.
+</div>
+</div>
+<div><span id="software"></span></div>
+<div class="box box-2">
+<div class="box-title">Supporting Software</div>
+<div class="paragraph">
+<a href="https://spectrumcomputing.co.uk/entry/1000081/Hardware/Currah_MicroSpeech" rel="noopener noreferrer nofollow">Spectrum Computing</a>
+lists 86 entries (about 83 distinct titles, as of October 2026).
+Verified there include Lunar Jetman, Booty, Rockfall, Rockfall
+II, Maziacs, Zig Zag, Spectrum Voice Chess, Terrahawks, Max
+Headroom and Twin Kingdom Valley. The list includes modern
+homebrew, so filter by year for period-only titles. Rockfall II
+detects the unit by toggling paging and comparing 57 with
+241 (<code>POP <span class="register">AF</span></code>; the Spectrum ROM has 229,
+<code>PUSH <span class="register">HL</span></code>, there). The test works because <a href="../asm/56.html">HandleInterrupt</a>
+/ 57 here are <code>PUSH <span class="register">AF</span></code> /
+<code>POP <span class="register">AF</span></code>.
+</div>
+</div>
+<div><span id="related"></span></div>
+<div class="box box-1">
+<div class="box-title">Related Machines</div>
+<div class="paragraph">
+Currah Speech 64 for the Commodore 64 (1984) is a cartridge with
+an SP0256-AL2; in the USA it was sold as "Voice Messenger" for
+$49.95 by Currah Technology, Boston
+(<a href="https://www.c64-wiki.com/wiki/Voice_Messenger" rel="noopener noreferrer nofollow">C64-Wiki</a>,
+<a href="https://www.computinghistory.org.uk/det/11717/Currah%20Speech%2064/" rel="noopener noreferrer nofollow">Centre for Computing History</a>).
+Other Spectrum SP0256 units include the Cheetah Sweet Talker,
+the dk'tronics Speech Synthesiser (which
+<a href="https://sourceforge.net/p/fuse-emulator/patches/142/" rel="noopener noreferrer nofollow">Fuse patch #142</a>
+describes as "probably a rebranded μSpeech") and the Fuller
+Orator. That patch (closed-accepted; milestone v1.7.0; created
+2007-08-29 by Stuart Brady) is the Fuse uspeech support.
+</div>
+</div>
 <footer>
 <div class="release"></div>
-<div class="copyright">&copy; 1983 Currah &copy; 2024 ArcadeGeek LTD.</div>
+<div class="copyright">&copy; 1983 Currah Computor Components Ltd. &copy; 2024 ArcadeGeek LTD.</div>
 <div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
-<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah/">Source code</a>.</div>
+<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah-microspeech">Source code</a>.</div>
 <div><a href="../../reference/facts.html">Switch to hexadecimal</a>.</div>
 </footer>
 </body>

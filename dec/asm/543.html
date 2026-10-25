@@ -247,7 +247,7 @@ Convert the next character of <a href="../reference/facts.html#sstring">s$</a> i
 <td class="asm-label"></td>
 <td class="address-1"><span id="580"></span>00580</td>
 <td class="instruction">LD A,4</td>
-<td class="comment-1" rowspan="1">Queue a short pause.</td>
+<td class="comment-1" rowspan="1">Load <span class="register">A</span> with PA5 (the longest pause) for a full stop.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -259,7 +259,7 @@ Convert the next character of <a href="../reference/facts.html#sstring">s$</a> i
 <td class="asm-label"></td>
 <td class="address-1"><span id="583"></span>00583</td>
 <td class="instruction">LD (BC),A</td>
-<td class="comment-1" rowspan="2">Write the pause to the speech buffer.</td>
+<td class="comment-1" rowspan="2">Queue the first PA5.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -287,7 +287,7 @@ Convert the next character of <a href="../reference/facts.html#sstring">s$</a> i
 <td class="asm-label"></td>
 <td class="address-1"><span id="590"></span>00590</td>
 <td class="instruction">JR <a href="543.html#640">ParseSpeechString_Store</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="543.html#640">ParseSpeechString_Store</a>.</td>
+<td class="comment-1" rowspan="1">Jump to <a href="543.html#640">ParseSpeechString_Store</a> to queue a second PA5, with the intonation bit.</td>
 </tr>
 <tr>
 <td class="routine-comment" colspan="5">
@@ -386,7 +386,7 @@ Map the character through <a href="943.html">CharacterKeys</a>.
 <span id="617"></span>
 <div class="comments">
 <div class="paragraph">
-This character is not in the key tables; mark <a href="../reference/facts.html#sstring">s$</a> with "?".
+This character is not valid. Put a "?" on the character after it (or on the last character), and then on the first character.
 </div>
 </div>
 </td>
@@ -395,7 +395,7 @@ This character is not in the key tables; mark <a href="../reference/facts.html#s
 <td class="asm-label">ParseSpeechString_Mark</td>
 <td class="address-2"><span id="617"></span>00617</td>
 <td class="instruction">INC DE</td>
-<td class="comment-1" rowspan="2">Step past this character.</td>
+<td class="comment-1" rowspan="2">Point <span class="register">DE</span> one past the end of <a href="../reference/facts.html#sstring">s$</a> and <span class="register">HL</span> at the next character.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -406,7 +406,7 @@ This character is not in the key tables; mark <a href="../reference/facts.html#s
 <td class="asm-label">ParseSpeechString_Bound</td>
 <td class="address-2"><span id="619"></span>00619</td>
 <td class="instruction">PUSH HL</td>
-<td class="comment-1" rowspan="4">Test whether the string pointer has reached the end of <a href="../reference/facts.html#sstring">s$</a>.</td>
+<td class="comment-1" rowspan="5">Jump to <a href="543.html#629">ParseSpeechString_Query</a> if <span class="register">HL</span> is still inside <a href="../reference/facts.html#sstring">s$</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -427,13 +427,12 @@ This character is not in the key tables; mark <a href="../reference/facts.html#s
 <td class="asm-label"></td>
 <td class="address-1"><span id="624"></span>00624</td>
 <td class="instruction">JR C,<a href="543.html#629">ParseSpeechString_Query</a></td>
-<td class="comment-1" rowspan="1">Jump to <a href="543.html#629">ParseSpeechString_Query</a> if it has.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="626"></span>00626</td>
 <td class="instruction">DEC HL</td>
-<td class="comment-1" rowspan="1">Move back one character.</td>
+<td class="comment-1" rowspan="1">Otherwise move back to the last character.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -442,10 +441,20 @@ This character is not in the key tables; mark <a href="../reference/facts.html#s
 <td class="comment-1" rowspan="1">Jump to <a href="543.html#619">ParseSpeechString_Bound</a>.</td>
 </tr>
 <tr>
+<td class="routine-comment" colspan="5">
+<span id="629"></span>
+<div class="comments">
+<div class="paragraph">
+The "?" path and the buffer-full returns never reach <a href="906.html">WriteBufferPointer</a>, so allophones already queued for this string are discarded. On buffer-full, <a href="../reference/facts.html#sstring">s$</a> is left unmarked and is retried on every interrupt. An <a href="../reference/facts.html#sstring">s$</a> too long for the buffer never speaks.
+</div>
+</div>
+</td>
+</tr>
+<tr>
 <td class="asm-label">ParseSpeechString_Query</td>
 <td class="address-2"><span id="629"></span>00629</td>
 <td class="instruction">LD C,63</td>
-<td class="comment-1" rowspan="3">Mark <a href="../reference/facts.html#sstring">s$</a> with "?" and jump to <a href="543.html#675">ParseSpeechString_Term</a>.</td>
+<td class="comment-1" rowspan="3">Write "?" there and jump to <a href="543.html#675">ParseSpeechString_Term</a> to write another over the first character.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -461,7 +470,7 @@ This character is not in the key tables; mark <a href="../reference/facts.html#s
 <td class="asm-label">ParseSpeechString_Mapped</td>
 <td class="address-2"><span id="634"></span>00634</td>
 <td class="instruction">LD BC,53</td>
-<td class="comment-1" rowspan="3">Fetch the mapped allophone from <a href="970.html">MappedCharacters</a>.</td>
+<td class="comment-1" rowspan="3">Fetch the allophone at the same index in <a href="997.html">AllophoneValues</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -511,7 +520,7 @@ Apply intonation and queue the allophone.
 <td class="asm-label"></td>
 <td class="address-1"><span id="643"></span>00643</td>
 <td class="instruction">CALL <a href="852.html">ReadWorkspace</a></td>
-<td class="comment-1" rowspan="1">Call <a href="852.html">ReadWorkspace</a>.</td>
+<td class="comment-1" rowspan="1">Call <a href="852.html">ReadWorkspace</a> for the flags byte.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -584,7 +593,7 @@ Apply intonation and queue the allophone.
 <td class="asm-label"></td>
 <td class="address-1"><span id="663"></span>00663</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="3">Write a terminator to the speech buffer.</td>
+<td class="comment-1" rowspan="3">Write PA1 (0) to the speech buffer to end the phrase.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -682,9 +691,9 @@ Next: <a href="685.html">00685</a>
 </table>
 <footer>
 <div class="release"></div>
-<div class="copyright">&copy; 1983 Currah &copy; 2024 ArcadeGeek LTD.</div>
+<div class="copyright">&copy; 1983 Currah Computor Components Ltd. &copy; 2024 ArcadeGeek LTD.</div>
 <div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
-<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah/">Source code</a>.</div>
+<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah-microspeech">Source code</a>.</div>
 <div><a href="../../asm/021F.html">Switch to hexadecimal</a>.</div>
 </footer>
 </body>

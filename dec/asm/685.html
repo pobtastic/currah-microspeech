@@ -51,7 +51,7 @@ Look up the BASIC variable "keys". A value of 1 enables speaking each key press.
 </tr>
 <tr>
 <td class="register">F</td>
-<td class="register-desc">Z flag set if key speech is enabled</td>
+<td class="register-desc">Z flag set if key speech is disabled</td>
 </tr>
 </table>
 </td>
@@ -131,7 +131,7 @@ Look up the BASIC variable "keys". A value of 1 enables speaking each key press.
 <td class="asm-label"></td>
 <td class="address-1"><span id="711"></span>00711</td>
 <td class="instruction">XOR A</td>
-<td class="comment-1" rowspan="3">Jump to <a href="685.html#733">TestKeysVariable_State</a> if the name has not ended.</td>
+<td class="comment-1" rowspan="3">Jump to <a href="685.html#733">TestKeysVariable_State</a> unless keys is held as a small integer (first byte 0).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -147,7 +147,7 @@ Look up the BASIC variable "keys". A value of 1 enables speaking each key press.
 <td class="asm-label"></td>
 <td class="address-1"><span id="716"></span>00716</td>
 <td class="instruction">CPI</td>
-<td class="comment-1" rowspan="2">Jump to <a href="685.html#733">TestKeysVariable_State</a> if the value header is not empty.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="685.html#733">TestKeysVariable_State</a> if keys is negative.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -158,7 +158,7 @@ Look up the BASIC variable "keys". A value of 1 enables speaking each key press.
 <td class="asm-label"></td>
 <td class="address-1"><span id="720"></span>00720</td>
 <td class="instruction">CP (HL)</td>
-<td class="comment-1" rowspan="2">Jump to <a href="685.html#740">TestKeysVariable_Off</a> if keys is 0.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="685.html#740">TestKeysVariable_Off</a> if the low byte of keys is 0.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -169,7 +169,7 @@ Look up the BASIC variable "keys". A value of 1 enables speaking each key press.
 <td class="asm-label"></td>
 <td class="address-1"><span id="723"></span>00723</td>
 <td class="instruction">INC A</td>
-<td class="comment-1" rowspan="3">Jump to <a href="685.html#733">TestKeysVariable_State</a> if keys is not 1.</td>
+<td class="comment-1" rowspan="3">Jump to <a href="685.html#733">TestKeysVariable_State</a> if the low byte of keys is not 1 (leave the setting unchanged).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -213,7 +213,7 @@ Look up the BASIC variable "keys". A value of 1 enables speaking each key press.
 <td class="asm-label"></td>
 <td class="address-1"><span id="737"></span>00737</td>
 <td class="instruction">BIT 1,(HL)</td>
-<td class="comment-1" rowspan="1">Set the Z flag from the key-speech flag.</td>
+<td class="comment-1" rowspan="1">Set the Z flag if key speech is disabled.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -235,7 +235,7 @@ keys is 0; turn key speech off.
 <td class="asm-label">TestKeysVariable_Off</td>
 <td class="address-2"><span id="740"></span>00740</td>
 <td class="instruction">CALL <a href="852.html">ReadWorkspace</a></td>
-<td class="comment-1" rowspan="1">Call <a href="852.html">ReadWorkspace</a>.</td>
+<td class="comment-1" rowspan="1">Call <a href="852.html">ReadWorkspace</a> for the flags byte.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -262,9 +262,9 @@ Next: <a href="747.html">00747</a>
 </table>
 <footer>
 <div class="release"></div>
-<div class="copyright">&copy; 1983 Currah &copy; 2024 ArcadeGeek LTD.</div>
+<div class="copyright">&copy; 1983 Currah Computor Components Ltd. &copy; 2024 ArcadeGeek LTD.</div>
 <div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
-<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah/">Source code</a>.</div>
+<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah-microspeech">Source code</a>.</div>
 <div><a href="../../asm/02AD.html">Switch to hexadecimal</a>.</div>
 </footer>
 </body>

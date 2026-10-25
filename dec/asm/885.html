@@ -42,7 +42,7 @@ Next: <a href="895.html">00895</a>
 Used by the routines at <a href="56.html">HandleInterrupt</a> and <a href="543.html">ParseSpeechString</a>.
 </div>
 <div class="paragraph">
-Compare the speech-buffer pointer with *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB2.html">RAMTOP</a>. Carry is set when the pointer has dropped into the reserved workspace.
+Compare the speech-buffer pointer with *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23730.html">RAMTOP</a>. Carry is set when the pointer has run out of the reserved page (at or below *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23730.html">RAMTOP</a>).
 </div>
 </div>
 <table class="input">
@@ -60,7 +60,7 @@ Compare the speech-buffer pointer with *<a rel="noopener nofollow" href="https:/
 </tr>
 <tr>
 <td class="register">F</td>
-<td class="register-desc">Carry set if <span class="register">BC</span> is below *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB2.html">RAMTOP</a></td>
+<td class="register-desc">Carry set if <span class="register">BC</span> is at or below *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23730.html">RAMTOP</a></td>
 </tr>
 </table>
 </td>
@@ -75,13 +75,13 @@ Compare the speech-buffer pointer with *<a rel="noopener nofollow" href="https:/
 <td class="asm-label"></td>
 <td class="address-1"><span id="886"></span>00886</td>
 <td class="instruction">LD HL,(23730)</td>
-<td class="comment-1" rowspan="1">Fetch *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB2.html">RAMTOP</a>.</td>
+<td class="comment-1" rowspan="1">Fetch *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23730.html">RAMTOP</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="889"></span>00889</td>
 <td class="instruction">OR A</td>
-<td class="comment-1" rowspan="3">Compare *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5CB2.html">RAMTOP</a> with the buffer pointer.</td>
+<td class="comment-1" rowspan="3">Compare *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23730.html">RAMTOP</a> with the buffer pointer.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -119,9 +119,9 @@ Next: <a href="895.html">00895</a>
 </table>
 <footer>
 <div class="release"></div>
-<div class="copyright">&copy; 1983 Currah &copy; 2024 ArcadeGeek LTD.</div>
+<div class="copyright">&copy; 1983 Currah Computor Components Ltd. &copy; 2024 ArcadeGeek LTD.</div>
 <div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
-<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah/">Source code</a>.</div>
+<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah-microspeech">Source code</a>.</div>
 <div><a href="../../asm/0375.html">Switch to hexadecimal</a>.</div>
 </footer>
 </body>

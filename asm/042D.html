@@ -39,7 +39,7 @@ Next: <a href="043A.html">043A</a>
 <td class="routine-comment" colspan="5">
 <div class="details">
 <div class="paragraph">
-Punctuation and token bytes spoken from *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C08.html">LAST_K</a>. The replacement is 0C bytes later in <a href="043A.html">PunctuationValues</a>.
+Punctuation and token bytes spoken from *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/5C08.html">LAST_K</a>, searched by <a href="0038.html#011d">ServiceSpeech_Punctuation</a>. The replacement is 0D bytes later in <a href="043A.html">PunctuationValues</a>.
 </div>
 </div>
 </td>
@@ -47,8 +47,80 @@ Punctuation and token bytes spoken from *<a rel="noopener nofollow" href="https:
 <tr>
 <td class="asm-label">PunctuationKeys</td>
 <td class="address-1"><span id="042d"></span>042D</td>
-<td class="instruction">DEFB $29,$5B,$5D,$7B,$7D,$A9,$FB,$40,$09,$0A,$0B,$BC,$C6</td>
-<td class="comment-0" rowspan="1"></td>
+<td class="instruction">DEFB $29</td>
+<td class="comment-1" rowspan="1">Key 29: dictionary key 28.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="042e"></span>042E</td>
+<td class="instruction">DEFB $5B</td>
+<td class="comment-1" rowspan="1">Key 5B: dictionary key 28.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="042f"></span>042F</td>
+<td class="instruction">DEFB $5D</td>
+<td class="comment-1" rowspan="1">Key 5D: dictionary key 28.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0430"></span>0430</td>
+<td class="instruction">DEFB $7B</td>
+<td class="comment-1" rowspan="1">Key 7B: dictionary key 28.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0431"></span>0431</td>
+<td class="instruction">DEFB $7D</td>
+<td class="comment-1" rowspan="1">Key 7D: dictionary key 28.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0432"></span>0432</td>
+<td class="instruction">DEFB $A9</td>
+<td class="comment-1" rowspan="1">Key A9: dictionary key 2E.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0433"></span>0433</td>
+<td class="instruction">DEFB $FB</td>
+<td class="comment-1" rowspan="1">Key FB: dictionary key FD.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0434"></span>0434</td>
+<td class="instruction">DEFB $40</td>
+<td class="comment-1" rowspan="1">Key 40: dictionary key AC.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0435"></span>0435</td>
+<td class="instruction">DEFB $09</td>
+<td class="comment-1" rowspan="1">Key 09: dictionary key 08.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0436"></span>0436</td>
+<td class="instruction">DEFB $0A</td>
+<td class="comment-1" rowspan="1">Key 0A: dictionary key 08.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0437"></span>0437</td>
+<td class="instruction">DEFB $0B</td>
+<td class="comment-1" rowspan="1">Key 0B: dictionary key 08.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0438"></span>0438</td>
+<td class="instruction">DEFB $BC</td>
+<td class="comment-1" rowspan="1">Key BC: dictionary key B2.</td>
+</tr>
+<tr>
+<td class="asm-label"></td>
+<td class="address-1"><span id="0439"></span>0439</td>
+<td class="instruction">DEFB $C6</td>
+<td class="comment-1" rowspan="1">Key C6: dictionary key 26.</td>
 </tr>
 </table>
 <table class="asm-navigation">
@@ -64,9 +136,9 @@ Next: <a href="043A.html">043A</a>
 </table>
 <footer>
 <div class="release"></div>
-<div class="copyright">&copy; 1983 Currah &copy; 2024 ArcadeGeek LTD.</div>
+<div class="copyright">&copy; 1983 Currah Computor Components Ltd. &copy; 2024 ArcadeGeek LTD.</div>
 <div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
-<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah/">Source code</a>.</div>
+<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah-microspeech">Source code</a>.</div>
 <div><a href="../dec/asm/1069.html">Switch to decimal</a>.</div>
 </footer>
 </body>

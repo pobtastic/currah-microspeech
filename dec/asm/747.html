@@ -42,7 +42,7 @@ Next: <a href="843.html">00843</a>
 Used by the routine at <a href="543.html">ParseSpeechString</a>.
 </div>
 <div class="paragraph">
-Read a parenthesised allophone name from the speech string (for example "(AA)" or "(SH)"). Letters are normalised, checked against <a href="943.html">CharacterKeys</a>, and summed; the sum selects an allophone from the parallel tables.
+Read a parenthesised allophone name from the speech string (for example "(AA)" or "(SH)"). Letters are normalised, checked against <a href="943.html">CharacterKeys</a>, and summed; the sum selects an allophone from <a href="997.html">AllophoneValues</a> (via <a href="970.html">MappedCharacters</a>). Groups with sums 92/100/102/104/120 are finished from <a href="1051.html">SuffixKeys</a> and <a href="1060.html">SuffixValues</a>.
 </div>
 </div>
 <table class="input">
@@ -276,7 +276,7 @@ The name has ended; the running total selects the allophone.
 <span id="798"></span>
 <div class="comments">
 <div class="paragraph">
-Look the sum up across both character-key tables.
+Look the sum up in <a href="943.html">CharacterKeys</a> and <a href="970.html">MappedCharacters</a>.
 </div>
 </div>
 </td>
@@ -285,7 +285,7 @@ Look the sum up across both character-key tables.
 <td class="asm-label"></td>
 <td class="address-1"><span id="798"></span>00798</td>
 <td class="instruction">LD BC,54</td>
-<td class="comment-1" rowspan="1">Search 54 bytes of the character-key tables.</td>
+<td class="comment-1" rowspan="1">Search the 54 bytes of <a href="943.html">CharacterKeys</a> and <a href="970.html">MappedCharacters</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -308,7 +308,7 @@ Look the sum up across both character-key tables.
 <td class="asm-label"></td>
 <td class="address-1"><span id="807"></span>00807</td>
 <td class="instruction">LD BC,53</td>
-<td class="comment-1" rowspan="1">Use the parallel mapped value (53 bytes on).</td>
+<td class="comment-1" rowspan="1">Point at the same index in <a href="997.html">AllophoneValues</a> (<span class="register">HL</span> is one past the match).</td>
 </tr>
 <tr>
 <td class="asm-label">ParseAllophoneGroup_Offset</td>
@@ -331,7 +331,7 @@ Look the sum up across both character-key tables.
 <td class="asm-label"></td>
 <td class="address-1"><span id="814"></span>00814</td>
 <td class="instruction">OR A</td>
-<td class="comment-1" rowspan="1">Set the flags from the mapped allophone.</td>
+<td class="comment-1" rowspan="1">Clear the carry flag (valid group).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -350,7 +350,7 @@ Look the sum up across both character-key tables.
 <span id="817"></span>
 <div class="comments">
 <div class="paragraph">
-Sum 120 uses the character before the ")".
+Sum 120 uses the character two before the ")" (the middle letter of "(aer)" or "(ear)").
 </div>
 </div>
 </td>
@@ -384,7 +384,7 @@ Sum 120 uses the character before the ")".
 <span id="822"></span>
 <div class="comments">
 <div class="paragraph">
-Map the previous character through the suffix tables.
+Map the selected character through the suffix tables.
 </div>
 </div>
 </td>
@@ -453,7 +453,7 @@ The name sum is not in the key tables; restore the string pointer and fail.
 <td class="asm-label">ParseAllophoneGroup_Carry</td>
 <td class="address-2"><span id="841"></span>00841</td>
 <td class="instruction">SCF</td>
-<td class="comment-1" rowspan="1">Set the carry flag.</td>
+<td class="comment-1" rowspan="1">Set the carry flag to signal an invalid group.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -475,9 +475,9 @@ Next: <a href="843.html">00843</a>
 </table>
 <footer>
 <div class="release"></div>
-<div class="copyright">&copy; 1983 Currah &copy; 2024 ArcadeGeek LTD.</div>
+<div class="copyright">&copy; 1983 Currah Computor Components Ltd. &copy; 2024 ArcadeGeek LTD.</div>
 <div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
-<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah/">Source code</a>.</div>
+<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah-microspeech">Source code</a>.</div>
 <div><a href="../../asm/02EB.html">Switch to hexadecimal</a>.</div>
 </footer>
 </body>

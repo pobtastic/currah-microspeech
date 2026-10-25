@@ -33,7 +33,7 @@ Next: <a href="03AF.html">03AF</a>
 </td>
 </tr>
 </table>
-<div class="description">03A2: Reset Buffer Pointer</div>
+<div class="description">03A2: Empty Queue</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -42,7 +42,7 @@ Next: <a href="03AF.html">03AF</a>
 Used by the routine at <a href="0038.html">HandleInterrupt</a>.
 </div>
 <div class="paragraph">
-Copy the saved queue pointer back over the live buffer pointer.
+Reset the buffer pointer to the queue head, discarding anything still queued.
 </div>
 </div>
 <table class="output">
@@ -57,7 +57,7 @@ Copy the saved queue pointer back over the live buffer pointer.
 </td>
 </tr>
 <tr>
-<td class="asm-label">ResetBufferPointer</td>
+<td class="asm-label">EmptyQueue</td>
 <td class="address-2"><span id="03a2"></span>03A2</td>
 <td class="instruction">LD A,$06</td>
 <td class="comment-1" rowspan="1">Select workspace index 06.</td>
@@ -72,13 +72,13 @@ Copy the saved queue pointer back over the live buffer pointer.
 <td class="asm-label"></td>
 <td class="address-1"><span id="03a5"></span>03A5</td>
 <td class="instruction">CALL <a href="0354.html">ReadWorkspace</a></td>
-<td class="comment-1" rowspan="1">Call <a href="0354.html">ReadWorkspace</a>.</td>
+<td class="comment-1" rowspan="1">Call <a href="0354.html">ReadWorkspace</a> for the address of the queue head.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="03a8"></span>03A8</td>
 <td class="instruction">LD B,H</td>
-<td class="comment-1" rowspan="2">Copy the saved pointer to <span class="register">BC</span>.</td>
+<td class="comment-1" rowspan="2">Copy the queue-head address to <span class="register">BC</span>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -117,9 +117,9 @@ Next: <a href="03AF.html">03AF</a>
 </table>
 <footer>
 <div class="release"></div>
-<div class="copyright">&copy; 1983 Currah &copy; 2024 ArcadeGeek LTD.</div>
+<div class="copyright">&copy; 1983 Currah Computor Components Ltd. &copy; 2024 ArcadeGeek LTD.</div>
 <div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
-<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah/">Source code</a>.</div>
+<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah-microspeech">Source code</a>.</div>
 <div><a href="../dec/asm/930.html">Switch to decimal</a>.</div>
 </footer>
 </body>

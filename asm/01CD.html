@@ -85,7 +85,7 @@ Walk the BASIC variable area looking for the name code in <span class="register"
 <td class="asm-label"></td>
 <td class="address-1"><span id="01d1"></span>01D1</td>
 <td class="instruction">RLA</td>
-<td class="comment-1" rowspan="2">Jump to <a href="01CD.html#0209">FindVariable_Miss</a> if bit 7 is not set.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="01CD.html#0209">FindVariable_Miss</a> if bit 7 is not set (checking syntax).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -102,7 +102,7 @@ Walk the BASIC variable area looking for the name code in <span class="register"
 <td class="asm-label"></td>
 <td class="address-1"><span id="01d7"></span>01D7</td>
 <td class="instruction">CP $F4</td>
-<td class="comment-1" rowspan="2">Jump to <a href="01CD.html#01de">FindVariable_Start</a> if it is F4.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="01CD.html#01de">FindVariable_Start</a> if it is F4 (the low byte of <a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex/asm/09F4.html">PRINT_OUT</a>).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -195,12 +195,12 @@ Walk *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex
 <td class="asm-label"></td>
 <td class="address-1"><span id="01f2"></span>01F2</td>
 <td class="instruction">CP $E0</td>
-<td class="comment-1" rowspan="2">Jump to <a href="01CD.html#020d">FindVariable_SkipArray</a> if the type is E0.</td>
+<td class="comment-1" rowspan="2">Jump to <a href="01CD.html#020d">FindVariable_SkipFor</a> if the type is E0.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="01f4"></span>01F4</td>
-<td class="instruction">JR Z,<a href="01CD.html#020d">FindVariable_SkipArray</a></td>
+<td class="instruction">JR Z,<a href="01CD.html#020d">FindVariable_SkipFor</a></td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -228,7 +228,7 @@ Walk *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex
 <td class="asm-label"></td>
 <td class="address-1"><span id="01fe"></span>01FE</td>
 <td class="instruction">CP $40</td>
-<td class="comment-1" rowspan="2">Return if the type is not a simple numeric.</td>
+<td class="comment-1" rowspan="2">Return (with Z clear) unless the type is 40 (a string).</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -289,10 +289,10 @@ Walk *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/hex
 <td class="comment-1" rowspan="1">Return.</td>
 </tr>
 <tr>
-<td class="asm-label">FindVariable_SkipArray</td>
+<td class="asm-label">FindVariable_SkipFor</td>
 <td class="address-2"><span id="020d"></span>020D</td>
 <td class="instruction">LD DE,$000D</td>
-<td class="comment-1" rowspan="2">Skip the array header.</td>
+<td class="comment-1" rowspan="2">Skip the limit, step, looping line and statement of a FOR-NEXT control variable.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -357,9 +357,9 @@ Next: <a href="021F.html">021F</a>
 </table>
 <footer>
 <div class="release"></div>
-<div class="copyright">&copy; 1983 Currah &copy; 2024 ArcadeGeek LTD.</div>
+<div class="copyright">&copy; 1983 Currah Computor Components Ltd. &copy; 2024 ArcadeGeek LTD.</div>
 <div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
-<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah/">Source code</a>.</div>
+<div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah-microspeech">Source code</a>.</div>
 <div><a href="../dec/asm/461.html">Switch to decimal</a>.</div>
 </footer>
 </body>
