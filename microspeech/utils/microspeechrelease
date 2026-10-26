@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Copyright 2026 Paul Maddern (paul@arcadegeek.co.uk)
 set -e # Abort on errors
 
 if [[ -z $MICROSPEECH_DISASSEMBLY_HOME ]]; then

@@ -14,7 +14,7 @@ GameDir=microspeech
 
 [Game]
 Game=Currah μSpeech
-Copyright=&copy; 1983 Currah Computor Components Ltd. &copy; 2024 ArcadeGeek LTD.
+Copyright=&copy; 1983 Currah Computor Components Ltd<br />&copy; 2026 ArcadeGeek LTD.
 Repository=https://github.com/pobtastic/currah-microspeech
 LinkInternalOperands=1
 AddressAnchor={address#IF({base}==16)(:04x)}

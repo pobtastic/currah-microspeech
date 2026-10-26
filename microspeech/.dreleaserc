@@ -1,3 +1,4 @@
+# Copyright 2026 Paul Maddern (paul@arcadegeek.co.uk)
 GAME=microspeech
 DECCONFIG="-Da"
 HEXCONFIG="-a"

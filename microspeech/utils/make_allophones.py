@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Copyright 2026 Paul Maddern (paul@arcadegeek.co.uk)
 """Pack SP0256-AL2 PCM arrays into sources/allophones.js.
 
 Reads a wav2byt-style allophones.c (from ExtremeElectronics/RC2040, itself

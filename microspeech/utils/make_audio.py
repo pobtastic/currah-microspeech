@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Copyright 2026 Paul Maddern (paul@arcadegeek.co.uk)
 """Build SP0256-AL2 WAV files and attach #AUDIO0 lines in the ctl.
 
 Reads sources/allophones.js (8-bit PCM at 11025 Hz) and CURRAH.ROM.

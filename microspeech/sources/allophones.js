@@ -1,3 +1,4 @@
+// Copyright 2026 Paul Maddern (paul@arcadegeek.co.uk)
 /* SP0256-AL2 8-bit PCM at 11025 Hz.
  * Recordings: https://www.cpcwiki.eu/index.php/SP0256_Allophones
  * Packed from ExtremeElectronics/RC2040 allophones.c
