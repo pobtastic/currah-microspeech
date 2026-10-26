@@ -1,3 +1,4 @@
+// Copyright 2026 Paul Maddern (paul@arcadegeek.co.uk)
 /* Currah μSpeech s$ parser and SP0256-AL2 player.
  * Tables and control flow follow ParseSpeechString ($021F) and
  * ParseAllophoneGroup ($02EB) in the 2K ROM.
