@@ -1,8 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <title>Currah μSpeech: Routine at 021F</title>
 <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Currah μSpeech: Routine at 021F. Complete ZX Spectrum RAM disassembly." />
+<meta property="og:title" content="Currah μSpeech: Routine at 021F" />
+<meta property="og:description" content="Currah μSpeech: Routine at 021F. Complete ZX Spectrum RAM disassembly." />
+<meta property="og:site_name" content="ArcadeGeek" />
+<meta property="og:type" content="article" />
+<link rel="canonical" href="https://skoolkit.arcadegeek.co.uk/microspeech/asm/021F.html" />
+<meta property="og:url" content="https://skoolkit.arcadegeek.co.uk/microspeech/asm/021F.html" />
+<meta property="og:image" content="https://skoolkit.arcadegeek.co.uk/microspeech/images/logo.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<script type="application/ld+json">
+{
+"@context": "https://schema.org",
+"@graph": [
+{
+"@type": "WebSite",
+"@id": "https://skoolkit.arcadegeek.co.uk/#website",
+"name": "ArcadeGeek",
+"url": "https://skoolkit.arcadegeek.co.uk/"
+},
+{
+"@type": "TechArticle",
+"headline": "Currah μSpeech: Routine at 021F",
+"name": "Currah μSpeech: Routine at 021F",
+"description": "Currah μSpeech: Routine at 021F. Complete ZX Spectrum RAM disassembly.",
+"inLanguage": "en",
+"isPartOf": {"@id": "https://skoolkit.arcadegeek.co.uk/#website"},
+"author": {
+"@type": "Organization",
+"name": "ArcadeGeek",
+"url": "https://www.arcadegeek.co.uk/"
+},
+"about": {
+"@type": "VideoGame",
+"name": "Currah μSpeech",
+"gamePlatform": "ZX Spectrum"
+}
+,"url": "https://skoolkit.arcadegeek.co.uk/microspeech/asm/021F.html"
+,"image": "https://skoolkit.arcadegeek.co.uk/microspeech/images/logo.png"
+},
+{
+"@type": "BreadcrumbList",
+"itemListElement": [
+{
+"@type": "ListItem",
+"position": 1,
+"name": "ArcadeGeek",
+"item": "https://skoolkit.arcadegeek.co.uk/"
+},
+{
+"@type": "ListItem",
+"position": 2,
+"name": "Currah μSpeech"
+,"item": "https://skoolkit.arcadegeek.co.uk/microspeech/"
+}
+,{
+"@type": "ListItem",
+"position": 3,
+"name": "Routine at 021F"
+,"item": "https://skoolkit.arcadegeek.co.uk/microspeech/asm/021F.html"
+}
+]
+}
+]
+}
+</script>
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
@@ -269,8 +335,8 @@ Convert the next character of <a href="../reference/facts.html#sstring">s$</a> i
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="0249"></span>0249</td>
-<td class="instruction">CALL <a href="0375.html">CheckMemory</a></td>
-<td class="comment-1" rowspan="2">Call <a href="0375.html">CheckMemory</a> and return if the buffer is full.</td>
+<td class="instruction">CALL <a href="0375.html">CheckBufferSpace</a></td>
+<td class="comment-1" rowspan="2">Call <a href="0375.html">CheckBufferSpace</a> and return if the buffer is full.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -560,8 +626,8 @@ Apply intonation and queue the allophone.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="028d"></span>028D</td>
-<td class="instruction">CALL <a href="0375.html">CheckMemory</a></td>
-<td class="comment-1" rowspan="2">Call <a href="0375.html">CheckMemory</a> and return if the buffer is full.</td>
+<td class="instruction">CALL <a href="0375.html">CheckBufferSpace</a></td>
+<td class="comment-1" rowspan="2">Call <a href="0375.html">CheckBufferSpace</a> and return if the buffer is full.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -608,8 +674,8 @@ Apply intonation and queue the allophone.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="029a"></span>029A</td>
-<td class="instruction">CALL <a href="0375.html">CheckMemory</a></td>
-<td class="comment-1" rowspan="2">Call <a href="0375.html">CheckMemory</a> and return if the buffer is full.</td>
+<td class="instruction">CALL <a href="0375.html">CheckBufferSpace</a></td>
+<td class="comment-1" rowspan="2">Call <a href="0375.html">CheckBufferSpace</a> and return if the buffer is full.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -692,7 +758,7 @@ Next: <a href="02AD.html">02AD</a>
 <footer>
 <div class="release"></div>
 <div class="copyright">&copy; 1983 Currah Computor Components Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
-<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.2.</div>
 <div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah-microspeech">Source code</a>.</div>
 <div><a href="../dec/asm/543.html">Switch to decimal</a>.</div>
 </footer>

@@ -1,8 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <title>Currah μSpeech: Routine at 00747</title>
 <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Currah μSpeech: Routine at 00747. Complete ZX Spectrum RAM disassembly." />
+<meta property="og:title" content="Currah μSpeech: Routine at 00747" />
+<meta property="og:description" content="Currah μSpeech: Routine at 00747. Complete ZX Spectrum RAM disassembly." />
+<meta property="og:site_name" content="ArcadeGeek" />
+<meta property="og:type" content="article" />
+<link rel="canonical" href="https://skoolkit.arcadegeek.co.uk/microspeech/asm/747.html" />
+<meta property="og:url" content="https://skoolkit.arcadegeek.co.uk/microspeech/asm/747.html" />
+<meta property="og:image" content="https://skoolkit.arcadegeek.co.uk/microspeech/images/logo.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<script type="application/ld+json">
+{
+"@context": "https://schema.org",
+"@graph": [
+{
+"@type": "WebSite",
+"@id": "https://skoolkit.arcadegeek.co.uk/#website",
+"name": "ArcadeGeek",
+"url": "https://skoolkit.arcadegeek.co.uk/"
+},
+{
+"@type": "TechArticle",
+"headline": "Currah μSpeech: Routine at 00747",
+"name": "Currah μSpeech: Routine at 00747",
+"description": "Currah μSpeech: Routine at 00747. Complete ZX Spectrum RAM disassembly.",
+"inLanguage": "en",
+"isPartOf": {"@id": "https://skoolkit.arcadegeek.co.uk/#website"},
+"author": {
+"@type": "Organization",
+"name": "ArcadeGeek",
+"url": "https://www.arcadegeek.co.uk/"
+},
+"about": {
+"@type": "VideoGame",
+"name": "Currah μSpeech",
+"gamePlatform": "ZX Spectrum"
+}
+,"url": "https://skoolkit.arcadegeek.co.uk/microspeech/asm/747.html"
+,"image": "https://skoolkit.arcadegeek.co.uk/microspeech/images/logo.png"
+},
+{
+"@type": "BreadcrumbList",
+"itemListElement": [
+{
+"@type": "ListItem",
+"position": 1,
+"name": "ArcadeGeek",
+"item": "https://skoolkit.arcadegeek.co.uk/"
+},
+{
+"@type": "ListItem",
+"position": 2,
+"name": "Currah μSpeech"
+,"item": "https://skoolkit.arcadegeek.co.uk/microspeech/"
+}
+,{
+"@type": "ListItem",
+"position": 3,
+"name": "Routine at 00747"
+,"item": "https://skoolkit.arcadegeek.co.uk/microspeech/asm/747.html"
+}
+]
+}
+]
+}
+</script>
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
@@ -42,7 +108,7 @@ Next: <a href="843.html">00843</a>
 Used by the routine at <a href="543.html">ParseSpeechString</a>.
 </div>
 <div class="paragraph">
-Read a parenthesised allophone name from the speech string (for example "(AA)" or "(SH)"). Letters are normalised, checked against <a href="943.html">CharacterKeys</a>, and summed; the sum selects an allophone from <a href="997.html">AllophoneValues</a> (via <a href="970.html">MappedCharacters</a>). Groups with sums 92/100/102/104/120 are finished from <a href="1051.html">SuffixKeys</a> and <a href="1060.html">SuffixValues</a>.
+Read a parenthesised allophone name from the speech string (for example "(AA)" or "(SH)"). Letters are normalised, checked against <a href="943.html">CharacterKeys</a>, and summed; the sum selects an allophone from <a href="997.html">AllophoneValues</a> (via <a href="970.html">AllophoneNameSums</a>). Groups with sums 92/100/102/104/120 are finished from <a href="1051.html">SuffixKeys</a> and <a href="1060.html">SuffixValues</a>.
 </div>
 </div>
 <table class="input">
@@ -276,7 +342,7 @@ The name has ended; the running total selects the allophone.
 <span id="798"></span>
 <div class="comments">
 <div class="paragraph">
-Look the sum up in <a href="943.html">CharacterKeys</a> and <a href="970.html">MappedCharacters</a>.
+Look the sum up in <a href="943.html">CharacterKeys</a> and <a href="970.html">AllophoneNameSums</a>.
 </div>
 </div>
 </td>
@@ -285,7 +351,7 @@ Look the sum up in <a href="943.html">CharacterKeys</a> and <a href="970.html">M
 <td class="asm-label"></td>
 <td class="address-1"><span id="798"></span>00798</td>
 <td class="instruction">LD BC,54</td>
-<td class="comment-1" rowspan="1">Search the 54 bytes of <a href="943.html">CharacterKeys</a> and <a href="970.html">MappedCharacters</a>.</td>
+<td class="comment-1" rowspan="1">Search the 54 bytes of <a href="943.html">CharacterKeys</a> and <a href="970.html">AllophoneNameSums</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -476,7 +542,7 @@ Next: <a href="843.html">00843</a>
 <footer>
 <div class="release"></div>
 <div class="copyright">&copy; 1983 Currah Computor Components Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
-<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.2.</div>
 <div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah-microspeech">Source code</a>.</div>
 <div><a href="../../asm/02EB.html">Switch to hexadecimal</a>.</div>
 </footer>

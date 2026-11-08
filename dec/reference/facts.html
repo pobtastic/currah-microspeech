@@ -1,8 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <title>Currah μSpeech: Trivia</title>
 <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Currah μSpeech: Trivia. Complete ZX Spectrum RAM disassembly." />
+<meta property="og:title" content="Currah μSpeech: Trivia" />
+<meta property="og:description" content="Currah μSpeech: Trivia. Complete ZX Spectrum RAM disassembly." />
+<meta property="og:site_name" content="ArcadeGeek" />
+<meta property="og:type" content="article" />
+<link rel="canonical" href="https://skoolkit.arcadegeek.co.uk/microspeech/reference/facts.html" />
+<meta property="og:url" content="https://skoolkit.arcadegeek.co.uk/microspeech/reference/facts.html" />
+<meta property="og:image" content="https://skoolkit.arcadegeek.co.uk/microspeech/images/logo.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<script type="application/ld+json">
+{
+"@context": "https://schema.org",
+"@graph": [
+{
+"@type": "WebSite",
+"@id": "https://skoolkit.arcadegeek.co.uk/#website",
+"name": "ArcadeGeek",
+"url": "https://skoolkit.arcadegeek.co.uk/"
+},
+{
+"@type": "TechArticle",
+"headline": "Currah μSpeech: Trivia",
+"name": "Currah μSpeech: Trivia",
+"description": "Currah μSpeech: Trivia. Complete ZX Spectrum RAM disassembly.",
+"inLanguage": "en",
+"isPartOf": {"@id": "https://skoolkit.arcadegeek.co.uk/#website"},
+"author": {
+"@type": "Organization",
+"name": "ArcadeGeek",
+"url": "https://www.arcadegeek.co.uk/"
+},
+"about": {
+"@type": "VideoGame",
+"name": "Currah μSpeech",
+"gamePlatform": "ZX Spectrum"
+}
+,"url": "https://skoolkit.arcadegeek.co.uk/microspeech/reference/facts.html"
+,"image": "https://skoolkit.arcadegeek.co.uk/microspeech/images/logo.png"
+},
+{
+"@type": "BreadcrumbList",
+"itemListElement": [
+{
+"@type": "ListItem",
+"position": 1,
+"name": "ArcadeGeek",
+"item": "https://skoolkit.arcadegeek.co.uk/"
+},
+{
+"@type": "ListItem",
+"position": 2,
+"name": "Currah μSpeech"
+,"item": "https://skoolkit.arcadegeek.co.uk/microspeech/"
+}
+,{
+"@type": "ListItem",
+"position": 3,
+"name": "Trivia"
+,"item": "https://skoolkit.arcadegeek.co.uk/microspeech/reference/facts.html"
+}
+]
+}
+]
+}
+</script>
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
@@ -116,7 +182,7 @@ that, each interrupt at <a href="../asm/56.html#183">ServiceSpeech</a>:
 <div class="paragraph">
 Key voices map letters, tokens and symbols to allophone IDs
 through <a href="../asm/1095.html">AllophoneDictionary</a>. The <a href="facts.html#sstring">s$</a> path uses <a href="../asm/943.html">CharacterKeys</a> /
-<a href="../asm/970.html">MappedCharacters</a> / <a href="../asm/997.html">AllophoneValues</a> instead. A parenthesised name such as "(SH)"
+<a href="../asm/970.html">AllophoneNameSums</a> / <a href="../asm/997.html">AllophoneValues</a> instead. A parenthesised name such as "(SH)"
 picks an allophone directly (see <a href="../asm/747.html">ParseAllophoneGroup</a>). The queued IDs sit
 in the workspace buffer and grow downwards; when the
 <a href="facts.html#sp0256">SP0256</a> is ready, <a href="../asm/56.html#358">FeedAllophone</a> writes one ID and
@@ -182,7 +248,7 @@ stays out of this block.
 The live pointer is a word, so its high byte sits at 85
 (install first writes the workspace page there). The allophone
 buffer begins at the address of index 6 and grows down
-towards the new *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23730.html">RAMTOP</a>. <a href="../asm/885.html">CheckMemory</a> sets carry
+towards the new *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23730.html">RAMTOP</a>. <a href="../asm/885.html">CheckBufferSpace</a> sets carry
 when the pointer has run out of that reserved page (at or below *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23730.html">RAMTOP</a>).
 </div>
 <div class="paragraph">
@@ -302,14 +368,15 @@ is the *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/a
 <div class="paragraph">
 *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23730.html">RAMTOP</a> drops by 256 bytes on install (to 65111
 on 48K). The manual says do not CLEAR above 65360 (48K) or
-32343 (16K). The re-install check at <a href="../asm/56.html#80">80</a>-90
-only goes off when *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23730.html">RAMTOP</a> is at or above the
+32343 (16K). The re-install check at
+<a href="../asm/56.html#80">ProbeWorkspace</a> (0080-0090) only goes off when
+*<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23730.html">RAMTOP</a> is at or above the
 workspace base (65361 on 48K, 32593 on 16K), so the code
 itself accepts CLEAR up to 32592 on 16K; the manual's 16K
 figure is just the *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23730.html">RAMTOP</a> install sets and is
 stricter than the code needs, while its 48K figure 65360
 matches the code. A CLEAR into the header forces a re-install with
-a new banner (chapter 5); that is ProbeWorkspace at <a href="../asm/56.html#80">ProbeWorkspace</a> /
+a new banner (chapter 5); that is the check at <a href="../asm/56.html#80">ProbeWorkspace</a> /
 <a href="../asm/56.html#87">87</a>. A buffer only 200 bytes long holds over 30 seconds
 (chapter 2); the default buffer is 250 bytes.
 </div>
@@ -614,8 +681,10 @@ addresses (65367-65361; the last is the first queue byte):
 </table>
 </div>
 <div class="paragraph">
-Buffer bytes are laid out as: bit 7 = 0, bit 6 = intonation up,
-bits 0-5 = allophone. A worked example is "he(ll)(oo)" = 27, 7,
+Buffer bytes are laid out as: bit 7 = set on the last allophone
+of a key-press word (<a href="../asm/56.html#330">330</a> tests it; <a href="facts.html#sstring">s$</a> bytes
+leave it clear), bit 6 = intonation up, bits 0-5 = allophone.
+A worked example is "he(ll)(oo)" = 27, 7,
 62, 53, with the "e" intoned up as 71. This matches the
 workspace indexes in <a href="facts.html#workspace">Speech Workspace</a> (87
 flags, 84/85 pointer, 81 queue start) and the <code>LDDR</code>
@@ -718,7 +787,7 @@ Orator. That patch (closed-accepted; milestone v1.7.0; created
 <footer>
 <div class="release"></div>
 <div class="copyright">&copy; 1983 Currah Computor Components Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
-<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.2.</div>
 <div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah-microspeech">Source code</a>.</div>
 <div><a href="../../reference/facts.html">Switch to hexadecimal</a>.</div>
 </footer>

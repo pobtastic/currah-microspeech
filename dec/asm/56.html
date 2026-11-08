@@ -1,8 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <title>Currah μSpeech: Routine at 00056</title>
 <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Currah μSpeech: Routine at 00056. Complete ZX Spectrum RAM disassembly." />
+<meta property="og:title" content="Currah μSpeech: Routine at 00056" />
+<meta property="og:description" content="Currah μSpeech: Routine at 00056. Complete ZX Spectrum RAM disassembly." />
+<meta property="og:site_name" content="ArcadeGeek" />
+<meta property="og:type" content="article" />
+<link rel="canonical" href="https://skoolkit.arcadegeek.co.uk/microspeech/asm/56.html" />
+<meta property="og:url" content="https://skoolkit.arcadegeek.co.uk/microspeech/asm/56.html" />
+<meta property="og:image" content="https://skoolkit.arcadegeek.co.uk/microspeech/images/logo.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<script type="application/ld+json">
+{
+"@context": "https://schema.org",
+"@graph": [
+{
+"@type": "WebSite",
+"@id": "https://skoolkit.arcadegeek.co.uk/#website",
+"name": "ArcadeGeek",
+"url": "https://skoolkit.arcadegeek.co.uk/"
+},
+{
+"@type": "TechArticle",
+"headline": "Currah μSpeech: Routine at 00056",
+"name": "Currah μSpeech: Routine at 00056",
+"description": "Currah μSpeech: Routine at 00056. Complete ZX Spectrum RAM disassembly.",
+"inLanguage": "en",
+"isPartOf": {"@id": "https://skoolkit.arcadegeek.co.uk/#website"},
+"author": {
+"@type": "Organization",
+"name": "ArcadeGeek",
+"url": "https://www.arcadegeek.co.uk/"
+},
+"about": {
+"@type": "VideoGame",
+"name": "Currah μSpeech",
+"gamePlatform": "ZX Spectrum"
+}
+,"url": "https://skoolkit.arcadegeek.co.uk/microspeech/asm/56.html"
+,"image": "https://skoolkit.arcadegeek.co.uk/microspeech/images/logo.png"
+},
+{
+"@type": "BreadcrumbList",
+"itemListElement": [
+{
+"@type": "ListItem",
+"position": 1,
+"name": "ArcadeGeek",
+"item": "https://skoolkit.arcadegeek.co.uk/"
+},
+{
+"@type": "ListItem",
+"position": 2,
+"name": "Currah μSpeech"
+,"item": "https://skoolkit.arcadegeek.co.uk/microspeech/"
+}
+,{
+"@type": "ListItem",
+"position": 3,
+"name": "Routine at 00056"
+,"item": "https://skoolkit.arcadegeek.co.uk/microspeech/asm/56.html"
+}
+]
+}
+]
+}
+</script>
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
@@ -176,8 +242,8 @@ The speech workspace is a short block at the top of the reserved area, between *
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="87"></span>00087</td>
-<td class="instruction">CALL <a href="885.html">CheckMemory</a></td>
-<td class="comment-1" rowspan="2">Call <a href="885.html">CheckMemory</a> and jump to <a href="56.html#129">InstallWorkspace</a> to reinstall if the workspace is no longer protected by *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23730.html">RAMTOP</a>.</td>
+<td class="instruction">CALL <a href="885.html">CheckBufferSpace</a></td>
+<td class="comment-1" rowspan="2">Call <a href="885.html">CheckBufferSpace</a> and jump to <a href="56.html#129">InstallWorkspace</a> to reinstall if the workspace is no longer protected by *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23730.html">RAMTOP</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -193,8 +259,8 @@ The speech workspace is a short block at the top of the reserved area, between *
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="95"></span>00095</td>
-<td class="instruction">CALL <a href="885.html">CheckMemory</a></td>
-<td class="comment-1" rowspan="1">Call <a href="885.html">CheckMemory</a>.</td>
+<td class="instruction">CALL <a href="885.html">CheckBufferSpace</a></td>
+<td class="comment-1" rowspan="1">Call <a href="885.html">CheckBufferSpace</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -1003,8 +1069,8 @@ Copy the matching allophones into the speech buffer.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="324"></span>00324</td>
-<td class="instruction">CALL <a href="915.html">IsQueueEmpty</a></td>
-<td class="comment-1" rowspan="2">Call <a href="915.html">IsQueueEmpty</a> and jump to <a href="56.html#337">ServiceSpeech_Store</a> if the queue is empty.</td>
+<td class="instruction">CALL <a href="915.html">TestQueueEmpty</a></td>
+<td class="comment-1" rowspan="2">Call <a href="915.html">TestQueueEmpty</a> and jump to <a href="56.html#337">ServiceSpeech_Store</a> if the queue is empty.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -1058,8 +1124,8 @@ Copy the matching allophones into the speech buffer.
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="340"></span>00340</td>
-<td class="instruction">CALL <a href="885.html">CheckMemory</a></td>
-<td class="comment-1" rowspan="2">Call <a href="885.html">CheckMemory</a> and jump to <a href="56.html#352">ServiceSpeech_Flush</a> if the buffer has hit *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23730.html">RAMTOP</a>.</td>
+<td class="instruction">CALL <a href="885.html">CheckBufferSpace</a></td>
+<td class="comment-1" rowspan="2">Call <a href="885.html">CheckBufferSpace</a> and jump to <a href="56.html#352">ServiceSpeech_Flush</a> if the buffer has hit *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23730.html">RAMTOP</a>.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -1133,7 +1199,7 @@ The <a href="../reference/facts.html#sp0256">SP0256</a> is the speech-synthesise
 <span id="365"></span>
 <div class="comments">
 <div class="paragraph">
-The manual notes that "the unit will remain silent until the first ENTER is pressed after a power up, a NEW, or after a 'report' has been printed at the bottom of the screen." On every interrupt that reaches this code where bit 7 of *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23610.html">ERR_NR</a> is reset (an error code is waiting), this code empties the speech queue through <a href="930.html">EmptyQueue</a>, so nothing is spoken until the ROM sets *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23610.html">ERR_NR</a> back to 255; that happens when ENTER is pressed and on the editor's error paths (<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/4223.html&#35;4229">ED_ERROR</a> and <a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/4381.html&#35;4466">ED_FULL</a> in the Spectrum ROM). The power-on and NEW cases are from the manual (chapter 2 also says any report other than OK has this effect).
+The manual notes that "the unit will remain silent until the first ENTER is pressed after a power up, a NEW, or after a 'report' has been printed at the bottom of the screen." On every interrupt that reaches this code where bit 7 of *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23610.html">ERR_NR</a> is reset (an error code is waiting), this code empties the speech queue through <a href="930.html">EmptyQueue</a>, so nothing is spoken until the ROM sets *<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/23610.html">ERR_NR</a> back to 255; that happens when ENTER is pressed and on the editor's error paths (<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/4223.html">ED_ERROR</a> at 4229 and <a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/asm/4381.html&#35;4455">ED_FULL</a> at 4466 in the Spectrum ROM). The power-on and NEW cases are from the manual (chapter 2 also says any report other than OK has this effect).
 </div>
 </div>
 </td>
@@ -1157,8 +1223,8 @@ The manual notes that "the unit will remain silent until the first ENTER is pres
 <tr>
 <td class="asm-label"></td>
 <td class="address-1"><span id="372"></span>00372</td>
-<td class="instruction">CALL <a href="915.html">IsQueueEmpty</a></td>
-<td class="comment-1" rowspan="2">Call <a href="915.html">IsQueueEmpty</a> and jump to <a href="56.html#383">FeedAllophone_Write</a> if anything is queued.</td>
+<td class="instruction">CALL <a href="915.html">TestQueueEmpty</a></td>
+<td class="comment-1" rowspan="2">Call <a href="915.html">TestQueueEmpty</a> and jump to <a href="56.html#383">FeedAllophone_Write</a> if anything is queued.</td>
 </tr>
 <tr>
 <td class="asm-label"></td>
@@ -1361,7 +1427,7 @@ Next: <a href="427.html">00427</a>
 <footer>
 <div class="release"></div>
 <div class="copyright">&copy; 1983 Currah Computor Components Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
-<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.2.</div>
 <div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah-microspeech">Source code</a>.</div>
 <div><a href="../../asm/0038.html">Switch to hexadecimal</a>.</div>
 </footer>

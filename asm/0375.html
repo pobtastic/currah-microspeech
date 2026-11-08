@@ -1,8 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <title>Currah μSpeech: Routine at 0375</title>
 <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Currah μSpeech: Routine at 0375. Complete ZX Spectrum RAM disassembly." />
+<meta property="og:title" content="Currah μSpeech: Routine at 0375" />
+<meta property="og:description" content="Currah μSpeech: Routine at 0375. Complete ZX Spectrum RAM disassembly." />
+<meta property="og:site_name" content="ArcadeGeek" />
+<meta property="og:type" content="article" />
+<link rel="canonical" href="https://skoolkit.arcadegeek.co.uk/microspeech/asm/0375.html" />
+<meta property="og:url" content="https://skoolkit.arcadegeek.co.uk/microspeech/asm/0375.html" />
+<meta property="og:image" content="https://skoolkit.arcadegeek.co.uk/microspeech/images/logo.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<script type="application/ld+json">
+{
+"@context": "https://schema.org",
+"@graph": [
+{
+"@type": "WebSite",
+"@id": "https://skoolkit.arcadegeek.co.uk/#website",
+"name": "ArcadeGeek",
+"url": "https://skoolkit.arcadegeek.co.uk/"
+},
+{
+"@type": "TechArticle",
+"headline": "Currah μSpeech: Routine at 0375",
+"name": "Currah μSpeech: Routine at 0375",
+"description": "Currah μSpeech: Routine at 0375. Complete ZX Spectrum RAM disassembly.",
+"inLanguage": "en",
+"isPartOf": {"@id": "https://skoolkit.arcadegeek.co.uk/#website"},
+"author": {
+"@type": "Organization",
+"name": "ArcadeGeek",
+"url": "https://www.arcadegeek.co.uk/"
+},
+"about": {
+"@type": "VideoGame",
+"name": "Currah μSpeech",
+"gamePlatform": "ZX Spectrum"
+}
+,"url": "https://skoolkit.arcadegeek.co.uk/microspeech/asm/0375.html"
+,"image": "https://skoolkit.arcadegeek.co.uk/microspeech/images/logo.png"
+},
+{
+"@type": "BreadcrumbList",
+"itemListElement": [
+{
+"@type": "ListItem",
+"position": 1,
+"name": "ArcadeGeek",
+"item": "https://skoolkit.arcadegeek.co.uk/"
+},
+{
+"@type": "ListItem",
+"position": 2,
+"name": "Currah μSpeech"
+,"item": "https://skoolkit.arcadegeek.co.uk/microspeech/"
+}
+,{
+"@type": "ListItem",
+"position": 3,
+"name": "Routine at 0375"
+,"item": "https://skoolkit.arcadegeek.co.uk/microspeech/asm/0375.html"
+}
+]
+}
+]
+}
+</script>
 <link rel="stylesheet" type="text/css" href="../skoolkit.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-dark.css" />
 <link rel="stylesheet" type="text/css" href="../skoolkit-wide.css" />
@@ -33,7 +99,7 @@ Next: <a href="037F.html">037F</a>
 </td>
 </tr>
 </table>
-<div class="description">0375: Check Memory</div>
+<div class="description">0375: Check Buffer Space</div>
 <table class="disassembly">
 <tr>
 <td class="routine-comment" colspan="5">
@@ -66,7 +132,7 @@ Compare the speech-buffer pointer with *<a rel="noopener nofollow" href="https:/
 </td>
 </tr>
 <tr>
-<td class="asm-label">CheckMemory</td>
+<td class="asm-label">CheckBufferSpace</td>
 <td class="address-2"><span id="0375"></span>0375</td>
 <td class="instruction">PUSH HL</td>
 <td class="comment-1" rowspan="1">Stash <span class="register">HL</span> on the stack.</td>
@@ -120,7 +186,7 @@ Next: <a href="037F.html">037F</a>
 <footer>
 <div class="release"></div>
 <div class="copyright">&copy; 1983 Currah Computor Components Ltd<br />&copy; 2026 ArcadeGeek LTD.</div>
-<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.1.</div>
+<div class="created">Created using <a href="https://skoolkit.ca">SkoolKit</a> 10.2.</div>
 <div class="repository">Link to <a rel="noopener nofollow" href="https://github.com/pobtastic/currah-microspeech">Source code</a>.</div>
 <div><a href="../dec/asm/885.html">Switch to decimal</a>.</div>
 </footer>
