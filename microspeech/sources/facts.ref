@@ -163,14 +163,15 @@ is the *#SKOOLKID$5C3A(ERR_NR) test at #R$016D.
 
 *#SKOOLKID$5CB2(RAMTOP) drops by 256 bytes on install (to #N$FE57
 on 48K). The manual says do not CLEAR above #N$FF50 (48K) or
-#N$7E57 (16K). The re-install check at #R$0050(#N$0050)-#N$005A
-only goes off when *#SKOOLKID$5CB2(RAMTOP) is at or above the
+#N$7E57 (16K). The re-install check at
+#R$0050 (#N($0050,$04,$04)-#N($005A,$04,$04)) only goes off when
+*#SKOOLKID$5CB2(RAMTOP) is at or above the
 workspace base (#N$FF51 on 48K, #N$7F51 on 16K), so the code
 itself accepts CLEAR up to #N$7F50 on 16K; the manual's 16K
 figure is just the *#SKOOLKID$5CB2(RAMTOP) install sets and is
 stricter than the code needs, while its 48K figure #N$FF50
 matches the code. A CLEAR into the header forces a re-install with
-a new banner (chapter 5); that is ProbeWorkspace at #R$0050 /
+a new banner (chapter 5); that is the check at #R$0050 /
 #R$0057. A buffer only 200 bytes long holds over 30 seconds
 (chapter 2); the default buffer is #N$FA bytes.
 
@@ -323,8 +324,10 @@ addresses (#N$FF57-#N$FF51; the last is the first queue byte):
 { #N$FF51 | 65361 | Next allophone / queue start }
 TABLE#
 
-Buffer bytes are laid out as: bit 7 = 0, bit 6 = intonation up,
-bits 0-5 = allophone. A worked example is "he(ll)(oo)" = 27, 7,
+Buffer bytes are laid out as: bit 7 = set on the last allophone
+of a key-press word (#R$014A tests it; #FACT(sstring,s$) bytes
+leave it clear), bit 6 = intonation up, bits 0-5 = allophone.
+A worked example is "he(ll)(oo)" = 27, 7,
 62, 53, with the "e" intoned up as 71. This matches the
 workspace indexes in #FACT(workspace,Speech Workspace) (#N$57
 flags, #N$54/#N$55 pointer, #N$51 queue start) and the <code>LDDR</code>

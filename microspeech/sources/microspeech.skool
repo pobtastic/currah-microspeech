@@ -4,13 +4,14 @@
 @org=$0000
 @expand=#DEF1(#SKOOLKID(addr,anchor=0)(name)#HTML(<a rel="noopener nofollow" href="https://skoolkit.ca/disassemblies/rom/#IF({{mode[base]}}==16)(hex/)asm/#IF({{mode[base]}}==16)(#EVAL({addr},16,4),#EVAL({addr})).html#IF({anchor})(#CHR(35)#IF({{mode[base]}}==16)(#EVAL({anchor},16,4),#EVAL({anchor})))">){name}#HTML(</a>))
 @expand=#DEF(#FACT()(anchor,text) #LINK(Facts#$anchor)($text))
+@expand=#DEF(#ALLO(id) #LINK(Sound#al2-#EVAL($id,16,2))(#N($id)))
 
 ; Banner Characters
 ;
 ; Seven 8x8 bitmaps used by #R$01AB with #R$0798 to print
 ; "Speech System © CURRAH 1983" into the display file. The inverse
 ; letters here are "R", "A" and "H" ("R" is used twice); "CU" live
-; at #R$0798(#N$07F0).
+; at #R$07F0(#N($07F0,$04,$04)).
 @label=BannerCharacters
 b$0000 DEFB $00,$3C,$42,$0C,$02,$42,$3C,$00 ; #UDGTABLE { #UDG(#PC) } TABLE#
  $0008 DEFB $FF,$83,$BD,$BD,$83,$BB,$BD,$FF ; #UDGTABLE { #UDG(#PC) } TABLE#
@@ -27,9 +28,8 @@ b$0000 DEFB $00,$3C,$42,$0C,$02,$42,$3C,$00 ; #UDGTABLE { #UDG(#PC) } TABLE#
 ; so this ROM runs first. Every exit jumps back to #R$0038, which
 ; pages the Spectrum ROM in and lets IM1 finish.
 @label=HandleInterrupt
-c$0038 PUSH AF       ; {#HTML[Preserve #REGaf (this
- $0039 POP AF        ; <code>PUSH</code>/<code>POP</code> pair is what Rockfall
-                     ; II checks for).]}
+c$0038 PUSH AF       ; {#HTML[Preserve #REGaf (this <code>PUSH</code>/<code>POP</code> pair
+ $0039 POP AF        ; is what Rockfall II checks for).]}
  $003A DI            ; Keep further interrupts out while the μSpeech ROM is
                      ; paged in.
  $003B PUSH HL       ; {Stash #REGhl, #REGaf, #REGbc and #REGde on the stack.
@@ -233,11 +233,11 @@ c$0038 PUSH AF       ; {#HTML[Preserve #REGaf (this
  $0144 CALL $0393    ; {Call #R$0393 and jump to #R$0151 if the queue is empty.
  $0147 JR Z,$0151    ; }
  $0149 INC BC        ; Step the buffer pointer on one byte.
- $014A LD A,(BC)     ; {Jump to #R$0166 (leaving the key unspoken) if the last
- $014B RLA           ; queued allophone does not have bit 7 set.
+ $014A LD A,(BC)     ; {Jump to #R$0166 (leaving the key unspoken) if the last queued
+ $014B RLA           ; allophone does not have bit 7 set.
  $014C JR NC,$0166   ; }
- $014E CALL $03A2    ; Call #R$03A2 to empty the queue so the new key word
-                     ; replaces the previous one.
+ $014E CALL $03A2    ; Call #R$03A2 to empty the queue so the new key word replaces the
+                     ; previous one.
 @label=ServiceSpeech_Store
 *$0151 LD A,(HL)     ; {Queue this allophone in the speech buffer.
  $0152 LD (BC),A     ;
@@ -267,9 +267,9 @@ c$0038 PUSH AF       ; {#HTML[Preserve #REGaf (this
 ; this code empties the speech queue through #R$03A2, so nothing
 ; is spoken until the ROM sets *#SKOOLKID$5C3A(ERR_NR) back to
 ; #N$FF; that happens when ENTER is pressed and on the editor's
-; error paths (#SKOOLKID$107F,$1085(ED_ERROR) and
-; #SKOOLKID$111D,$1172(ED_FULL) in the Spectrum ROM). The
-; power-on and NEW cases are from the manual (chapter 2 also
+; error paths (#SKOOLKID$107F(ED_ERROR) at #N$1085 and
+; #SKOOLKID$111D,$1167(ED_FULL) at #N$1172 in the Spectrum ROM).
+; The power-on and NEW cases are from the manual (chapter 2 also
 ; says any report other than OK has this effect).
  $016D LD A,($5C3A)  ; {Empty the speech queue (#R$03A2) if BASIC is reporting an
  $0170 RLA           ; error (bit 7 of *#SKOOLKID$5C3A(ERR_NR) reset).
@@ -407,8 +407,8 @@ c$01CD LD B,A        ; Keep the name code in #REGb.
  $020B AND A         ; }
  $020C RET           ; Return.
 @label=FindVariable_SkipFor
-*$020D LD DE,$000D   ; {Skip the limit, step, looping line and statement of a
- $0210 ADD HL,DE     ; FOR-NEXT control variable.}
+*$020D LD DE,$000D   ; {Skip the limit, step, looping line and statement of a FOR-NEXT
+ $0210 ADD HL,DE     ; control variable.}
 @label=FindVariable_SkipNumeric
 *$0211 LD DE,$0006   ; {Skip the numeric value and jump to #R$01E1.
  $0214 ADD HL,DE     ;
@@ -581,8 +581,8 @@ c$02AD LD A,$AB      ; {Call #R$01CD for "keys".
  $02CE JR NZ,$02DD   ; }
  $02D0 CP (HL)       ; {Jump to #R$02E4 if the low byte of keys is #N$00.
  $02D1 JR Z,$02E4    ; }
- $02D3 INC A         ; {Jump to #R$02DD if the low byte of keys is not #N$01
- $02D4 CP (HL)       ; (leave the setting unchanged).
+ $02D3 INC A         ; {Jump to #R$02DD if the low byte of keys is not #N$01 (leave the
+ $02D4 CP (HL)       ; setting unchanged).
  $02D5 JR NZ,$02DD   ; }
  $02D7 DEC A         ; {Call #R$0354 for the flags byte.
  $02D8 CALL $0354    ; }
@@ -592,7 +592,7 @@ c$02AD LD A,$AB      ; {Call #R$01CD for "keys".
  $02DE CALL $0354    ; }
  $02E1 BIT 1,(HL)    ; Set the Z flag if key speech is disabled.
  $02E3 RET           ; Return.
-; keys is #N$00; turn key speech off.
+; The variable "keys" is #N($00), so turn key speech off.
 @label=TestKeysVariable_Off
 *$02E4 CALL $0354    ; Call #R$0354 for the flags byte.
  $02E7 RES 1,(HL)    ; {Disable key speech and jump to #R$02DD.
@@ -663,8 +663,8 @@ c$02EB LD B,$00      ; Set the running total to #N$00.
  $032E OR A          ; Clear the carry flag (valid group).
  $032F POP HL        ; Restore the string pointer from the stack.
  $0330 RET           ; Return.
-; Sum #N$78 uses the character two before the ")" (the middle letter of "(aer)"
-; or "(ear)").
+; Sum #N$78 uses the character two before the ")" (the middle letter of
+; "(aer)" or "(ear)").
 @label=ParseAllophoneGroup_Prev
 *$0331 PUSH HL       ; Stash the string pointer on the stack.
  $0332 DEC HL        ; Move back to the previous character.
@@ -735,7 +735,7 @@ c$0354 LD HL,($5CB4) ; Fetch *#SKOOLKID$5CB4(P_RAMT).
 ;
 ; Used by the routines at #R$021F and #R$02EB.
 ; .
-; Convert a character towards the dictionary alphabet,
+; Convert a character to the alphabet of #R$03AF and #R$041B,
 ; and set workspace bit 6 for intonation (set for codes below "a").
 ;
 ;   A Character
@@ -746,7 +746,7 @@ c$035E PUSH HL       ; Stash #REGhl on the stack.
  $0360 XOR A         ; {Call #R$0354 for the flags byte.
  $0361 CALL $0354    ; }
  $0364 LD A,B        ; Restore the character.
-; Fold the letter into the dictionary alphabet. "A" and
+; Fold the letter into the #R$03AF alphabet. "A" and
 ; "a" both become #N$21.
  $0365 CP $61        ; {Jump to #R$036F if the character is below "a".
  $0367 JR C,$036F    ; }
@@ -760,7 +760,7 @@ c$035E PUSH HL       ; Stash #REGhl on the stack.
 *$0373 POP HL        ; Restore #REGhl from the stack.
  $0374 RET           ; Return.
 
-; Check Memory
+; Check Buffer Space
 ;
 ; Used by the routines at #R$0038 and #R$021F.
 ; .
@@ -770,7 +770,7 @@ c$035E PUSH HL       ; Stash #REGhl on the stack.
 ;
 ;   BC Buffer pointer
 ; O:F Carry set if #REGbc is at or below *#SKOOLKID$5CB2(RAMTOP)
-@label=CheckMemory
+@label=CheckBufferSpace
 c$0375 PUSH HL       ; Stash #REGhl on the stack.
  $0376 LD HL,($5CB2) ; Fetch *#SKOOLKID$5CB2(RAMTOP).
  $0379 OR A          ; {Compare *#SKOOLKID$5CB2(RAMTOP) with the buffer
@@ -811,14 +811,14 @@ c$038A LD A,$03      ; {Call #R$0354 for the buffer-pointer slot.
  $0391 LD (HL),B     ; }
  $0392 RET           ; Return.
 
-; Is Queue Empty
+; Test Queue Empty
 ;
 ; Used by the routine at #R$0038.
 ; .
 ; Compare the buffer pointer with the address of the queue head.
 ;
 ; O:F Z flag set if the queue is empty
-@label=IsQueueEmpty
+@label=TestQueueEmpty
 c$0393 PUSH HL       ; Stash #REGhl on the stack.
  $0394 LD A,$06      ; {Call #R$0354 for the address of the queue head.
  $0396 CALL $0354    ; }
@@ -857,33 +857,60 @@ c$03A2 LD A,$06      ; Select workspace index #N$06.
 ; The allophone for each key is at the same index in #R$03E5
 ; (#REGhl is left one past the match, then #N$35 is added).
 @label=CharacterKeys
-b$03AF DEFB $21      ; Key #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03B0 DEFB $22      ; Key #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03B1 DEFB $23      ; Key #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03B2 DEFB $24      ; Key #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03B3 DEFB $25      ; Key #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03B4 DEFB $26      ; Key #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03B5 DEFB $27      ; Key #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03B6 DEFB $28      ; Key #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03B7 DEFB $29      ; Key #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03B8 DEFB $2A      ; Key #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03B9 DEFB $2B      ; Key #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03BA DEFB $2C      ; Key #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03BB DEFB $2D      ; Key #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03BC DEFB $2E      ; Key #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03BD DEFB $2F      ; Key #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03BE DEFB $30      ; Key #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03BF DEFB $32      ; Key #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03C0 DEFB $33      ; Key #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03C1 DEFB $34      ; Key #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03C2 DEFB $35      ; Key #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03C3 DEFB $36      ; Key #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03C4 DEFB $37      ; Key #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03C5 DEFB $39      ; Key #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03C6 DEFB $3A      ; Key #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03C7 DEFB $0C      ; Key #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03C8 DEFB $07      ; Key #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03C9 DEFB $00      ; Key #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
+b$03AF DEFB $21      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03B0 DEFB $22      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03B1 DEFB $23      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03B2 DEFB $24      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03B3 DEFB $25      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03B4 DEFB $26      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03B5 DEFB $27      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03B6 DEFB $28      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03B7 DEFB $29      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03B8 DEFB $2A      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03B9 DEFB $2B      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03BA DEFB $2C      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03BB DEFB $2D      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03BC DEFB $2E      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03BD DEFB $2F      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03BE DEFB $30      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03BF DEFB $32      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03C0 DEFB $33      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03C1 DEFB $34      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03C2 DEFB $35      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03C3 DEFB $36      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03C4 DEFB $37      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03C5 DEFB $39      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03C6 DEFB $3A      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03C7 DEFB $0C      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03C8 DEFB $07      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03C9 DEFB $00      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
 
 ; Allophone Name Sums
 ;
@@ -899,34 +926,61 @@ b$03AF DEFB $21      ; Key #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
 ; KK2 (#N$29), so the ROM gives "(gg)" the "(ck)" sound instead of
 ; the manual's GG2; that confirms the unused GG2 entry was meant
 ; for "(gg)".
-@label=MappedCharacters
-b$03CA DEFB $42      ; Name sum #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03CB DEFB $5A      ; Name sum #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03CC DEFB $44      ; Name sum #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03CD DEFB $4E      ; Name sum #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03CE DEFB $48      ; Name sum #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03CF DEFB $4A      ; Name sum #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03D0 DEFB $4E      ; Name sum #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03D1 DEFB $50      ; Name sum #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03D2 DEFB $52      ; Name sum #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03D3 DEFB $58      ; Name sum #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03D4 DEFB $5E      ; Name sum #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03D5 DEFB $72      ; Name sum #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03D6 DEFB $61      ; Name sum #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03D7 DEFB $53      ; Name sum #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03D8 DEFB $55      ; Name sum #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03D9 DEFB $4D      ; Name sum #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03DA DEFB $57      ; Name sum #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03DB DEFB $5F      ; Name sum #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03DC DEFB $4B      ; Name sum #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03DD DEFB $5B      ; Name sum #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03DE DEFB $5D      ; Name sum #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03DF DEFB $62      ; Name sum #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03E0 DEFB $7B      ; Name sum #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03E1 DEFB $75      ; Name sum #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03E2 DEFB $89      ; Name sum #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03E3 DEFB $99      ; Name sum #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
- $03E4 DEFB $80      ; Name sum #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
+@label=AllophoneNameSums
+b$03CA DEFB $42      ; Sum #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03CB DEFB $5A      ; Sum #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03CC DEFB $44      ; Sum #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03CD DEFB $4E      ; Sum #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03CE DEFB $48      ; Sum #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03CF DEFB $4A      ; Sum #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03D0 DEFB $4E      ; Sum #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03D1 DEFB $50      ; Sum #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03D2 DEFB $52      ; Sum #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03D3 DEFB $58      ; Sum #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03D4 DEFB $5E      ; Sum #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03D5 DEFB $72      ; Sum #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03D6 DEFB $61      ; Sum #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03D7 DEFB $53      ; Sum #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03D8 DEFB $55      ; Sum #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03D9 DEFB $4D      ; Sum #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03DA DEFB $57      ; Sum #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03DB DEFB $5F      ; Sum #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03DC DEFB $4B      ; Sum #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03DD DEFB $5B      ; Sum #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03DE DEFB $5D      ; Sum #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03DF DEFB $62      ; Sum #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03E0 DEFB $7B      ; Sum #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03E1 DEFB $75      ; Sum #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03E2 DEFB $89      ; Sum #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03E3 DEFB $99      ; Sum #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
+ $03E4 DEFB $80      ; Sum #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$36)(#N(#PEEK(#PC+$36))).
 
 ; Allophone Values
 ;
@@ -934,62 +988,67 @@ b$03CA DEFB $42      ; Name sum #N(#PEEK(#PC)): allophone #N(#PEEK(#PC+$36)).
 ; characters in #R$03AF (used by #R$027A), followed by #N$1B
 ; allophones for the name sums in #R$03CA (used by #R$032A). Hear
 ; the IDs on the #LINK(Sound)(Allophones) page.
+;
+; .
+;
+; Allophones for the characters in #R$03AF.
 @label=AllophoneValues
-b$03E5 DEFB $18      ; {Allophones for the characters in #R$03AF.
- $03E6 DEFB $1C      ;
- $03E7 DEFB $08      ;
- $03E8 DEFB $15      ;
- $03E9 DEFB $07      ;
- $03EA DEFB $28      ;
- $03EB DEFB $24      ;
- $03EC DEFB $1B      ;
- $03ED DEFB $0C      ;
- $03EE DEFB $0A      ;
- $03EF DEFB $2A      ;
- $03F0 DEFB $2D      ;
- $03F1 DEFB $10      ;
- $03F2 DEFB $0B      ;
- $03F3 DEFB $17      ;
- $03F4 DEFB $09      ;
- $03F5 DEFB $27      ;
- $03F6 DEFB $37      ;
- $03F7 DEFB $11      ;
- $03F8 DEFB $0F      ;
- $03F9 DEFB $23      ;
- $03FA DEFB $2E      ;
- $03FB DEFB $31      ;
- $03FC DEFB $2B      ;
- $03FD DEFB $04      ;
- $03FE DEFB $01      ;
- $03FF DEFB $03      ; }
-@label=GroupAllophones
- $0400 DEFB $14      ; {Allophones for the name sums in #R$03CA.
- $0401 DEFB $14      ;
- $0402 DEFB $3F      ;
- $0403 DEFB $29      ;
- $0404 DEFB $21      ;
- $0405 DEFB $13      ;
- $0406 DEFB $3D      ;
- $0407 DEFB $39      ;
- $0408 DEFB $06      ;
- $0409 DEFB $3E      ;
- $040A DEFB $35      ;
- $040B DEFB $19      ;
- $040C DEFB $3A      ;
- $040D DEFB $3B      ;
- $040E DEFB $2C      ;
- $040F DEFB $1A      ;
- $0410 DEFB $33      ;
- $0411 DEFB $30      ;
- $0412 DEFB $32      ;
- $0413 DEFB $25      ;
- $0414 DEFB $1E      ;
- $0415 DEFB $26      ;
- $0416 DEFB $35      ;
- $0417 DEFB $22      ;
- $0418 DEFB $34      ;
- $0419 DEFB $1F      ;
- $041A DEFB $12      ; }
+b$03E5 DEFB $18      ; Allophone #ALLO(#PEEK(#PC)).
+ $03E6 DEFB $1C      ; Allophone #ALLO(#PEEK(#PC)).
+ $03E7 DEFB $08      ; Allophone #ALLO(#PEEK(#PC)).
+ $03E8 DEFB $15      ; Allophone #ALLO(#PEEK(#PC)).
+ $03E9 DEFB $07      ; Allophone #ALLO(#PEEK(#PC)).
+ $03EA DEFB $28      ; Allophone #ALLO(#PEEK(#PC)).
+ $03EB DEFB $24      ; Allophone #ALLO(#PEEK(#PC)).
+ $03EC DEFB $1B      ; Allophone #ALLO(#PEEK(#PC)).
+ $03ED DEFB $0C      ; Allophone #ALLO(#PEEK(#PC)).
+ $03EE DEFB $0A      ; Allophone #ALLO(#PEEK(#PC)).
+ $03EF DEFB $2A      ; Allophone #ALLO(#PEEK(#PC)).
+ $03F0 DEFB $2D      ; Allophone #ALLO(#PEEK(#PC)).
+ $03F1 DEFB $10      ; Allophone #ALLO(#PEEK(#PC)).
+ $03F2 DEFB $0B      ; Allophone #ALLO(#PEEK(#PC)).
+ $03F3 DEFB $17      ; Allophone #ALLO(#PEEK(#PC)).
+ $03F4 DEFB $09      ; Allophone #ALLO(#PEEK(#PC)).
+ $03F5 DEFB $27      ; Allophone #ALLO(#PEEK(#PC)).
+ $03F6 DEFB $37      ; Allophone #ALLO(#PEEK(#PC)).
+ $03F7 DEFB $11      ; Allophone #ALLO(#PEEK(#PC)).
+ $03F8 DEFB $0F      ; Allophone #ALLO(#PEEK(#PC)).
+ $03F9 DEFB $23      ; Allophone #ALLO(#PEEK(#PC)).
+ $03FA DEFB $2E      ; Allophone #ALLO(#PEEK(#PC)).
+ $03FB DEFB $31      ; Allophone #ALLO(#PEEK(#PC)).
+ $03FC DEFB $2B      ; Allophone #ALLO(#PEEK(#PC)).
+ $03FD DEFB $04      ; Allophone #ALLO(#PEEK(#PC)).
+ $03FE DEFB $01      ; Allophone #ALLO(#PEEK(#PC)).
+ $03FF DEFB $03      ; Allophone #ALLO(#PEEK(#PC)).
+; Allophones for the name sums in #R$03CA.
+@label=AllophoneValues_NameSums
+ $0400 DEFB $14      ; Allophone #ALLO(#PEEK(#PC)).
+ $0401 DEFB $14      ; Allophone #ALLO(#PEEK(#PC)).
+ $0402 DEFB $3F      ; Allophone #ALLO(#PEEK(#PC)).
+ $0403 DEFB $29      ; Allophone #ALLO(#PEEK(#PC)).
+ $0404 DEFB $21      ; Allophone #ALLO(#PEEK(#PC)).
+ $0405 DEFB $13      ; Allophone #ALLO(#PEEK(#PC)).
+ $0406 DEFB $3D      ; Allophone #ALLO(#PEEK(#PC)).
+ $0407 DEFB $39      ; Allophone #ALLO(#PEEK(#PC)).
+ $0408 DEFB $06      ; Allophone #ALLO(#PEEK(#PC)).
+ $0409 DEFB $3E      ; Allophone #ALLO(#PEEK(#PC)).
+ $040A DEFB $35      ; Allophone #ALLO(#PEEK(#PC)).
+ $040B DEFB $19      ; Allophone #ALLO(#PEEK(#PC)).
+ $040C DEFB $3A      ; Allophone #ALLO(#PEEK(#PC)).
+ $040D DEFB $3B      ; Allophone #ALLO(#PEEK(#PC)).
+ $040E DEFB $2C      ; Allophone #ALLO(#PEEK(#PC)).
+ $040F DEFB $1A      ; Allophone #ALLO(#PEEK(#PC)).
+ $0410 DEFB $33      ; Allophone #ALLO(#PEEK(#PC)).
+ $0411 DEFB $30      ; Allophone #ALLO(#PEEK(#PC)).
+ $0412 DEFB $32      ; Allophone #ALLO(#PEEK(#PC)).
+ $0413 DEFB $25      ; Allophone #ALLO(#PEEK(#PC)).
+ $0414 DEFB $1E      ; Allophone #ALLO(#PEEK(#PC)).
+ $0415 DEFB $26      ; Allophone #ALLO(#PEEK(#PC)).
+ $0416 DEFB $35      ; Allophone #ALLO(#PEEK(#PC)).
+ $0417 DEFB $22      ; Allophone #ALLO(#PEEK(#PC)).
+ $0418 DEFB $34      ; Allophone #ALLO(#PEEK(#PC)).
+ $0419 DEFB $1F      ; Allophone #ALLO(#PEEK(#PC)).
+ $041A DEFB $12      ; Allophone #ALLO(#PEEK(#PC)).
 
 ; Suffix Keys
 ;
@@ -997,39 +1056,39 @@ b$03E5 DEFB $18      ; {Allophones for the characters in #R$03AF.
 ; searched by #R$0336. The matching value is #N$09 bytes later in
 ; #R$0424.
 @label=SuffixKeys
-b$041B DEFB $32      ; Suffix letter #N(#PEEK(#PC)): allophone
-                     ; #N(#PEEK(#PC+$09)).
- $041C DEFB $35      ; Suffix letter #N(#PEEK(#PC)): allophone
-                     ; #N(#PEEK(#PC+$09)).
- $041D DEFB $34      ; Suffix letter #N(#PEEK(#PC)): allophone
-                     ; #N(#PEEK(#PC+$09)).
- $041E DEFB $39      ; Suffix letter #N(#PEEK(#PC)): allophone
-                     ; #N(#PEEK(#PC+$09)).
- $041F DEFB $28      ; Suffix letter #N(#PEEK(#PC)): allophone
-                     ; #N(#PEEK(#PC+$09)).
- $0420 DEFB $2E      ; Suffix letter #N(#PEEK(#PC)): allophone
-                     ; #N(#PEEK(#PC+$09)).
- $0421 DEFB $21      ; Suffix letter #N(#PEEK(#PC)): allophone
-                     ; #N(#PEEK(#PC+$09)).
- $0422 DEFB $25      ; Suffix letter #N(#PEEK(#PC)): allophone
-                     ; #N(#PEEK(#PC+$09)).
- $0423 DEFB $37      ; Suffix letter #N(#PEEK(#PC)): allophone
-                     ; #N(#PEEK(#PC+$09)).
+b$041B DEFB $32      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$09)(#N(#PEEK(#PC+$09))).
+ $041C DEFB $35      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$09)(#N(#PEEK(#PC+$09))).
+ $041D DEFB $34      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$09)(#N(#PEEK(#PC+$09))).
+ $041E DEFB $39      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$09)(#N(#PEEK(#PC+$09))).
+ $041F DEFB $28      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$09)(#N(#PEEK(#PC+$09))).
+ $0420 DEFB $2E      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$09)(#N(#PEEK(#PC+$09))).
+ $0421 DEFB $21      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$09)(#N(#PEEK(#PC+$09))).
+ $0422 DEFB $25      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$09)(#N(#PEEK(#PC+$09))).
+ $0423 DEFB $37      ; Key #N(#PEEK(#PC)): allophone
+                     ; #R(#PC+$09)(#N(#PEEK(#PC+$09))).
 
 ; Suffix Values
 ;
 ; Allophone IDs for the suffix letters in #R$041B, used by
 ; #R$0336.
 @label=SuffixValues
-b$0424 DEFB $0E      ; Allophone #N(#PEEK(#PC)).
- $0425 DEFB $16      ; Allophone #N(#PEEK(#PC)).
- $0426 DEFB $0D      ; Allophone #N(#PEEK(#PC)).
- $0427 DEFB $05      ; Allophone #N(#PEEK(#PC)).
- $0428 DEFB $1D      ; Allophone #N(#PEEK(#PC)).
- $0429 DEFB $38      ; Allophone #N(#PEEK(#PC)).
- $042A DEFB $3C      ; Allophone #N(#PEEK(#PC)).
- $042B DEFB $2F      ; Allophone #N(#PEEK(#PC)).
- $042C DEFB $20      ; Allophone #N(#PEEK(#PC)).
+b$0424 DEFB $0E      ; Allophone #ALLO(#PEEK(#PC)).
+ $0425 DEFB $16      ; Allophone #ALLO(#PEEK(#PC)).
+ $0426 DEFB $0D      ; Allophone #ALLO(#PEEK(#PC)).
+ $0427 DEFB $05      ; Allophone #ALLO(#PEEK(#PC)).
+ $0428 DEFB $1D      ; Allophone #ALLO(#PEEK(#PC)).
+ $0429 DEFB $38      ; Allophone #ALLO(#PEEK(#PC)).
+ $042A DEFB $3C      ; Allophone #ALLO(#PEEK(#PC)).
+ $042B DEFB $2F      ; Allophone #ALLO(#PEEK(#PC)).
+ $042C DEFB $20      ; Allophone #ALLO(#PEEK(#PC)).
 
 ; Punctuation Keys
 ;
@@ -1037,38 +1096,51 @@ b$0424 DEFB $0E      ; Allophone #N(#PEEK(#PC)).
 ; searched by #R$011D. The replacement is #N$0D bytes later in
 ; #R$043A.
 @label=PunctuationKeys
-b$042D DEFB $29      ; Key #N(#PEEK(#PC)): dictionary key #N(#PEEK(#PC+$0D)).
- $042E DEFB $5B      ; Key #N(#PEEK(#PC)): dictionary key #N(#PEEK(#PC+$0D)).
- $042F DEFB $5D      ; Key #N(#PEEK(#PC)): dictionary key #N(#PEEK(#PC+$0D)).
- $0430 DEFB $7B      ; Key #N(#PEEK(#PC)): dictionary key #N(#PEEK(#PC+$0D)).
- $0431 DEFB $7D      ; Key #N(#PEEK(#PC)): dictionary key #N(#PEEK(#PC+$0D)).
- $0432 DEFB $A9      ; Key #N(#PEEK(#PC)): dictionary key #N(#PEEK(#PC+$0D)).
- $0433 DEFB $FB      ; Key #N(#PEEK(#PC)): dictionary key #N(#PEEK(#PC+$0D)).
- $0434 DEFB $40      ; Key #N(#PEEK(#PC)): dictionary key #N(#PEEK(#PC+$0D)).
- $0435 DEFB $09      ; Key #N(#PEEK(#PC)): dictionary key #N(#PEEK(#PC+$0D)).
- $0436 DEFB $0A      ; Key #N(#PEEK(#PC)): dictionary key #N(#PEEK(#PC+$0D)).
- $0437 DEFB $0B      ; Key #N(#PEEK(#PC)): dictionary key #N(#PEEK(#PC+$0D)).
- $0438 DEFB $BC      ; Key #N(#PEEK(#PC)): dictionary key #N(#PEEK(#PC+$0D)).
- $0439 DEFB $C6      ; Key #N(#PEEK(#PC)): dictionary key #N(#PEEK(#PC+$0D)).
+b$042D DEFB $29      ; Key #N(#PEEK(#PC)): maps to
+                     ; #R(#PC+$0D)(#N(#PEEK(#PC+$0D))).
+ $042E DEFB $5B      ; Key #N(#PEEK(#PC)): maps to
+                     ; #R(#PC+$0D)(#N(#PEEK(#PC+$0D))).
+ $042F DEFB $5D      ; Key #N(#PEEK(#PC)): maps to
+                     ; #R(#PC+$0D)(#N(#PEEK(#PC+$0D))).
+ $0430 DEFB $7B      ; Key #N(#PEEK(#PC)): maps to
+                     ; #R(#PC+$0D)(#N(#PEEK(#PC+$0D))).
+ $0431 DEFB $7D      ; Key #N(#PEEK(#PC)): maps to
+                     ; #R(#PC+$0D)(#N(#PEEK(#PC+$0D))).
+ $0432 DEFB $A9      ; Key #N(#PEEK(#PC)): maps to
+                     ; #R(#PC+$0D)(#N(#PEEK(#PC+$0D))).
+ $0433 DEFB $FB      ; Key #N(#PEEK(#PC)): maps to
+                     ; #R(#PC+$0D)(#N(#PEEK(#PC+$0D))).
+ $0434 DEFB $40      ; Key #N(#PEEK(#PC)): maps to
+                     ; #R(#PC+$0D)(#N(#PEEK(#PC+$0D))).
+ $0435 DEFB $09      ; Key #N(#PEEK(#PC)): maps to
+                     ; #R(#PC+$0D)(#N(#PEEK(#PC+$0D))).
+ $0436 DEFB $0A      ; Key #N(#PEEK(#PC)): maps to
+                     ; #R(#PC+$0D)(#N(#PEEK(#PC+$0D))).
+ $0437 DEFB $0B      ; Key #N(#PEEK(#PC)): maps to
+                     ; #R(#PC+$0D)(#N(#PEEK(#PC+$0D))).
+ $0438 DEFB $BC      ; Key #N(#PEEK(#PC)): maps to
+                     ; #R(#PC+$0D)(#N(#PEEK(#PC+$0D))).
+ $0439 DEFB $C6      ; Key #N(#PEEK(#PC)): maps to
+                     ; #R(#PC+$0D)(#N(#PEEK(#PC+$0D))).
 
 ; Punctuation Values
 ;
 ; Dictionary keys for the characters in #R$042D, used by
 ; #R$011D.
 @label=PunctuationValues
-b$043A DEFB $28      ; Dictionary key #N(#PEEK(#PC)).
- $043B DEFB $28      ; Dictionary key #N(#PEEK(#PC)).
- $043C DEFB $28      ; Dictionary key #N(#PEEK(#PC)).
- $043D DEFB $28      ; Dictionary key #N(#PEEK(#PC)).
- $043E DEFB $28      ; Dictionary key #N(#PEEK(#PC)).
- $043F DEFB $2E      ; Dictionary key #N(#PEEK(#PC)).
- $0440 DEFB $FD      ; Dictionary key #N(#PEEK(#PC)).
- $0441 DEFB $AC      ; Dictionary key #N(#PEEK(#PC)).
- $0442 DEFB $08      ; Dictionary key #N(#PEEK(#PC)).
- $0443 DEFB $08      ; Dictionary key #N(#PEEK(#PC)).
- $0444 DEFB $08      ; Dictionary key #N(#PEEK(#PC)).
- $0445 DEFB $B2      ; Dictionary key #N(#PEEK(#PC)).
- $0446 DEFB $26      ; Dictionary key #N(#PEEK(#PC)).
+b$043A DEFB $28      ; Dictionary key #R$04B0(#N$28).
+ $043B DEFB $28      ; Dictionary key #R$04B0(#N$28).
+ $043C DEFB $28      ; Dictionary key #R$04B0(#N$28).
+ $043D DEFB $28      ; Dictionary key #R$04B0(#N$28).
+ $043E DEFB $28      ; Dictionary key #R$04B0(#N$28).
+ $043F DEFB $2E      ; Dictionary key #R$04FE(#N$2E).
+ $0440 DEFB $FD      ; Dictionary key #R$074B(#N$FD).
+ $0441 DEFB $AC      ; Dictionary key #R$0489(#N$AC).
+ $0442 DEFB $08      ; Dictionary key #R$0454(#N$08).
+ $0443 DEFB $08      ; Dictionary key #R$0454(#N$08).
+ $0444 DEFB $08      ; Dictionary key #R$0454(#N$08).
+ $0445 DEFB $B2      ; Dictionary key #R$0620(#N$B2).
+ $0446 DEFB $26      ; Dictionary key #R$04A2(#N$26).
 
 ; Allophone Dictionary
 ;
@@ -1424,33 +1496,33 @@ b$0447 DEFB $80                             ; Dummy list terminator.
 ; "Speech System © CURRAH 1983", used by #R$01AB. A high byte of #N$FF
 ; ends the list.
 @label=BannerAddresses
-w$075B DEFW $07A0    ; #R$0798(#N$07A0) ("S").
- $075D DEFW $07A8    ; #R$0798(#N$07A8) ("p").
- $075F DEFW $07B0    ; #R$0798(#N$07B0) ("e").
- $0761 DEFW $07B0    ; #R$0798(#N$07B0) ("e").
- $0763 DEFW $07B8    ; #R$0798(#N$07B8) ("c").
- $0765 DEFW $07C0    ; #R$0798(#N$07C0) ("h").
+w$075B DEFW $07A0    ; #R$07A0(#N($07A0,$04,$04)) ("S").
+ $075D DEFW $07A8    ; #R$07A8(#N($07A8,$04,$04)) ("p").
+ $075F DEFW $07B0    ; #R$07B0(#N($07B0,$04,$04)) ("e").
+ $0761 DEFW $07B0    ; #R$07B0(#N($07B0,$04,$04)) ("e").
+ $0763 DEFW $07B8    ; #R$07B8(#N($07B8,$04,$04)) ("c").
+ $0765 DEFW $07C0    ; #R$07C0(#N($07C0,$04,$04)) ("h").
  $0767 DEFW $0798    ; #R$0798 (space).
- $0769 DEFW $07A0    ; #R$0798(#N$07A0) ("S").
- $076B DEFW $07C8    ; #R$0798(#N$07C8) ("y").
- $076D DEFW $07E0    ; #R$0798(#N$07E0) ("s").
- $076F DEFW $07D8    ; #R$0798(#N$07D8) ("t").
- $0771 DEFW $07B0    ; #R$0798(#N$07B0) ("e").
- $0773 DEFW $07D0    ; #R$0798(#N$07D0) ("m").
+ $0769 DEFW $07A0    ; #R$07A0(#N($07A0,$04,$04)) ("S").
+ $076B DEFW $07C8    ; #R$07C8(#N($07C8,$04,$04)) ("y").
+ $076D DEFW $07E0    ; #R$07E0(#N($07E0,$04,$04)) ("s").
+ $076F DEFW $07D8    ; #R$07D8(#N($07D8,$04,$04)) ("t").
+ $0771 DEFW $07B0    ; #R$07B0(#N($07B0,$04,$04)) ("e").
+ $0773 DEFW $07D0    ; #R$07D0(#N($07D0,$04,$04)) ("m").
  $0775 DEFW $0798    ; #R$0798 (space).
- $0777 DEFW $07E8    ; #R$0798(#N$07E8) (copyright).
+ $0777 DEFW $07E8    ; #R$07E8(#N($07E8,$04,$04)) (copyright).
  $0779 DEFW $0798    ; #R$0798 (space).
- $077B DEFW $07F0    ; #R$0798(#N$07F0) ("C").
- $077D DEFW $07F8    ; #R$0798(#N$07F8) ("U").
- $077F DEFW $0008    ; #R$0000(#N($0008,$04,$04)) ("R").
- $0781 DEFW $0008    ; #R$0000(#N($0008,$04,$04)) ("R").
- $0783 DEFW $0010    ; #R$0000(#N($0010,$04,$04)) ("A").
- $0785 DEFW $0018    ; #R$0000(#N($0018,$04,$04)) ("H").
+ $077B DEFW $07F0    ; #R$07F0(#N($07F0,$04,$04)) ("C").
+ $077D DEFW $07F8    ; #R$07F8(#N($07F8,$04,$04)) ("U").
+ $077F DEFW $0008    ; #R$0008(#N($0008,$04,$04)) ("R").
+ $0781 DEFW $0008    ; #R$0008(#N($0008,$04,$04)) ("R").
+ $0783 DEFW $0010    ; #R$0010(#N($0010,$04,$04)) ("A").
+ $0785 DEFW $0018    ; #R$0018(#N($0018,$04,$04)) ("H").
  $0787 DEFW $0798    ; #R$0798 (space).
- $0789 DEFW $0020    ; #R$0000(#N($0020,$04,$04)) ("1").
- $078B DEFW $0028    ; #R$0000(#N($0028,$04,$04)) ("9").
- $078D DEFW $0030    ; #R$0000(#N($0030,$04,$04)) ("8").
- $078F DEFW $0000    ; #R$0000(#N($0000,$04,$04)) ("3").
+ $0789 DEFW $0020    ; #R$0020(#N($0020,$04,$04)) ("1").
+ $078B DEFW $0028    ; #R$0028(#N($0028,$04,$04)) ("9").
+ $078D DEFW $0030    ; #R$0030(#N($0030,$04,$04)) ("8").
+ $078F DEFW $0000    ; #R$0000 ("3").
  $0791 DEFW $FFFF    ; Terminator.
 
 ; Programmer Credit
